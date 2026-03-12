@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>
+            {% block title %}
+                清算アプリ
+            {% endblock %}
+        </title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body
+        class="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50"
+    >
+        {% block content %}
+
+        {% endblock %}
+
+        <script src="/js/location.js"></script>
+        <script src="/js/ranking_bar.js"></script>
+        <script src="/js/settlement_accordion.js"></script>
+        <script src="/js/toast.js"></script>
+    </body>
+</html>

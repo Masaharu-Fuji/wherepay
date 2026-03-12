@@ -7,6 +7,144 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## このバックエンドについて
+
+このディレクトリは Laravel をベースにしたアプリケーションのバックエンドです。  
+開発・検証時に最低限必要なコマンドや、DB 初期データ投入の手順をここにまとめます。
+
+### 開発用コマンド
+
+- アプリケーションコンテナ内でマイグレーションを実行
+
+```bash
+docker compose exec laravel.test php artisan migrate
+```
+
+- テーブルを作り直してシーディングまで一括実行
+
+```bash
+docker compose exec laravel.test php artisan migrate:fresh --seed
+```
+
+## DB 構成とシーディング
+
+### `t_items.room_id` の追加と関連
+
+- テーブル: `t_items`
+- 追加カラム: `room_id` (`unsignedBigInteger`, NOT NULL)
+- 外部キー: `t_rooms.id`
+
+マイグレーション:
+
+```14:22:backend/database/migrations/2026_03_10_000009_add_room_id_to_t_items_table.php
+    public function up(): void
+    {
+        Schema::table('t_items', function (Blueprint $table) {
+            $table->unsignedBigInteger('room_id')->after('id');
+
+            $table->foreign('room_id')
+                ->references('id')
+                ->on('t_rooms')
+                ->onUpdate('no action')
+                ->onDelete('no action');
+        });
+    }
+```
+
+### 関連モデルの概要
+
+- `Room` (`t_rooms`)
+  - `items()` で `hasMany(Item::class, 'room_id')`
+- `Member` (`t_members`)
+  - カラム `room_id`
+  - `room()` で `belongsTo(Room::class, 'room_id')`
+- `Item` (`t_items`)
+  - `fillable` に `room_id` を含める
+
+### シーディングの流れ（Room → Member → Item）
+
+1. **RoomSeeder**
+
+既存の `RoomFactory` を使って複数の部屋を作成します。
+
+2. **MemberSeeder**
+
+各 `Room` ごとにメンバーを 4 人ずつ作成し、`room_id` を固定します。
+
+```13:20:backend/database/seeders/MemberSeeder.php
+    public function run(): void
+    {
+        // 既存の Room に対してメンバーを作成
+        Room::all()->each(function (Room $room) {
+            Member::factory()
+                ->count(4)
+                ->create([
+                    'room_id' => $room->id,
+                ]);
+        });
+    }
+```
+
+3. **ItemSeeder**
+
+各メンバーに対して、そのメンバーが所属している `room_id` をアイテムにも引き継いで作成します。  
+`room_id` が NOT NULL のため、この指定が必須です。
+
+```11:21:backend/database/seeders/ItemSeeder.php
+    public function run(): void
+    {
+        // 既存メンバーごとにアイテムを作成
+        Member::all()->each(function (Member $member) {
+            Item::factory()
+                ->count(5)
+                ->create([
+                    'room_id' => $member->room_id,
+                    'payer_id' => $member->id,
+                ]);
+        });
+    }
+```
+
+### よくあるエラーと対処
+
+- `SQLSTATE[23502]: not null violation: 7 ERROR:  null value in column "room_id" of relation "t_items"`  
+  - `ItemSeeder` で `room_id` を指定しているか確認する
+  - `t_members` の `room_id` が `NULL` になっていないか確認する
+  - 必要に応じて `migrate:fresh --seed` を実行してテーブル・初期データを作り直す
+
+### データ整合性チェック用テスト
+
+- **目的**: Seeder / Factory を変更した際に、**部屋とメンバーの整合性が 1 件でも崩れたら検知する** ためのテストです。
+- **テストファイル**: `tests/Feature/DataIntegrityTest.php`
+- **検証内容**:
+  - `t_items.room_id` と、`payer_id` に紐づく `t_members.room_id` が常に一致していること
+  - `t_item_participants.member_id` が、対応する `item_id` の属する `room_id` のメンバーであること
+- **実行例**:
+
+```bash
+docker compose exec laravel.test php artisan test --filter=DataIntegrityTest
+```
+
+このテストが失敗した場合は、Seeder / Factory のロジックにより「別の部屋のメンバーが紐づいていないか」を確認してください。
+
+### テスト実行時の DB と `psql` の結果の違いについて
+
+- **`DataIntegrityTest` では `RefreshDatabase` トレイトを使用しており、テスト時は `.env.testing` で定義された「テスト用 DB」に対してマイグレーション + シーディング (`$this->seed()`) が実行されます。**
+- 一方で、次のようにコンテナ内から `psql` で確認しているのは、通常の接続先（例: `laravel` データベース）です。
+
+```bash
+docker exec -it backend-pgsql-1 psql -U sail -d laravel -c "SELECT * FROM t_rooms;"
+```
+
+- そのため、**テスト実行後に上記コマンドで `t_rooms` を確認しても 0 件 `(0 rows)` になることがありますが、これは「テスト用 DB と本番/開発用 DB が別」であるためです。**
+- 本番/開発用 DB 側にもシーディング結果を反映させたい場合は、テストではなく通常のコマンドで以下のように実行してください。
+
+```bash
+docker compose exec laravel.test php artisan migrate:fresh --seed
+```
+
+その後に `psql` で `t_rooms` を確認すると、`RoomSeeder` によるデータが投入されていることを確認できます。
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:

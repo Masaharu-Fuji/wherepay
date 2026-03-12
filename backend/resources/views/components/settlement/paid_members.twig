@@ -1,0 +1,24 @@
+{% if (paidMembers|length) > 0 %}
+    <div class="bg-white rounded-2xl border border-emerald-200 shadow-md p-5">
+        <div class="flex items-center gap-2 mb-3">
+            <span class="text-2xl">✅</span>
+            <h3 class="text-lg font-semibold text-emerald-800">
+                清算完了したメンバー
+            </h3>
+            <span
+                class="ml-auto text-xs bg-emerald-100 text-emerald-800 px-2 py-1 rounded-full"
+            >
+                {{ paidMembers|length }}人
+            </span>
+        </div>
+        <div class="flex flex-wrap gap-2">
+            {% for member in paidMembers %}
+                <div
+                    class="px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-sm"
+                >
+                    {{ member.member_name }}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}

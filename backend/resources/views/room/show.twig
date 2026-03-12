@@ -1,0 +1,23 @@
+{% extends 'layouts.base' %}
+
+{% block title %}
+    {{ room.room_name }}
+    - 清算アプリ
+{% endblock %}
+
+{% block content %}
+    <div class="min-h-screen pb-32">
+        {{ include('components.room.header') }}
+
+        <div class="max-w-4xl mx-auto p-4 space-y-4">
+            {{ include('components.room.members') }}
+            <div class="flex flex-col justify-center gap-4">
+                {{ include('components.room.forms') }}
+                {{ include('components.room.settlement_link') }}
+            </div>
+            {{ include('components.room.items') }}
+        </div>
+
+        {{ include('components.room.ranking_bar') }}
+    </div>
+{% endblock %}

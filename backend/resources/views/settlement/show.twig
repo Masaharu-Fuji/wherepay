@@ -1,0 +1,96 @@
+{% extends 'layouts.base' %}
+
+{% block title %}
+    清算結果 - 清算アプリ
+{% endblock %}
+
+{% block content %}
+    <div class="min-h-screen">
+        {{
+            include(
+                'components.settlement.header',
+                {
+                    isFullySettled: isFullySettled
+                }
+            )
+        }}
+
+        <div class="max-w-4xl mx-auto p-4 space-y-6">
+            {% if isFullySettled %}
+                {{ include('components.settlement.completed') }}
+            {% endif %}
+
+            {{ include('components.settlement.summary') }}
+
+            {{ include('components.settlement.paid_members') }}
+
+            <div class="space-y-3" data-accordion>
+                <div
+                    class="bg-white rounded-2xl border border-gray-200 shadow-md"
+                >
+                    <button
+                        type="button"
+                        class="w-full flex items-center justify-between px-4 py-3 text-left"
+                        data-accordion-button
+                        data-accordion-target="payments"
+                    >
+                        <div class="flex items-center gap-2">
+                            <span class="text-2xl">🔄</span>
+                            <span class="text-lg">支払い計算</span>
+                        </div>
+                        <span class="text-sm text-gray-500">
+                            タップして開閉
+                        </span>
+                    </button>
+                </div>
+                <div class="mt-2" data-accordion-panel="payments">
+                    {{ include('components.settlement.transactions') }}
+                </div>
+
+                <div
+                    class="bg-white rounded-2xl border border-gray-200 shadow-md"
+                >
+                    <button
+                        type="button"
+                        class="w-full flex items-center justify-between px-4 py-3 text-left"
+                        data-accordion-button
+                        data-accordion-target="change"
+                    >
+                        <div class="flex items-center gap-2">
+                            <span class="text-2xl">💵</span>
+                            <span class="text-lg">おつり計算</span>
+                        </div>
+                        <span class="text-sm text-gray-500">
+                            タップして開閉
+                        </span>
+                    </button>
+                </div>
+                <div class="mt-2 hidden" data-accordion-panel="change">
+                    {{ include('components.settlement.change_form') }}
+                </div>
+
+                <div
+                    class="bg-white rounded-2xl border border-gray-200 shadow-md"
+                >
+                    <button
+                        type="button"
+                        class="w-full flex items-center justify-between px-4 py-3 text-left"
+                        data-accordion-button
+                        data-accordion-target="locations"
+                    >
+                        <div class="flex items-center gap-2">
+                            <span class="text-2xl">📍</span>
+                            <span class="text-lg">訪れた場所</span>
+                        </div>
+                        <span class="text-sm text-gray-500">
+                            タップして開閉
+                        </span>
+                    </button>
+                </div>
+                <div class="mt-2 hidden" data-accordion-panel="locations">
+                    {{ include('components.settlement.locations') }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,166 @@
+{% extends 'layouts.base' %}
+
+{% block title %}
+    ルーム作成 - 清算アプリ
+{% endblock %}
+
+{% block content %}
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="w-full max-w-md">
+            <div class="text-center mb-8">
+                <div
+                    class="{{
+                    cn(
+                        'inline-flex items-center justify-center',
+                        'w-20 h-20',
+                        'bg-gradient-to-br from-blue-500 to-purple-600',
+                        'rounded-3xl mb-4 shadow-lg'
+                    )
+                    }}"
+                >
+                    <span class="text-4xl">💰</span>
+                </div>
+                <h1
+                    class="{{
+                    cn(
+                        'text-4xl mb-2',
+                        'bg-gradient-to-r from-blue-600 to-purple-600',
+                        'bg-clip-text text-transparent'
+                    )
+                    }}"
+                >
+                    清算アプリ
+                </h1>
+                <p class="text-gray-600">
+                    簡単・便利な割り勘計算
+                </p>
+            </div>
+
+            <div
+                class="bg-white rounded-2xl border border-gray-200 shadow-xl p-8"
+            >
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl mb-2">ルーム作成</h2>
+                    <p class="text-gray-600">
+                        グループ名を入力して清算を始めましょう
+                    </p>
+                </div>
+
+                <form
+                    method="POST"
+                    action="{{ route('rooms.store') }}"
+                    class="space-y-6"
+                >
+                    <input
+                        type="hidden"
+                        name="_token"
+                        value="{{ csrf_token() }}"
+                    />
+
+                    <div>
+                        <label for="room_name" class="block mb-3 text-gray-700">
+                            グループ名
+                        </label>
+                        <input
+                            id="room_name"
+                            name="room_name"
+                            type="text"
+                            placeholder="例: 飲み会グループ、ランチ会"
+                            value="{{ old('room_name') }}"
+                            class="{{
+                            cn(
+                                'w-full text-lg p-4',
+                                'border-2 border-gray-200 rounded-xl',
+                                'focus:outline-none focus:border-blue-500',
+                                'focus:ring-4 focus:ring-blue-100',
+                                'transition-all'
+                            )
+                            }}"
+                            autofocus
+                            required
+                        />
+                        {% if errors.has('room_name') %}
+                            <p class="mt-2 text-sm text-red-600">
+                                {{ errors.first('room_name') }}
+                            </p>
+                        {% endif %}
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="{{
+                        cn(
+                            'w-full text-lg py-4',
+                            'bg-gradient-to-r from-blue-500 to-purple-600 text-white',
+                            'rounded-xl',
+                            'hover:from-blue-600 hover:to-purple-700',
+                            'disabled:opacity-50 disabled:cursor-not-allowed',
+                            'transition-all shadow-lg hover:shadow-xl',
+                            'transform hover:scale-[1.02] active:scale-[0.98]'
+                        )
+                        }}"
+                    >
+                        ルームを作成 🚀
+                    </button>
+                </form>
+
+                <div class="mt-8 pt-6 border-t border-gray-200">
+                    <p class="text-sm text-gray-600 mb-3 text-center">
+                        主な機能
+                    </p>
+                    <div class="space-y-2 text-sm text-gray-600">
+                        <div class="flex items-center gap-2">
+                            <span
+                                class="{{
+                                cn(
+                                    'w-6 h-6',
+                                    'bg-blue-100 rounded-full',
+                                    'flex items-center justify-center',
+                                    'text-blue-600'
+                                )
+                                }}"
+                            >
+                                ✓
+                            </span>
+                            <span>メンバー管理と支払い記録</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span
+                                class="{{
+                                cn(
+                                    'w-6 h-6',
+                                    'bg-purple-100 rounded-full',
+                                    'flex items-center justify-center',
+                                    'text-purple-600'
+                                )
+                                }}"
+                            >
+                                ✓
+                            </span>
+                            <span>自動清算計算とおつり計算</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span
+                                class="{{
+                                cn(
+                                    'w-6 h-6',
+                                    'bg-pink-100 rounded-full',
+                                    'flex items-center justify-center',
+                                    'text-pink-600'
+                                )
+                                }}"
+                            >
+                                ✓
+                            </span>
+                            <span>位置情報で思い出を記録</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-center text-sm text-gray-500 mt-6">
+                デジタルに不慣れな方でも簡単に使えます
+            </p>
+        </div>
+    </div>
+{% endblock %}

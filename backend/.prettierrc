@@ -1,0 +1,13 @@
+{
+    "plugins": [
+        "@zackad/prettier-plugin-twig"
+    ],
+    "overrides": [
+        {
+            "files": "*.twig",
+            "options": {
+                "parser": "twig"
+            }
+        }
+    ]
+}

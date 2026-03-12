@@ -1,0 +1,82 @@
+<div class="bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm">
+    <div class="max-w-4xl mx-auto p-4">
+        <div class="flex items-center gap-4">
+            <a
+                href="{{ route('rooms.create') }}"
+                class="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+                ← ルーム選択に戻る
+            </a>
+            <div class="flex-1">
+                <h1 class="text-2xl">{{ room.room_name }}</h1>
+                <p class="text-sm text-gray-600 mt-1">
+                    合計: <span class="text-purple-600">¥{{ totalAmount|number_format(0, '.', ',') }}</span>
+                </p>
+                <div class="mt-2 space-y-1">
+                    <p class="text-xs text-gray-500">
+                        このURLを共有すると、他の人もこのルームを開けます。
+                    </p>
+                    <div
+                        class="flex flex-col sm:flex-row sm:items-center gap-2"
+                    >
+                        <input
+                            id="room-url"
+                            type="text"
+                            readonly
+                            class="{{
+                            cn(
+                                'w-full sm:max-w-md',
+                                'px-3 py-2 text-xs',
+                                'border border-gray-300 rounded-md',
+                                'bg-gray-50 text-gray-700'
+                            )
+                            }}"
+                            value="{{
+                            route(
+                                'rooms.show',
+                                {
+                                    room: room.id
+                                }
+                            )
+                            }}"
+                        />
+                        <button
+                            type="button"
+                            id="copy-room-url"
+                            class="{{
+                            cn(
+                                'inline-flex items-center justify-center',
+                                'px-3 py-2 text-xs font-medium',
+                                'text-white bg-blue-600 rounded-md',
+                                'hover:bg-blue-700 active:bg-blue-800',
+                                'transition-colors'
+                            )
+                            }}"
+                        >
+                            URLをコピー
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () { var copyButton =
+    document.getElementById('copy-room-url'); var urlInput =
+    document.getElementById('room-url');
+
+    if (!copyButton || !urlInput) { return; }
+
+    copyButton.addEventListener('click', function () { var url = urlInput.value;
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(function () { copyButton.textContent
+    = 'コピーしました'; setTimeout(function () { copyButton.textContent =
+    'URLをコピー'; }, 2000); }).catch(function () { urlInput.select();
+    document.execCommand('copy'); copyButton.textContent = 'コピーしました';
+    setTimeout(function () { copyButton.textContent = 'URLをコピー'; }, 2000);
+    }); } else { urlInput.select(); document.execCommand('copy');
+    copyButton.textContent = 'コピーしました'; setTimeout(function () {
+    copyButton.textContent = 'URLをコピー'; }, 2000); } }); });
+</script>
