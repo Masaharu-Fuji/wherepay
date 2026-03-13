@@ -4,8 +4,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     button.addEventListener('click', function (event) {
         const isFullySettled = button.dataset.isFullySettled === '1';
+        const hasPaidMembers = button.dataset.hasPaidMembers === '1';
 
-        if (isFullySettled) {
+        if (isFullySettled || hasPaidMembers) {
             const form = button.closest('form');
             if (form) {
                 form.submit();
@@ -14,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         event.preventDefault();
-        showToast('まだ清算が完了していないメンバーがいます。すべてのおつりを確認してください。');
+        showToast('まだ全員の清算が完了していません。すべてのメンバーのおつりを確認してください。');
     });
 });
 

@@ -1,5 +1,5 @@
-<div class="bg-white rounded-2xl border border-gray-200 shadow-lg p-6">
-    <div class="flex items-center gap-2 mb-6">
+<div class="bg-white rounded-2xl border border-gray-200 shadow-lg p-4 md:p-6">
+    <div class="flex items-center gap-2 mb-4 md:mb-6">
         <span class="text-2xl">🔄</span>
         <h3 class="text-xl">支払い清算</h3>
     </div>
@@ -13,14 +13,14 @@
             </p>
         </div>
     {% else %}
-        <div class="space-y-4">
+        <div class="space-y-3 md:space-y-4">
             {% for transaction in transactions %}
                 {% set fromMember = membersById[transaction.from] ?? null %}
                 {% set toMember = membersById[transaction.to] ?? null %}
                 <div
                     class="{{
                     cn(
-                        'flex items-center gap-4 p-5',
+                        'p-3 md:p-5',
                         'bg-gradient-to-r from-blue-50 to-purple-50',
                         'rounded-xl border border-purple-200',
                         'shadow-sm'
@@ -28,34 +28,49 @@
                     }}"
                 >
                     <div
-                        class="{{
-                        cn(
-                            'flex-1 text-center px-4 py-3',
-                            'bg-gradient-to-r from-blue-500 to-blue-600 text-white',
-                            'rounded-xl shadow-md'
-                        )
-                        }}"
+                        class="flex flex-col gap-0.5 md:gap-3 md:flex-row md:items-center md:gap-4"
                     >
-                        {{ fromMember ? fromMember.member_name : '不明' }}
-                    </div>
-                    <div class="text-2xl text-purple-500 flex-shrink-0">
-                        →
-                    </div>
-                    <div
-                        class="{{
-                        cn(
-                            'flex-1 text-center px-4 py-3',
-                            'bg-gradient-to-r from-green-500 to-emerald-600 text-white',
-                            'rounded-xl shadow-md'
-                        )
-                        }}"
-                    >
-                        {{ toMember ? toMember.member_name : '不明' }}
-                    </div>
-                    <div
-                        class="text-2xl flex-shrink-0 min-w-[140px] text-right text-purple-600"
-                    >
-                        ¥{{ transaction.amount|number_format(0, '.', ',') }}
+                        <div
+                            class="{{
+                            cn(
+                                'flex-1 text-center px-4 py-2 md:py-3 text-sm md:text-base',
+                                'bg-gradient-to-r from-blue-500 to-blue-600 text-white',
+                                'rounded-xl shadow-md'
+                            )
+                            }}"
+                        >
+                            {{ fromMember ? fromMember.member_name : '不明' }}
+                        </div>
+                        <div
+                            class="{{
+                            cn(
+                                'text-lg md:text-2xl text-purple-500 flex-shrink-0 text-center',
+                                'rotate-90 md:rotate-0'
+                            )
+                            }}"
+                        >
+                            <img
+                                src="{{ asset('svg/arrow.svg') }}"
+                                alt="arrow"
+                                class="inline-block w-4 h-4 md:w-6 md:h-6"
+                            />
+                        </div>
+                        <div
+                            class="{{
+                            cn(
+                                'flex-1 text-center px-4 py-2 md:py-3 text-sm md:text-base',
+                                'bg-gradient-to-r from-green-500 to-emerald-600 text-white',
+                                'rounded-xl shadow-md'
+                            )
+                            }}"
+                        >
+                            {{ toMember ? toMember.member_name : '不明' }}
+                        </div>
+                        <div
+                            class="text-base md:text-2xl flex-shrink-0 md:min-w-[140px] text-right text-purple-600 mt-1 md:mt-0"
+                        >
+                            ¥{{ transaction.amount|number_format(0, '.', ',') }}
+                        </div>
                     </div>
                 </div>
             {% endfor %}

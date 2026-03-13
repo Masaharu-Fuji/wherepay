@@ -1,5 +1,6 @@
 {% if (room.items|length) > 0 and (room.members|length) > 0 %}
     <a
+        id="settlement-view-link"
         href="{{
         route(
             'rooms.settlement.show',
@@ -10,7 +11,7 @@
         }}"
         class="{{
         cn(
-            'block text-center text-xl py-5',
+            'block text-center text-sm md:text-xl py-3 md:py-5',
             'bg-gradient-to-r from-green-500 to-emerald-600 text-white',
             'rounded-2xl',
             'hover:from-green-600 hover:to-emerald-700',

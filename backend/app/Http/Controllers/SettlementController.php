@@ -121,17 +121,21 @@ class SettlementController extends Controller
             ]);
         }
 
-        // DB 上で支払いが完了している payer をメンバー単位で取得
-        $paidMemberIds = Settlement::query()
-            ->where('room_id', $room->id)
-            ->where('is_paid', true)
-            ->pluck('payer_id')
-            ->unique()
-            ->all();
+        // 画面表示用の「清算完了メンバー」は、おつり計算の結果と揃える
+        $paidMembers = $room->members->filter(function ($member) use ($owedByMember, $changeByMember) {
+            $memberId = $member->id;
+            $owed = $owedByMember[$memberId] ?? 0;
 
-        $paidMembers = $room->members
-            ->whereIn('id', $paidMemberIds)
-            ->values();
+            // そもそも支払うべき金額がない人は、最初から完了扱い
+            if ($owed === 0) {
+                return true;
+            }
+
+            // 支払義務のある人は、おつりが 0 以上になっていれば完了
+            return array_key_exists($memberId, $changeByMember)
+                && $changeByMember[$memberId] !== null
+                && $changeByMember[$memberId] >= 0;
+        })->values();
 
         /** @var view-string $view */
         $view = 'settlement.show';

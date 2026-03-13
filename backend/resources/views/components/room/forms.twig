@@ -1,7 +1,7 @@
-<div class="bg-white rounded-2xl border border-gray-200 shadow-lg p-6">
+<div class="bg-white rounded-2xl border border-gray-200 shadow-lg p-2 md:p-6">
     <div class="flex items-center gap-2 mb-4">
         <span class="text-2xl">🛍️</span>
-        <h3 class="font-semibold">品目追加</h3>
+        <h3 class="font-semibold text-xs md:text-sm">品目追加</h3>
     </div>
     <form
         method="POST"
@@ -13,7 +13,7 @@
             }
         )
         }}"
-        class="space-y-4"
+        class="space-y-2 md:space-y-4"
         id="item-form"
     >
         <input type="hidden" name="_token" value="{{ csrf_token() }}" />
@@ -22,7 +22,10 @@
         <input type="hidden" name="location_address" id="location_address" />
 
         <div>
-            <label for="item_name" class="block mb-2 text-gray-700">
+            <label
+                for="item_name"
+                class="block text-xs md:text-sm mb-2 text-gray-700"
+            >
                 品目名
             </label>
             <input
@@ -32,7 +35,7 @@
                 value="{{ old('item_name') }}"
                 class="{{
                 cn(
-                    'w-full text-lg p-3',
+                    'w-full text-sm md:text-lg p-2',
                     'border-2 border-gray-200 rounded-xl',
                     'focus:outline-none focus:border-purple-500',
                     'focus:ring-4 focus:ring-purple-100',
@@ -49,7 +52,10 @@
         </div>
 
         <div>
-            <label for="amount" class="block mb-2 text-gray-700">
+            <label
+                for="amount"
+                class="block text-xs md:text-sm mb-2 text-gray-700"
+            >
                 金額（円）
             </label>
             <input
@@ -60,7 +66,7 @@
                 value="{{ old('amount') }}"
                 class="{{
                 cn(
-                    'w-full text-lg p-3',
+                    'w-full text-sm md:text-lg p-2',
                     'border-2 border-gray-200 rounded-xl',
                     'focus:outline-none focus:border-purple-500',
                     'focus:ring-4 focus:ring-purple-100',
@@ -77,7 +83,10 @@
         </div>
 
         <div>
-            <label for="payer_id" class="block mb-2 text-gray-700">
+            <label
+                for="payer_id"
+                class="block text-xs md:text-sm mb-2 text-gray-700"
+            >
                 支払者（誰が支払ったか）
             </label>
             <select
@@ -85,7 +94,7 @@
                 name="payer_id"
                 class="{{
                 cn(
-                    'w-full text-lg p-3',
+                    'w-full text-sm md:text-lg p-2',
                     'border-2 border-gray-200 rounded-xl',
                     'focus:outline-none focus:border-purple-500',
                     'focus:ring-4 focus:ring-purple-100',
@@ -115,13 +124,13 @@
         </div>
 
         <div>
-            <label class="block mb-2 text-gray-700">
+            <label class="block text-xs md:text-sm mb-2 text-gray-700">
                 対象者（誰の分の支払いか）
             </label>
             <div
                 class="{{
                 cn(
-                    'space-y-2 p-3',
+                    'space-y-2 p-2 md:p-3',
                     'bg-gray-50 rounded-xl',
                     'border-2 border-gray-200',
                     'max-h-48 overflow-y-auto'
@@ -137,7 +146,7 @@
                         <label
                             class="{{
                             cn(
-                                'flex items-center gap-3 p-3',
+                                'flex items-center gap-3 p-2 md:p-3',
                                 'bg-white rounded-lg cursor-pointer',
                                 'hover:bg-blue-50 transition-colors',
                                 'border border-gray-200'
@@ -156,7 +165,7 @@
                                 )
                                 }}"
                             />
-                            <span class="text-lg">
+                            <span class="text-sm md:text-lg">
                                 {{ member.member_name }}
                             </span>
                         </label>
@@ -176,7 +185,7 @@
                 onclick="getLocationForNextItem()"
                 class="{{
                 cn(
-                    'w-full text-lg py-3',
+                    'w-full text-sm md:text-lg p-2',
                     'rounded-xl shadow-md',
                     'hover:shadow-lg transition-all',
                     'transform hover:scale-[1.02]',
@@ -191,7 +200,7 @@
                 type="submit"
                 class="{{
                 cn(
-                    'w-full text-lg py-3',
+                    'w-full text-sm md:text-lg p-2',
                     'bg-gradient-to-r from-purple-500 to-purple-600 text-white',
                     'rounded-xl',
                     'hover:from-purple-600 hover:to-purple-700',
