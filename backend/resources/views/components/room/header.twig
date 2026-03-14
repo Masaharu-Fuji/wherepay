@@ -1,87 +1,84 @@
-<div class="bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm">
-    <div class="max-w-4xl mx-auto px-3 py-3 sm:px-4 sm:py-4">
-        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-            <a
-                href="{{ route('rooms.create') }}"
-                class="p-2 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
-            >
-                ルーム選択に戻る
-            </a>
-            <div class="flex-1">
-                <div class="flex items-center gap-2">
-                    <h1 class="text-xl sm:text-2xl break-words">
-                        {{ room.room_name }}
-                    </h1>
-                    <p class="text-xs sm:text-sm text-gray-600 mt-1">
-                        合計: <span class="text-sub-pink">¥{{ totalAmount|number_format(0, '.', ',') }}</span>
-                    </p>
-                </div>
-                <div class="mt-2 space-y-1">
-                    <div
-                        class="flex flex-col md:flex-row items-start sm:items-center gap-2"
-                    >
-                        <input
-                            id="room-url"
-                            type="text"
-                            readonly
-                            class="{{
-                            cn(
-                                'w-2/5 sm:max-w-md',
-                                'px-3 py-2 text-xs',
-                                'border border-gray-300 rounded-md',
-                                'bg-gray-50 text-gray-700'
-                            )
-                            }}"
-                            value="{{
-                            route(
-                                'rooms.show',
-                                {
-                                    room: room.id,
-                                    query_key: room.password_plan
-                                }
-                            )
-                            }}"
-                        />
-                        <button
-                            type="button"
-                            id="copy-room-url"
-                            class="{{
-                            cn(
-                                'inline-flex items-center justify-center',
-                                'px-3 py-2 text-xs font-medium',
-                                'text-white bg-primary rounded-md',
-                                'hover:bg-primary-hover active:opacity-90',
-                                'transition-colors'
-                            )
-                            }}"
-                        >
-                            URLをコピー
-                        </button>
-                        <a
-                            href="{{
-                            route(
-                                'rooms.csv',
-                                {
-                                    room: room.id,
-                                    query_key: room.password_plan
-                                }
-                            )
-                            }}"
-                            class="{{
-                            cn(
-                                'inline-flex items-center justify-center',
-                                'px-3 py-2 text-xs font-medium',
-                                'text-white bg-sub-green rounded-md',
-                                'hover:bg-sub-green-hover active:opacity-90',
-                                'transition-colors'
-                            )
-                            }}"
-                        >
-                            CSV出力
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
+<div
+    class="{{
+    cn(
+        'bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm',
+        'max-w-4xl mx-auto px-3 py-3 md:px-4 md:py-4',
+        'flex gap-1 flex-row items-start'
+    )
+    }}"
+>
+    <div class="flex flex-col md:flex-row items-start md:items-center gap-2">
+        <h1 class="text-xl sm:text-2xl break-words">{{ room.room_name }}</h1>
+
+        <p class="text-xs sm:text-sm text-gray-600 mt-1">
+            合計: <span class="text-sub-pink">¥{{ totalAmount|number_format(0, '.', ',') }}</span>
+        </p>
+        <a
+            href="{{ route('rooms.create') }}"
+            class="p-2 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
+        >
+            ルーム選択に戻る
+        </a>
+    </div>
+    <div class="flex flex-col md:flex-row items-start justify-start gap-2">
+        <input
+            id="room-url"
+            type="text"
+            readonly
+            class="{{
+            cn(
+                'w-full md:w-2/5 sm:max-w-md',
+                'px-3 py-2 text-xs',
+                'border border-gray-300 rounded-md',
+                'bg-gray-50 text-gray-700'
+            )
+            }}"
+            value="{{
+            route(
+                'rooms.show',
+                {
+                    room: room.id,
+                    query_key: room.password_plan
+                }
+            )
+            }}"
+        />
+        <button
+            type="button"
+            id="copy-room-url"
+            class="{{
+            cn(
+                'inline-flex items-center justify-center',
+                'px-3 py-2 text-xs font-medium',
+                'text-white bg-primary rounded-md',
+                'hover:bg-primary-hover active:opacity-90',
+                'transition-colors'
+            )
+            }}"
+        >
+            URLをコピー
+        </button>
+        <a
+            href="{{
+            route(
+                'rooms.csv',
+                {
+                    room: room.id,
+                    query_key: room.password_plan
+                }
+            )
+            }}"
+            class="{{
+            cn(
+                'inline-flex items-center justify-center',
+                'px-3 py-2 text-xs font-medium',
+                'text-white bg-sub-green rounded-md',
+                'hover:bg-sub-green-hover active:opacity-90',
+                'transition-colors'
+            )
+            }}"
+        >
+            品目一覧CSV出力
+        </a>
     </div>
 </div>
