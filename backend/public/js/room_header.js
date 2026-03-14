@@ -1,6 +1,6 @@
-document.addEventListener("DOMContentLoaded", function () {
-    var copyButton = document.getElementById("copy-room-url");
-    var urlInput = document.getElementById("room-url");
+export default function roomHeader() {
+    const copyButton = document.getElementById("copy-room-url");
+    const urlInput = document.getElementById("room-url");
 
     if (!copyButton || !urlInput) {
         return;
@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     copyButton.addEventListener("click", function () {
-        var url = urlInput.value;
+        const url = urlInput.value;
 
         if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard
@@ -33,4 +33,4 @@ document.addEventListener("DOMContentLoaded", function () {
             setCopiedText();
         }
     });
-});
+}

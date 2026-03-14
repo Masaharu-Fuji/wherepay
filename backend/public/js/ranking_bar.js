@@ -1,30 +1,31 @@
-document.addEventListener('DOMContentLoaded', function () {
-    var bar = document.getElementById('ranking-bar');
-    var toggle = document.getElementById('ranking-bar-toggle');
+export default function rankingBar() {
+    const bar = document.getElementById("ranking-bar");
+    const toggle = document.getElementById("ranking-bar-toggle");
     if (!bar || !toggle) {
         return;
     }
 
-    var textSpan = toggle.querySelector('span[data-open-text]');
-    var isOpen = false;
+    const textSpan = toggle.querySelector("span[data-open-text]");
+    let isOpen = false;
 
     function updateState() {
         if (isOpen) {
-            bar.classList.remove('translate-y-[calc(100%-5rem)]');
+            bar.classList.remove("translate-y-[calc(100%-5rem)]");
             if (textSpan) {
-                textSpan.textContent = textSpan.getAttribute('data-open-text') || '閉じる';
+                textSpan.textContent =
+                    textSpan.getAttribute("data-open-text") || "閉じる";
             }
         } else {
-            bar.classList.add('translate-y-[calc(100%-5rem)]');
+            bar.classList.add("translate-y-[calc(100%-5rem)]");
             if (textSpan) {
-                textSpan.textContent = textSpan.getAttribute('data-closed-text') || '開く';
+                textSpan.textContent =
+                    textSpan.getAttribute("data-closed-text") || "開く";
             }
         }
     }
 
-    toggle.addEventListener('click', function () {
+    toggle.addEventListener("click", function () {
         isOpen = !isOpen;
         updateState();
     });
-});
-
+}

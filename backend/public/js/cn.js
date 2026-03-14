@@ -1,4 +1,4 @@
-function cn() {
+export default function cn() {
     const args = Array.from(arguments);
 
     const parts = args

@@ -1,4 +1,4 @@
-function getLocationForNextItem() {
+export default function location() {
     if (!navigator.geolocation) {
         alert("このブラウザは位置情報をサポートしていません");
         return;
@@ -6,9 +6,9 @@ function getLocationForNextItem() {
 
     navigator.geolocation.getCurrentPosition(
         function (position) {
-            var latitudeInput = document.getElementById("latitude");
-            var longitudeInput = document.getElementById("longitude");
-            var addressInput = document.getElementById("location_address");
+            const latitudeInput = document.getElementById("latitude");
+            const longitudeInput = document.getElementById("longitude");
+            const addressInput = document.getElementById("location_address");
 
             if (!latitudeInput || !longitudeInput || !addressInput) {
                 alert("位置情報用の入力欄が見つかりませんでした");

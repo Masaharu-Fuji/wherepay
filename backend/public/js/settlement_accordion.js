@@ -1,37 +1,38 @@
-document.addEventListener('DOMContentLoaded', function () {
-    var accordions = document.querySelectorAll('[data-accordion]');
+export default function settlementAccordion() {
+    const accordions = document.querySelectorAll("[data-accordion]");
 
     accordions.forEach(function (accordion) {
-        var buttons = accordion.querySelectorAll('[data-accordion-button]');
+        const buttons = accordion.querySelectorAll("[data-accordion-button]");
 
         function closeAll() {
-            var panels = accordion.querySelectorAll('[data-accordion-panel]');
+            const panels = accordion.querySelectorAll("[data-accordion-panel]");
             panels.forEach(function (panel) {
-                panel.classList.add('hidden');
+                panel.classList.add("hidden");
             });
         }
 
         buttons.forEach(function (button) {
-            button.addEventListener('click', function () {
-                var target = button.getAttribute('data-accordion-target');
+            button.addEventListener("click", function () {
+                const target = button.getAttribute("data-accordion-target");
                 if (!target) {
                     return;
                 }
 
-                var panel = accordion.querySelector('[data-accordion-panel="' + target + '"]');
+                const panel = accordion.querySelector(
+                    '[data-accordion-panel="' + target + '"]',
+                );
                 if (!panel) {
                     return;
                 }
 
-                var isCurrentlyOpen = !panel.classList.contains('hidden');
+                const isCurrentlyOpen = !panel.classList.contains("hidden");
 
                 closeAll();
 
                 if (!isCurrentlyOpen) {
-                    panel.classList.remove('hidden');
+                    panel.classList.remove("hidden");
                 }
             });
         });
     });
-});
-
+}
