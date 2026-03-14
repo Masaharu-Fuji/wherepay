@@ -22,8 +22,29 @@
             >
                 戻る
             </a>
-            <div class="flex gap-2 md:gap-3 items-center">
+            <div class="flex gap-2 md:gap-3 items-center flex-wrap">
                 <h1 class="font-bold text-xs md:text-xl">清算結果</h1>
+                <a
+                    href="{{
+                    route(
+                        'rooms.settlement.csv',
+                        {
+                            room: room.id,
+                            query_key: query_key
+                        }
+                    )
+                    }}"
+                    class="{{
+                    cn(
+                        'px-3 py-2 rounded-lg',
+                        'bg-sub-green hover:bg-sub-green-hover',
+                        'text-white text-sm font-medium',
+                        'transition-colors'
+                    )
+                    }}"
+                >
+                    CSV出力
+                </a>
                 {% if (transactions|length) > 0 %}
                     <form
                         method="POST"
@@ -57,7 +78,7 @@
                             class="{{
                             cn(
                                 'px-4 py-2 rounded-lg',
-                                'bg-gradient-to-r from-sub-green to-sub-green-hover',
+                                'bg-primary hover:bg-primary-hover',
                                 'text-white text-sm font-medium',
                                 'shadow-md',
                                 'hover:opacity-90',

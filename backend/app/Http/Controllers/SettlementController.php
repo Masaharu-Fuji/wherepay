@@ -9,6 +9,7 @@ use App\Services\SettlementCalculator;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class SettlementController extends Controller
 {
@@ -83,7 +84,7 @@ class SettlementController extends Controller
         ]);
         $membersById = $room->members->keyBy('id');
 
-        $locatedItems = $room->items->filter(fn ($item) => $item->location !== null);
+        $locatedItems = $room->items->filter(fn($item) => $item->location !== null);
 
         $allLocationsUrl = null;
 
@@ -92,19 +93,19 @@ class SettlementController extends Controller
             $destination = $locatedItems->last()->location;
 
             $url = 'https://www.google.com/maps/dir/?api=1';
-            $url .= '&origin='.$origin->latitude.','.$origin->longitude;
-            $url .= '&destination='.$destination->latitude.','.$destination->longitude;
+            $url .= '&origin=' . $origin->latitude . ',' . $origin->longitude;
+            $url .= '&destination=' . $destination->latitude . ',' . $destination->longitude;
 
             if ($locatedItems->count() > 2) {
                 $waypoints = $locatedItems
                     ->slice(1, max(0, min(9, $locatedItems->count() - 2)))
                     ->map(function ($item) {
-                        return $item->location->latitude.','.$item->location->longitude;
+                        return $item->location->latitude . ',' . $item->location->longitude;
                     })
                     ->implode('|');
 
                 if ($waypoints !== '') {
-                    $url .= '&waypoints='.$waypoints;
+                    $url .= '&waypoints=' . $waypoints;
                 }
             }
 
@@ -175,5 +176,46 @@ class SettlementController extends Controller
                 'query_key' => $room->password_plan,
             ])
             ->with('status', 'settlement_confirmed');
+    }
+
+    public function exportSettlementCsv(Request $request, Room $room): StreamedResponse|RedirectResponse
+    {
+        $queryKey = $request->query('query_key');
+        if ($queryKey === null || $queryKey !== $room->password_plan) {
+            return redirect()->route('rooms.show', ['room' => $room]);
+        }
+
+        $settlements = Settlement::where('room_id', $room->id)
+            ->with(['payer', 'receiver'])
+            ->orderBy('id')
+            ->get();
+
+        $safeName = preg_replace('/[^\p{L}\p{N}\s\-_]/u', '_', $room->room_name);
+        $safeName = trim($safeName) !== '' ? trim($safeName) : 'room';
+        $filename = $safeName . '_settlements.csv';
+
+        $callback = function () use ($settlements): void {
+            $handle = fopen('php://output', 'w');
+            if ($handle === false) {
+                return;
+            }
+            fwrite($handle, "\xEF\xBB\xBF");
+            fputcsv($handle, ['ID', 'お金を返す人', 'お金を受け取る人', '金額', '清算完了済みか']);
+            foreach ($settlements as $s) {
+                fputcsv($handle, [
+                    $s->id,
+                    $s->payer?->member_name ?? '',
+                    $s->receiver?->member_name ?? '',
+                    $s->amount,
+                    $s->is_paid ? '済' : '未',
+                ]);
+            }
+            fclose($handle);
+        };
+
+        return new StreamedResponse($callback, 200, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
     }
 }

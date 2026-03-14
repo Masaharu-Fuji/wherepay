@@ -10,6 +10,7 @@ use App\Models\Room;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class RoomController extends Controller
 {
@@ -162,6 +163,47 @@ class RoomController extends Controller
         return redirect()->route('rooms.show', [
             'room' => $room,
             'query_key' => $room->password_plan,
+        ]);
+    }
+
+    public function exportCsv(Request $request, Room $room): StreamedResponse|RedirectResponse
+    {
+        $queryKey = $request->query('query_key');
+        if ($queryKey === null || $queryKey !== $room->password_plan) {
+            return redirect()->route('rooms.show', ['room' => $room]);
+        }
+
+        $room->load(['items.payer', 'items.location']);
+
+        $safeName = preg_replace('/[^\p{L}\p{N}\s\-_]/u', '_', $room->room_name);
+        $safeName = trim($safeName) !== '' ? trim($safeName) : 'room';
+        $filename = $safeName.'.csv';
+
+        $callback = function () use ($room): void {
+            $handle = fopen('php://output', 'w');
+            if ($handle === false) {
+                return;
+            }
+            fwrite($handle, "\xEF\xBB\xBF");
+            fputcsv($handle, ['ID', '項目', '支払者名', '金額', '経度', '緯度', '作成日時']);
+            foreach ($room->items as $item) {
+                $location = $item->location;
+                fputcsv($handle, [
+                    $item->id,
+                    $item->item_name,
+                    $item->payer?->member_name ?? '',
+                    $item->amount,
+                    $location?->longitude ?? '',
+                    $location?->latitude ?? '',
+                    $item->created_at?->format('Y-m-d H:i:s') ?? '',
+                ]);
+            }
+            fclose($handle);
+        };
+
+        return new StreamedResponse($callback, 200, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
         ]);
     }
 }

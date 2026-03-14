@@ -57,6 +57,28 @@
                         >
                             URLをコピー
                         </button>
+                        <a
+                            href="{{
+                            route(
+                                'rooms.csv',
+                                {
+                                    room: room.id,
+                                    query_key: room.password_plan
+                                }
+                            )
+                            }}"
+                            class="{{
+                            cn(
+                                'inline-flex items-center justify-center',
+                                'px-3 py-2 text-xs font-medium',
+                                'text-white bg-sub-green rounded-md',
+                                'hover:bg-sub-green-hover active:opacity-90',
+                                'transition-colors'
+                            )
+                            }}"
+                        >
+                            CSV出力
+                        </a>
                     </div>
                 </div>
             </div>
