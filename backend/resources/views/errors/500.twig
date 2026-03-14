@@ -1,0 +1,54 @@
+{% extends 'layouts/base.twig' %}
+
+{% block title %}
+    500 | サーバーエラー
+{% endblock %}
+
+{% block content %}
+    <div class="bg-transparent py-10 sm:py-16 lg:py-20">
+        <div class="mx-auto max-w-screen-2xl px-4 md:px-8">
+            <div
+                class="{{
+                cn(
+                    'relative mx-auto flex h-96 w-full items-center justify-center',
+                    'overflow-hidden rounded-2xl bg-white/90 shadow-xl',
+                    'ring-1 ring-black/5 backdrop-blur sm:w-96'
+                )
+                }}"
+            >
+                <div
+                    class="relative flex flex-col items-center justify-center bg-black/40 p-8 text-center md:p-12"
+                >
+                    <h1
+                        class="mb-2 text-4xl font-bold tracking-wide text-black/90 md:text-5xl"
+                    >
+                        500
+                    </h1>
+
+                    <p class="mb-6 text-sm text-gray-100 md:text-base">
+                        サーバーで問題が発生しました。
+                    </p>
+                    <p class="mb-8 text-xs text-gray-200 md:text-sm">
+                        しばらくしてから再度お試しください。問題が続く場合はお問い合わせください。
+                    </p>
+
+                    <a
+                        href="/"
+                        class="{{
+                        cn(
+                            'inline-flex items-center justify-center gap-2 rounded-full',
+                            'bg-primary px-8 py-3.5 text-sm font-semibold text-white shadow-lg',
+                            'transition-colors duration-200',
+                            'hover:bg-primary-hover hover:shadow-xl active:scale-[0.98]',
+                            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white',
+                            'focus-visible:ring-offset-2 focus-visible:ring-offset-primary md:text-base'
+                        )
+                        }}"
+                    >
+                        ホームに戻る
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -77,10 +77,12 @@
                                 >
                                     {{ payer ? payer.member_name : '不明' }}
                                 </span>
-                                <span
-                                    class="text-sm md:text-lg rotate-90 md:rotate-0"
-                                >
-                                    →
+                                <span class="rotate-90 md:rotate-0">
+                                    <img
+                                        src="{{ asset('svg/arrow.svg') }}"
+                                        alt="arrow"
+                                        class="inline-block w-2 h-2 md:w-3 md:h-3"
+                                    />
                                 </span>
                                 <span class="text-base text-gray-700">
                                     <div

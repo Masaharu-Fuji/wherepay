@@ -3,6 +3,14 @@
 /* Scan Twig templates (not in Vite dependency graph) */
 @source "../views/**/*.twig";
 
+/* Base typography (Google Fonts loaded in base.twig) */
+@layer base {
+    body {
+        font-family:
+            "Roboto", "Noto Sans JP", "BIZ UDPMincho", system-ui, sans-serif;
+    }
+}
+
 @plugin "@iconify/tailwind4";
 
 /* Ensure icon classes used in Twig are generated (Vite may not scan .twig) */
