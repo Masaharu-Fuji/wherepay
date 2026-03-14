@@ -128,7 +128,9 @@
 
                             </span>
                             <span class="text-sm">
-                                {{ payer ? payer.member_name : '不明' }}
+                                {{ payer
+                                    ? payer.id ~ ' ' ~ payer.member_name
+                                    : '不明' }}
                             </span>
                         </div>
                         <div

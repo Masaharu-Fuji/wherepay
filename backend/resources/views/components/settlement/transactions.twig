@@ -39,7 +39,9 @@
                             )
                             }}"
                         >
-                            {{ fromMember ? fromMember.member_name : '不明' }}
+                            {{ fromMember
+                                ? fromMember.id ~ ' ' ~ fromMember.member_name
+                                : '不明' }}
                         </div>
                         <div
                             class="{{
@@ -64,7 +66,9 @@
                             )
                             }}"
                         >
-                            {{ toMember ? toMember.member_name : '不明' }}
+                            {{ toMember
+                                ? toMember.id ~ ' ' ~ toMember.member_name
+                                : '不明' }}
                         </div>
                         <div
                             class="{{
