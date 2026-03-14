@@ -1,6 +1,6 @@
 <div class="bg-white rounded-2xl border border-gray-200 shadow-lg p-2 md:p-6">
     <div class="flex items-center gap-2 mb-4">
-        <span class="text-2xl">🛍️</span>
+        <span class="icon-[fluent-color--drafts-20] w-10 h-10"></span>
         <h3 class="font-semibold text-xs md:text-sm">品目追加</h3>
     </div>
     <form
@@ -37,15 +37,15 @@
                 cn(
                     'w-full text-sm md:text-lg p-2',
                     'border-2 border-gray-200 rounded-xl',
-                    'focus:outline-none focus:border-purple-500',
-                    'focus:ring-4 focus:ring-purple-100',
+                    'focus:outline-none focus:border-sub-pink',
+                    'focus:ring-4 focus:ring-sub-pink-100',
                     'transition-all'
                 )
                 }}"
                 required
             />
             {% if errors.has('item_name') %}
-                <p class="mt-2 text-sm text-red-600">
+                <p class="mt-2 text-sm text-sub-pink">
                     {{ errors.first('item_name') }}
                 </p>
             {% endif %}
@@ -68,15 +68,15 @@
                 cn(
                     'w-full text-sm md:text-lg p-2',
                     'border-2 border-gray-200 rounded-xl',
-                    'focus:outline-none focus:border-purple-500',
-                    'focus:ring-4 focus:ring-purple-100',
+                    'focus:outline-none focus:border-sub-pink',
+                    'focus:ring-4 focus:ring-sub-pink-100',
                     'transition-all'
                 )
                 }}"
                 required
             />
             {% if errors.has('amount') %}
-                <p class="mt-2 text-sm text-red-600">
+                <p class="mt-2 text-sm text-sub-pink">
                     {{ errors.first('amount') }}
                 </p>
             {% endif %}
@@ -96,8 +96,8 @@
                 cn(
                     'w-full text-sm md:text-lg p-2',
                     'border-2 border-gray-200 rounded-xl',
-                    'focus:outline-none focus:border-purple-500',
-                    'focus:ring-4 focus:ring-purple-100',
+                    'focus:outline-none focus:border-sub-pink',
+                    'focus:ring-4 focus:ring-sub-pink-100',
                     'transition-all',
                     'bg-white'
                 )
@@ -117,7 +117,7 @@
                 {% endfor %}
             </select>
             {% if errors.has('payer_id') %}
-                <p class="mt-2 text-sm text-red-600">
+                <p class="mt-2 text-sm text-sub-pink">
                     {{ errors.first('payer_id') }}
                 </p>
             {% endif %}
@@ -148,7 +148,7 @@
                             cn(
                                 'flex items-center gap-3 p-2 md:p-3',
                                 'bg-white rounded-lg cursor-pointer',
-                                'hover:bg-blue-50 transition-colors',
+                                'hover:bg-primary-50 transition-colors',
                                 'border border-gray-200'
                             )
                             }}"
@@ -160,8 +160,8 @@
                                 class="{{
                                 cn(
                                     'w-5 h-5',
-                                    'text-purple-600 rounded',
-                                    'focus:ring-2 focus:ring-purple-500'
+                                    'text-sub-pink rounded',
+                                    'focus:ring-2 focus:ring-sub-pink'
                                 )
                                 }}"
                             />
@@ -173,7 +173,7 @@
                 {% endif %}
             </div>
             {% if errors.has('participant_ids') %}
-                <p class="mt-2 text-sm text-red-600">
+                <p class="mt-2 text-sm text-sub-pink">
                     {{ errors.first('participant_ids') }}
                 </p>
             {% endif %}
@@ -189,26 +189,32 @@
                     'rounded-xl shadow-md',
                     'hover:shadow-lg transition-all',
                     'transform hover:scale-[1.02]',
-                    'bg-gradient-to-r from-pink-500 to-pink-600 text-white',
-                    'hover:from-pink-600 hover:to-pink-700'
+                    'bg-gradient-to-r from-sub-pink to-sub-pink-hover text-white',
+                    'hover:opacity-90',
+                    'flex items-center justify-center gap-1'
                 )
                 }}"
             >
-                📍 位置情報取得
+                <span class="icon-[fluent-color--location-ripple-24] w-5 h-5">
+
+                </span>
+                <span class="text-sm md:text-xl">位置情報取得</span>
             </button>
             <button
                 type="submit"
                 class="{{
                 cn(
                     'w-full text-sm md:text-lg p-2',
-                    'bg-gradient-to-r from-purple-500 to-purple-600 text-white',
+                    'bg-gradient-to-r from-primary to-sub-pink text-white',
                     'rounded-xl',
-                    'hover:from-purple-600 hover:to-purple-700',
-                    'shadow-lg transition-all'
+                    'hover:from-primary-hover hover:to-sub-pink-hover',
+                    'shadow-lg transition-all',
+                    'flex items-center justify-center gap-1'
                 )
                 }}"
             >
-                追加
+                <span class="icon-[fluent-color--gift-24] w-5 h-5"></span>
+                <span class="text-sm md:text-xl">追加</span>
             </button>
         </div>
     </form>

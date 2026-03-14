@@ -13,14 +13,16 @@
         class="{{
         cn(
             'block text-center text-sm md:text-xl py-3 md:py-5',
-            'bg-gradient-to-r from-green-500 to-emerald-600 text-white',
+            'bg-gradient-to-r from-sub-green to-sub-green-hover text-white',
             'rounded-2xl',
-            'hover:from-green-600 hover:to-emerald-700',
+            'hover:opacity-90',
             'shadow-lg hover:shadow-xl',
-            'transition-all transform hover:scale-[1.02]'
+            'transition-all transform hover:scale-[1.02]',
+            'flex items-center justify-center gap-1'
         )
         }}"
     >
-        💰 清算結果を見る →
+        <span class="icon-[fluent-color--clipboard-task-24] w-10 h-10"></span>
+        <span class="text-sm md:text-xl">清算結果を見る</span>
     </a>
 {% endif %}

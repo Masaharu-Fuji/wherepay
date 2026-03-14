@@ -7,7 +7,7 @@
 {% block content %}
     <div class="min-h-screen flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl border border-gray-200 shadow-xl p-8">
-            <h2 class="text-center mb-6 text-2xl">ルーム作成</h2>
+            <h2 class="text-center mb-6 text-2xl">"Where Pay" is fair play</h2>
 
             <form
                 method="POST"
@@ -33,8 +33,8 @@
                         cn(
                             'w-full text-sm md:text-sm p-2',
                             'border-2 border-gray-200 rounded-xl',
-                            'focus:outline-none focus:border-blue-500',
-                            'focus:ring-4 focus:ring-blue-100',
+                            'focus:outline-none focus:border-primary',
+                            'focus:ring-4 focus:ring-primary-100',
                             'transition-all'
                         )
                         }}"
@@ -42,7 +42,7 @@
                         required
                     />
                     {% if errors.has('room_name') %}
-                        <p class="mt-2 text-sm text-red-600">
+                        <p class="mt-2 text-sm text-sub-pink">
                             {{ errors.first('room_name') }}
                         </p>
                     {% endif %}
@@ -53,21 +53,25 @@
                     class="{{
                     cn(
                         'w-full text-sm md:text-lg p-2',
-                        'bg-gradient-to-r from-blue-500 to-purple-600 text-white',
+                        'bg-gradient-to-r from-primary to-sub-pink text-white',
                         'rounded-xl',
-                        'hover:from-blue-600 hover:to-purple-700',
+                        'hover:from-primary-hover hover:to-sub-pink-hover',
                         'disabled:opacity-50 disabled:cursor-not-allowed',
                         'transition-all shadow-lg hover:shadow-xl',
-                        'transform hover:scale-[1.02] active:scale-[0.98]'
+                        'transform hover:scale-[1.02] active:scale-[0.98]',
+                        'flex items-center justify-center gap-1'
                     )
                     }}"
                 >
-                    ルームを作成 🚀
+                    <span class="icon-[fluent-color--book-open-24] w-10 h-10">
+
+                    </span>
+                    <span class="text-sm md:text-xl">ルームを作成</span>
                 </button>
             </form>
 
             <div class="mt-2 md:mt-4 pt-2 md:pt-4 border-t border-gray-200">
-                <p class="text-sm text-gray-600 mb-3 text-center">
+                <p class="text-sm font-bold text-gray-600 mb-3 text-center">
                     主な機能
                 </p>
                 <div class="space-y-2 text-sm text-gray-600">
@@ -75,14 +79,11 @@
                         <span
                             class="{{
                             cn(
-                                'w-6 h-6',
-                                'bg-blue-100 rounded-full',
-                                'flex items-center justify-center',
-                                'text-blue-600'
+                                'icon-[fluent-color--checkbox-24] w-6 h-6'
                             )
                             }}"
                         >
-                            ✓
+
                         </span>
                         <span>メンバー管理と支払い記録</span>
                     </div>
@@ -90,14 +91,11 @@
                         <span
                             class="{{
                             cn(
-                                'w-6 h-6',
-                                'bg-purple-100 rounded-full',
-                                'flex items-center justify-center',
-                                'text-purple-600'
+                                'icon-[fluent-color--checkbox-24] w-6 h-6'
                             )
                             }}"
                         >
-                            ✓
+
                         </span>
                         <span>自動清算計算とおつり計算</span>
                     </div>
@@ -105,14 +103,11 @@
                         <span
                             class="{{
                             cn(
-                                'w-6 h-6',
-                                'bg-pink-100 rounded-full',
-                                'flex items-center justify-center',
-                                'text-pink-600'
+                                'icon-[fluent-color--checkbox-24] w-6 h-6'
                             )
                             }}"
                         >
-                            ✓
+
                         </span>
                         <span>位置情報で思い出を記録</span>
                     </div>

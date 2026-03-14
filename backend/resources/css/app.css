@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+/* Scan Twig templates (not in Vite dependency graph) */
+@source "../views/**/*.twig";
+
+@plugin "@iconify/tailwind4";
+
+/* Ensure icon classes used in Twig are generated (Vite may not scan .twig) */
+@source inline("icon-[fluent-color--home-32]");
+
+/**
+ * Theme (colorset)
+ * @see backend/doc/colorset.txt
+ */
+@theme {
+    /* primary - for backgrounds/buttons only, never for text */
+    --color-primary: #1a68b1;
+    --color-primary-hover: #155399;
+    --color-primary-50: #e8f0fa;
+    --color-primary-100: #d1e1f5;
+    --color-primary-200: #a3c3eb;
+
+    /* sub-green */
+    --color-sub-green: #61b816;
+    --color-sub-green-hover: #4f9a12;
+    --color-sub-green-50: #e8f5e0;
+    --color-sub-green-100: #d1ebc1;
+    --color-sub-green-200: #a3d783;
+
+    /* sub-pink */
+    --color-sub-pink: #bf1e56;
+    --color-sub-pink-hover: #9e1946;
+    --color-sub-pink-50: #fce8ef;
+    --color-sub-pink-100: #f9d1df;
+    --color-sub-pink-200: #f3a3bf;
+
+    /* sub-yellow */
+    --color-sub-yellow: #f2bc09;
+    --color-sub-yellow-hover: #c29607;
+    --color-sub-yellow-50: #fdf6e8;
+    --color-sub-yellow-100: #fbedd1;
+    --color-sub-yellow-200: #f7dba3;
+}

@@ -1,20 +1,16 @@
 <div class="bg-white rounded-2xl border border-gray-200 shadow-lg p-2 md:p-6">
     <div class="flex justify-start items-center gap-2 mb-4">
-        <span class="text-2xl">🛍️</span>
-        <h3 class="text-xs md:text-sm">品目一覧</h3>
-        <span
-            class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm"
-        >
+        <span class="icon-[fluent-color--gift-24] w-10 h-10"></span>
+        <h3 class="text-xs md:text-sm font-bold">品目一覧</h3>
+        <span class="bg-sub-pink text-white px-3 py-1 rounded-full text-sm">
             {{ room.items|length }}件
         </span>
     </div>
 
     {% if (room.items|length) == 0 %}
         <div class="text-center py-12">
-            <div class="text-4xl md:text-6xl mb-4">
-                📝
-            </div>
-            <p class="text-gray-500">
+            <span class="icon-[fluent-color--drafts-24] w-10 h-10"></span>
+            <p class="text-gray-500 text-sm font-bold">
                 品目を追加してください
             </p>
         </div>
@@ -37,7 +33,7 @@
                     class="{{
                     cn(
                         'p-3 md:p-4',
-                        'bg-gradient-to-r from-gray-50 to-purple-50',
+                        'bg-gradient-to-r from-gray-50 to-sub-pink-50',
                         'rounded-xl border border-gray-200',
                         'hover:shadow-md transition-shadow'
                     )
@@ -53,11 +49,20 @@
                                 </span>
                                 {% if item.location %}
                                     <div
-                                        class="bg-green-100 rounded-full px-2 py-0.5 flex items-center gap-0.5"
+                                        class="{{
+                                        cn(
+                                            'bg-sub-green text-white rounded-full px-2 py-0.5',
+                                            'flex items-center gap-0.5'
+                                        )
+                                        }}"
                                     >
-                                        📍
                                         <span
-                                            class="hidden sm:block text-green-600 text-[10px] md:text-xs"
+                                            class="icon-[fluent-color--location-ripple-24]"
+                                        >
+
+                                        </span>
+                                        <span
+                                            class="hidden sm:block text-[10px] md:text-xs"
                                         >
                                             位置情報あり
                                         </span>
@@ -67,19 +72,42 @@
                             <div
                                 class="text-xs md:text-sm text-gray-600 flex flex-wrap items-center gap-1"
                             >
-                                <span class="text-purple-600">
+                                <span
+                                    class="text-sub-pink font-bold md:text-lg"
+                                >
                                     {{ payer ? payer.member_name : '不明' }}
                                 </span>
-                                <span>→</span>
-                                <span class="text-blue-600">
-                                    {{ recipients|join(', ') }}
+                                <span
+                                    class="text-sm md:text-lg rotate-90 md:rotate-0"
+                                >
+                                    →
+                                </span>
+                                <span class="text-base text-gray-700">
+                                    <div
+                                        class="flex flex-wrap items-center gap-1"
+                                    >
+                                        {% for recipient in recipients %}
+                                            <span
+                                                class="text-sm font-bold md:text-lg text-blue-500"
+                                            >
+                                                {{ recipient }}
+                                            </span>
+                                            {% if not loop.last %}
+                                                <span
+                                                    class="text-sm md:text-lg"
+                                                >
+                                                    ,
+                                                </span>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
                                 </span>
                             </div>
                         </div>
                     </div>
                     <div class="flex justify-between items-center">
                         <div
-                            class="text-base md:text-2xl text-right md:text-right mt-1 md:mt-0 text-purple-600"
+                            class="text-base md:text-2xl text-right md:text-right mt-1 md:mt-0 text-sub-pink"
                         >
                             ¥{{ item.amount|number_format(0, '.', ',') }}
                         </div>

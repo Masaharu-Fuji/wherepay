@@ -1,13 +1,13 @@
 <div class="bg-white rounded-2xl border border-gray-200 shadow-lg p-4 md:p-6">
     <div class="flex items-center gap-2 mb-4 md:mb-6">
-        <span class="text-2xl">🔄</span>
+        <span class="icon-[fluent-color--megaphone-loud-24] w-10 h-10"></span>
         <h3 class="text-xl">支払い清算</h3>
     </div>
     {% if (transactions|length) == 0 %}
         <div class="text-center py-12">
-            <div class="text-6xl mb-4">
-                ✅
-            </div>
+            <span class="icon-[fluent-color--checkmark-circle-24] w-10 h-10">
+
+            </span>
             <p class="text-gray-500 text-lg">
                 清算は完了しています！
             </p>
@@ -21,8 +21,7 @@
                     class="{{
                     cn(
                         'p-3 md:p-5',
-                        'bg-gradient-to-r from-blue-50 to-purple-50',
-                        'rounded-xl border border-purple-200',
+                        'bg-white rounded-xl border border-gray-200',
                         'shadow-sm'
                     )
                     }}"
@@ -33,9 +32,10 @@
                         <div
                             class="{{
                             cn(
-                                'flex-1 text-center px-4 py-2 md:py-3 text-sm md:text-base',
-                                'bg-gradient-to-r from-blue-500 to-blue-600 text-white',
-                                'rounded-xl shadow-md'
+                                'flex-1 text-center px-4 py-2 md:py-3',
+                                'text-sm md:text-base font-medium',
+                                'bg-primary text-white rounded-xl',
+                                'shadow-sm'
                             )
                             }}"
                         >
@@ -44,7 +44,7 @@
                         <div
                             class="{{
                             cn(
-                                'text-lg md:text-2xl text-purple-500 flex-shrink-0 text-center',
+                                'text-lg md:text-2xl text-gray-500 flex-shrink-0 text-center',
                                 'rotate-90 md:rotate-0'
                             )
                             }}"
@@ -58,16 +58,21 @@
                         <div
                             class="{{
                             cn(
-                                'flex-1 text-center px-4 py-2 md:py-3 text-sm md:text-base',
-                                'bg-gradient-to-r from-green-500 to-emerald-600 text-white',
-                                'rounded-xl shadow-md'
+                                'flex-1 text-center px-4 py-2 md:py-3 text-sm md:text-base font-medium',
+                                'bg-gray-700 text-white rounded-xl',
+                                'shadow-sm'
                             )
                             }}"
                         >
                             {{ toMember ? toMember.member_name : '不明' }}
                         </div>
                         <div
-                            class="text-base md:text-2xl flex-shrink-0 md:min-w-[140px] text-right text-purple-600 mt-1 md:mt-0"
+                            class="{{
+                            cn(
+                                'text-base md:text-2xl font-semibold flex-shrink-0',
+                                'md:min-w-[140px] text-right text-gray-900 mt-1 md:mt-0'
+                            )
+                            }}"
                         >
                             ¥{{ transaction.amount|number_format(0, '.', ',') }}
                         </div>

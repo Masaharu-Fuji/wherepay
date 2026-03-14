@@ -10,12 +10,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function updateState() {
         if (isOpen) {
-            bar.classList.remove('translate-y-[calc(100%-3rem)]');
+            bar.classList.remove('translate-y-[calc(100%-5rem)]');
             if (textSpan) {
                 textSpan.textContent = textSpan.getAttribute('data-open-text') || '閉じる';
             }
         } else {
-            bar.classList.add('translate-y-[calc(100%-3rem)]');
+            bar.classList.add('translate-y-[calc(100%-5rem)]');
             if (textSpan) {
                 textSpan.textContent = textSpan.getAttribute('data-closed-text') || '開く';
             }

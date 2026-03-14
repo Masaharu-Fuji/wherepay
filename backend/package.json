@@ -8,13 +8,15 @@
         "format:twig": "prettier --write \"resources/views/**/*.twig\""
     },
     "devDependencies": {
+        "@iconify-json/fluent-color": "^1.2.21",
+        "@iconify/tailwind4": "^1.2.3",
         "@tailwindcss/vite": "^4.0.0",
+        "@zackad/prettier-plugin-twig": "^0.16.3",
         "axios": "^1.11.0",
         "concurrently": "^9.0.1",
         "laravel-vite-plugin": "^2.0.0",
-        "tailwindcss": "^4.0.0",
-        "vite": "^7.0.7",
         "prettier": "^3.4.2",
-        "@zackad/prettier-plugin-twig": "^0.16.3"
+        "tailwindcss": "^4.0.0",
+        "vite": "^7.0.7"
     }
 }

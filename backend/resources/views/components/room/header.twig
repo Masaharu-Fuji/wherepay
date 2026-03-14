@@ -13,7 +13,7 @@
                         {{ room.room_name }}
                     </h1>
                     <p class="text-xs sm:text-sm text-gray-600 mt-1">
-                        合計: <span class="text-purple-600">¥{{ totalAmount|number_format(0, '.', ',') }}</span>
+                        合計: <span class="text-sub-pink">¥{{ totalAmount|number_format(0, '.', ',') }}</span>
                     </p>
                 </div>
                 <div class="mt-2 space-y-1">
@@ -49,8 +49,8 @@
                             cn(
                                 'inline-flex items-center justify-center',
                                 'px-3 py-2 text-xs font-medium',
-                                'text-white bg-blue-600 rounded-md',
-                                'hover:bg-blue-700 active:bg-blue-800',
+                                'text-white bg-primary rounded-md',
+                                'hover:bg-primary-hover active:opacity-90',
                                 'transition-colors'
                             )
                             }}"
