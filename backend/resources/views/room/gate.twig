@@ -1,0 +1,83 @@
+{% extends 'layouts.base' %}
+
+{% block title %}
+    アクセスキー入力 - {{ room.room_name }} - 清算アプリ
+{% endblock %}
+
+{% block content %}
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-xl p-8">
+            <h2 class="text-center mb-2 text-2xl">アクセスキー入力</h2>
+            <p class="text-center text-gray-600 text-sm mb-6">
+                このルーム（{{
+                    room.room_name
+                }}）はアクセスキーで保護されています。
+            </p>
+
+            <form
+                method="GET"
+                action="{{
+                route(
+                    'rooms.show',
+                    {
+                        room: room.id
+                    }
+                )
+                }}"
+                class="space-y-6"
+            >
+                <div class="flex flex-col gap-1">
+                    <label
+                        for="query_key"
+                        class="block mb-1 text-gray-700 text-xs md:text-sm"
+                    >
+                        アクセスキー（query_key）を入力してください
+                    </label>
+                    <input
+                        id="query_key"
+                        name="query_key"
+                        type="text"
+                        placeholder="アクセスキー"
+                        class="{{
+                        cn(
+                            'w-full text-sm md:text-sm p-2',
+                            'border-2 border-gray-200 rounded-xl',
+                            'focus:outline-none focus:border-blue-500',
+                            'focus:ring-4 focus:ring-blue-100',
+                            'transition-all'
+                        )
+                        }}"
+                        autofocus
+                        required
+                    />
+                </div>
+
+                <button
+                    type="submit"
+                    class="{{
+                    cn(
+                        'w-full text-sm md:text-lg p-2',
+                        'bg-gradient-to-r from-blue-500 to-purple-600 text-white',
+                        'rounded-xl',
+                        'hover:from-blue-600 hover:to-purple-700',
+                        'disabled:opacity-50 disabled:cursor-not-allowed',
+                        'transition-all shadow-lg hover:shadow-xl',
+                        'transform hover:scale-[1.02] active:scale-[0.98]'
+                    )
+                    }}"
+                >
+                    ルームに入る
+                </button>
+            </form>
+
+            <div class="mt-6 pt-4 border-t border-gray-200">
+                <a
+                    href="{{ route('rooms.create') }}"
+                    class="block text-center text-sm text-blue-600 hover:text-blue-800"
+                >
+                    ルーム選択に戻る
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

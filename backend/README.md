@@ -26,6 +26,13 @@ docker compose exec laravel.test php artisan migrate
 docker compose exec laravel.test php artisan migrate:fresh --seed
 ```
 
+- 静的解析（PHPStan）の実行  
+  コンテナ外（backend ディレクトリ）で実行します。
+
+```bash
+composer phpstan
+```
+
 ## DB 構成とシーディング
 
 ### `t_items.room_id` の追加と関連
@@ -61,11 +68,21 @@ docker compose exec laravel.test php artisan migrate:fresh --seed
 - `Item` (`t_items`)
   - `fillable` に `room_id` を含める
 
+### ルームへのアクセス（query_key）
+
+ルーム詳細（`/rooms/{id}`）および清算ページへは、URL に **query_key**（DB の `t_rooms.password_plan`）を付与しないとアクセスできません。
+
+- **アクセス可能な URL の例**: `http://localhost/rooms/1?query_key=abc12def`
+- query_key がない・誤っている場合は「アクセスキー入力」画面が表示され、正しいキーを入力するとルームに入れます。
+- ルーム作成直後のリダイレクトや「URLをコピー」では、最初から query_key 付きの URL が使われます。
+
+シーディングで作成したルームにブラウザでアクセスするには、各ルームの `password_plan` が必要です。**RoomSeeder 実行時にコンソールおよび `storage/logs/laravel.log` に各ルームの `password_plan` が出力される**ので、その値をコピーして `?query_key=...` として付けてください。
+
 ### シーディングの流れ（Room → Member → Item）
 
 1. **RoomSeeder**
 
-既存の `RoomFactory` を使って複数の部屋を作成します。
+既存の `RoomFactory` を使って複数の部屋を作成します。作成した各ルームの **room_id / room_name / password_plan** を `Log::info()` でログに書き出し、さらに `php artisan db:seed` 実行時にはコンソールにも `password_plan` を表示します。ローカルでシード済みルームにアクセスする際の query_key として利用してください。
 
 2. **MemberSeeder**
 

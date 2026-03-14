@@ -32,11 +32,22 @@ class RoomController extends Controller
             'password_plan' => bin2hex(random_bytes(4)),
         ]);
 
-        return redirect()->route('rooms.show', $room);
+        return redirect()->route('rooms.show', [
+            'room' => $room,
+            'query_key' => $room->password_plan,
+        ]);
     }
 
-    public function show(Room $room): View
+    public function show(Request $request, Room $room): View
     {
+        $queryKey = $request->query('query_key');
+        if ($queryKey === null || $queryKey !== $room->password_plan) {
+            /** @var view-string $view */
+            $view = 'room.gate';
+
+            return view($view, ['room' => $room]);
+        }
+
         $room->load([
             'members',
             'members.itemParticipants',
@@ -92,7 +103,10 @@ class RoomController extends Controller
             'room_id' => $room->id,
         ]);
 
-        return redirect()->route('rooms.show', $room);
+        return redirect()->route('rooms.show', [
+            'room' => $room,
+            'query_key' => $room->password_plan,
+        ]);
     }
 
     public function addItem(Request $request, Room $room): RedirectResponse
@@ -145,6 +159,9 @@ class RoomController extends Controller
             ]);
         }
 
-        return redirect()->route('rooms.show', $room);
+        return redirect()->route('rooms.show', [
+            'room' => $room,
+            'query_key' => $room->password_plan,
+        ]);
     }
 }

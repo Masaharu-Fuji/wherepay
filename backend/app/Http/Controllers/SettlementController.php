@@ -6,13 +6,19 @@ use App\Models\Map;
 use App\Models\Room;
 use App\Models\Settlement;
 use App\Services\SettlementCalculator;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class SettlementController extends Controller
 {
-    public function show(Request $request, Room $room, SettlementCalculator $calculator): View
+    public function show(Request $request, Room $room, SettlementCalculator $calculator): View|RedirectResponse
     {
+        $queryKey = $request->query('query_key');
+        if ($queryKey === null || $queryKey !== $room->password_plan) {
+            return redirect()->route('rooms.show', ['room' => $room]);
+        }
+
         $result = $calculator->calculate($room);
 
         $cashInputs = $request->input('cash', []);
@@ -77,14 +83,7 @@ class SettlementController extends Controller
         ]);
         $membersById = $room->members->keyBy('id');
 
-        $locatedItems = $room->items->filter(function ($item) {
-            if ($item->location === null) {
-                return false;
-            }
-
-            return $item->location->latitude !== null
-                && $item->location->longitude !== null;
-        });
+        $locatedItems = $room->items->filter(fn ($item) => $item->location !== null);
 
         $allLocationsUrl = null;
 
@@ -142,6 +141,7 @@ class SettlementController extends Controller
 
         return view($view, [
             'room' => $room,
+            'query_key' => $queryKey,
             'total' => $result['total'],
             'memberDebts' => $result['memberDebts'],
             'transactions' => $result['transactions'],
@@ -170,7 +170,10 @@ class SettlementController extends Controller
         }
 
         return redirect()
-            ->route('rooms.settlement.show', ['room' => $room->id])
+            ->route('rooms.settlement.show', [
+                'room' => $room->id,
+                'query_key' => $room->password_plan,
+            ])
             ->with('status', 'settlement_confirmed');
     }
 }

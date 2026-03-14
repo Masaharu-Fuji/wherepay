@@ -7,12 +7,7 @@
 {% block content %}
     <div class="min-h-screen flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl border border-gray-200 shadow-xl p-8">
-            <div class="text-center mb-6">
-                <h2 class="text-2xl mb-2">ルーム作成</h2>
-                <p class="text-gray-600 text-xs md:text-sm">
-                    グループ名を入力して清算を始めましょう
-                </p>
-            </div>
+            <h2 class="text-center mb-6 text-2xl">ルーム作成</h2>
 
             <form
                 method="POST"
@@ -32,11 +27,11 @@
                         id="room_name"
                         name="room_name"
                         type="text"
-                        placeholder="例: 飲み会グループ、ランチ会"
+                        placeholder="例: 飲み会グループ"
                         value="{{ old('room_name') }}"
                         class="{{
                         cn(
-                            'w-full text-sm md:text-lg p-2',
+                            'w-full text-sm md:text-sm p-2',
                             'border-2 border-gray-200 rounded-xl',
                             'focus:outline-none focus:border-blue-500',
                             'focus:ring-4 focus:ring-blue-100',
