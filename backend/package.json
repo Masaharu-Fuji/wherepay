@@ -9,6 +9,7 @@
     },
     "devDependencies": {
         "@iconify-json/fluent-color": "^1.2.21",
+        "@iconify-json/marketeq": "^1.2.2",
         "@iconify/tailwind4": "^1.2.3",
         "@tailwindcss/vite": "^4.0.0",
         "@zackad/prettier-plugin-twig": "^0.16.3",

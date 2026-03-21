@@ -112,17 +112,98 @@
                             class="text-base md:text-2xl text-right md:text-right mt-1 md:mt-0 text-sub-pink"
                         >
                             ¥{{ item.amount|number_format(0, '.', ',') }}
+                            {% if item.created_at %}
+                                <div
+                                    class="text-[10px] md:text-xs text-gray-500 mt-1"
+                                >
+                                    作成日時:
+                                    {{
+                                        item.created_at|date(
+                                            'Y/m/d H:i',
+                                            'Asia/Tokyo'
+                                        )
+                                    }}
+                                </div>
+                            {% endif %}
                         </div>
-                        {% if (item.participants|length) > 0 %}
-                            {% set per_person =
-                                (item.amount / (item.participants|length))
-                                    |round(0, 'common')
-                                    |number_format(0, '.', ',')
-                            %}
-                            <div class="text-xs md:text-sm text-gray-500 mt-2">
-                                一人あたり: ¥{{ per_person }}
-                            </div>
-                        {% endif %}
+                        <div class="flex items-center gap-2">
+                            {% if (item.participants|length) > 0 %}
+                                {% set per_person =
+                                    (item.amount / (item.participants|length))
+                                        |round(0, 'common')
+                                        |number_format(0, '.', ',')
+                                %}
+                                <div
+                                    class="text-xs md:text-sm text-gray-500 mt-2"
+                                >
+                                    一人あたり: ¥{{ per_person }}
+                                </div>
+                            {% endif %}
+
+                            <form
+                                method="POST"
+                                action="{{
+                                route(
+                                    'rooms.items.delete',
+                                    {
+                                        room: room.id,
+                                        item: item.id
+                                    }
+                                )
+                                }}"
+                                class="group flex items-center"
+                            >
+                                <input
+                                    type="hidden"
+                                    name="_token"
+                                    value="{{ csrf_token() }}"
+                                />
+                                <input
+                                    type="hidden"
+                                    name="_method"
+                                    value="DELETE"
+                                />
+                                <button
+                                    type="submit"
+                                    aria-label="削除を実行"
+                                    class="{{
+                                    cn(
+                                        'h-8 text-xs md:text-sm rounded-lg',
+                                        'text-white bg-rose-400 hover:bg-rose-400',
+                                        'transition-all duration-200',
+                                        'mr-0 max-w-0 px-0 opacity-0 overflow-hidden',
+                                        'group-hover:mr-2 group-hover:max-w-24 group-hover:px-3 group-hover:opacity-100',
+                                        'group-focus-within:mr-2 group-focus-within:max-w-24 group-focus-within:px-3 group-focus-within:opacity-100'
+                                    )
+                                    }}"
+                                >
+                                    実行
+                                </button>
+                                <button
+                                    type="button"
+                                    aria-label="削除ボタン"
+                                    class="{{
+                                    cn(
+                                        'h-8 px-3 text-xs md:text-sm rounded-lg border',
+                                        'border-rose-200 bg-white',
+                                        'hover:bg-rose-50 transition-colors'
+                                    )
+                                    }}"
+                                >
+                                    <span
+                                        class="{{
+                                        cn(
+                                            'icon-[marketeq--delete-alt-2] w-5 h-5 flex items-center justify-center',
+                                            'transition-all duration-200 ',
+                                            'text-black'
+                                        )
+                                        }}"
+                                    >
+
+                                    </span>
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             {% endfor %}

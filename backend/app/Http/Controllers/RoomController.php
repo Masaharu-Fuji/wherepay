@@ -166,6 +166,22 @@ class RoomController extends Controller
         ]);
     }
 
+    public function deleteItem(Room $room, Item $item): RedirectResponse
+    {
+        if ((int) $item->room_id !== (int) $room->id) {
+            abort(404);
+        }
+
+        $item->participants()->delete();
+        $item->location()->delete();
+        $item->delete();
+
+        return redirect()->route('rooms.show', [
+            'room' => $room,
+            'query_key' => $room->password_plan,
+        ]);
+    }
+
     public function exportCsv(Request $request, Room $room): StreamedResponse|RedirectResponse
     {
         $queryKey = $request->query('query_key');
@@ -191,10 +207,10 @@ class RoomController extends Controller
                 fputcsv($handle, [
                     $item->id,
                     $item->item_name,
-                    $item->payer?->member_name ?? '',
+                    $item->payer->member_name ?? '',
                     $item->amount,
-                    $location?->longitude ?? '',
-                    $location?->latitude ?? '',
+                    $location->longitude ?? '',
+                    $location->latitude ?? '',
                     $item->created_at?->format('Y-m-d H:i:s') ?? '',
                 ]);
             }

@@ -15,6 +15,7 @@ Route::get('/rooms/{room}/csv', [RoomController::class, 'exportCsv'])->name('roo
 Route::post('/rooms/{room}/members', [RoomController::class, 'addMember'])->name('rooms.members.store');
 
 Route::post('/rooms/{room}/items', [RoomController::class, 'addItem'])->name('rooms.items.store');
+Route::delete('/rooms/{room}/items/{item}', [RoomController::class, 'deleteItem'])->name('rooms.items.delete');
 
 Route::match(['get', 'post'], '/rooms/{room}/settlement', [SettlementController::class, 'show'])
     ->name('rooms.settlement.show');

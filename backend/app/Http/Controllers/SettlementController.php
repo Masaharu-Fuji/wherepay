@@ -189,7 +189,7 @@ class SettlementController extends Controller
             ->with(['payer', 'receiver'])
             ->orderBy('id')
             ->get();
-
+        /** @var \Illuminate\Database\Eloquent\Collection<int, Settlement> $settlements */
         $safeName = preg_replace('/[^\p{L}\p{N}\s\-_]/u', '_', $room->room_name);
         $safeName = trim($safeName) !== '' ? trim($safeName) : 'room';
         $filename = $safeName.'_settlements.csv';
@@ -204,8 +204,8 @@ class SettlementController extends Controller
             foreach ($settlements as $s) {
                 fputcsv($handle, [
                     $s->id,
-                    $s->payer?->member_name ?? '',
-                    $s->receiver?->member_name ?? '',
+                    $s->payer->member_name ?? '',
+                    $s->receiver->member_name ?? '',
                     $s->amount,
                     $s->is_paid ? '済' : '未',
                 ]);
