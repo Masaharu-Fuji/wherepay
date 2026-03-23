@@ -6,22 +6,27 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [RoomController::class, 'create'])->name('rooms.create');
 
-Route::post('/rooms', [RoomController::class, 'store'])->name('rooms.store');
+Route::prefix('rooms')->name('rooms.')->group(function (): void {
+    Route::post('/', [RoomController::class, 'store'])->name('store');
 
-Route::get('/rooms/{room}', [RoomController::class, 'show'])->name('rooms.show');
+    Route::prefix('{room}')->group(function (): void {
+        Route::get('/', [RoomController::class, 'show'])->name('show');
+        Route::get('/csv', [RoomController::class, 'exportCsv'])->name('csv');
 
-Route::get('/rooms/{room}/csv', [RoomController::class, 'exportCsv'])->name('rooms.csv');
+        Route::post('/members', [RoomController::class, 'addMember'])->name('members.store');
 
-Route::post('/rooms/{room}/members', [RoomController::class, 'addMember'])->name('rooms.members.store');
+        Route::post('/items', [RoomController::class, 'addItem'])->name('items.store');
+        Route::delete('/items/{item}', [RoomController::class, 'deleteItem'])->name('items.delete');
 
-Route::post('/rooms/{room}/items', [RoomController::class, 'addItem'])->name('rooms.items.store');
-Route::delete('/rooms/{room}/items/{item}', [RoomController::class, 'deleteItem'])->name('rooms.items.delete');
+        Route::prefix('settlement')->name('settlement.')->group(function (): void {
+            Route::match(['get', 'post'], '/', [SettlementController::class, 'show'])
+                ->name('show');
 
-Route::match(['get', 'post'], '/rooms/{room}/settlement', [SettlementController::class, 'show'])
-    ->name('rooms.settlement.show');
+            Route::get('/csv', [SettlementController::class, 'exportSettlementCsv'])
+                ->name('csv');
 
-Route::get('/rooms/{room}/settlement/csv', [SettlementController::class, 'exportSettlementCsv'])
-    ->name('rooms.settlement.csv');
-
-Route::post('/rooms/{room}/settlement/confirm', [SettlementController::class, 'confirm'])
-    ->name('rooms.settlement.confirm');
+            Route::post('/confirm', [SettlementController::class, 'confirm'])
+                ->name('confirm');
+        });
+    });
+});
