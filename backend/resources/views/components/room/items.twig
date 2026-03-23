@@ -111,12 +111,19 @@
                         <div
                             class="text-base md:text-2xl text-right md:text-right mt-1 md:mt-0 text-sub-pink"
                         >
-                            ¥{{ item.amount|number_format(0, '.', ',') }}
+                            <div class="flex items-center gap-1">
+                                <span
+                                    class="icon-[fluent-color--people-24] h-5 w-5 md:h-7 md:w-7"
+                                >
+
+                                </span>
+                                ¥{{ item.amount|number_format(0, '.', ',') }}
+                            </div>
                             {% if item.created_at %}
                                 <div
                                     class="text-[10px] md:text-xs text-gray-500 mt-1"
                                 >
-                                    作成日時:
+                                    作成:
                                     {{
                                         item.created_at|date(
                                             'Y/m/d H:i',
@@ -134,9 +141,16 @@
                                         |number_format(0, '.', ',')
                                 %}
                                 <div
-                                    class="text-xs md:text-sm text-gray-500 mt-2"
+                                    class="flex items-center gap-1 text-gray-500 mt-2"
                                 >
-                                    一人あたり: ¥{{ per_person }}
+                                    <span
+                                        class="icon-[fluent-color--person-24] h-5 w-5"
+                                    >
+
+                                    </span>
+                                    <span class="text-gray-500 text-sm">
+                                        ¥{{ per_person }}
+                                    </span>
                                 </div>
                             {% endif %}
 
@@ -168,7 +182,7 @@
                                     aria-label="削除を実行"
                                     class="{{
                                     cn(
-                                        'h-8 text-xs md:text-sm rounded-lg',
+                                        'h-8 text-xs rounded-lg',
                                         'text-white bg-rose-400 hover:bg-rose-400',
                                         'transition-all duration-200',
                                         'mr-0 max-w-0 px-0 opacity-0 overflow-hidden',
