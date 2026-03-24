@@ -21,6 +21,8 @@ Route::prefix('rooms')->name('rooms.')->group(function (): void {
 
         Route::prefix('items')->name('items.')->group(function (): void {
             Route::post('/', [RoomController::class, 'addItem'])->name('store');
+            Route::get('/', [RoomController::class, 'items'])->name('index');
+            Route::patch('/{item}', [RoomController::class, 'updateItem'])->name('update');
             Route::delete('/{item}', [RoomController::class, 'deleteItem'])->name('delete');
         });
 

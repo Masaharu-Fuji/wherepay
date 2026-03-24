@@ -211,6 +211,89 @@ class RoomController extends Controller
         ]);
     }
 
+    public function items(Request $request, Room $room): View
+    {
+        $queryKey = $request->query('query_key');
+        if ($queryKey === null || $queryKey !== $room->password_plan) {
+            /** @var view-string $view */
+            $view = 'room.gate';
+
+            return view($view, ['room' => $room]);
+        }
+
+        $room->load([
+            'members',
+            'items.payer',
+            'items.participants.member',
+            'items.location',
+        ]);
+
+        /** @var view-string $view */
+        $view = 'room.items';
+
+        return view($view, [
+            'room' => $room,
+        ]);
+    }
+
+    public function updateItem(Request $request, Room $room, Item $item): RedirectResponse
+    {
+        $queryKey = $request->query('query_key');
+        if ($queryKey === null || $queryKey !== $room->password_plan) {
+            return redirect()->route('rooms.show', ['room' => $room]);
+        }
+
+        if ((int) $item->room_id !== (int) $room->id) {
+            abort(404);
+        }
+
+        $validated = $request->validate([
+            'item_name' => ['required', 'string', 'max:255'],
+            'participant_ids' => ['required', 'array', 'min:1'],
+            'participant_ids.*' => ['integer', 'exists:t_members,id'],
+            'latitude' => ['nullable', 'numeric', 'required_with:longitude'],
+            'longitude' => ['nullable', 'numeric', 'required_with:latitude'],
+        ]);
+
+        $item->update([
+            'item_name' => $validated['item_name'],
+        ]);
+
+        $participants = $validated['participant_ids'];
+        $perPerson = (int) round($item->amount / max(1, count($participants)));
+
+        $item->participants()->delete();
+        foreach ($participants as $memberId) {
+            ItemParticipant::create([
+                'share_amount' => $perPerson,
+                'item_id' => $item->id,
+                'member_id' => $memberId,
+            ]);
+        }
+
+        $latitude = $validated['latitude'] ?? null;
+        $longitude = $validated['longitude'] ?? null;
+        if ($latitude !== null && $longitude !== null) {
+            $lat = (float) $latitude;
+            $lng = (float) $longitude;
+            $url = sprintf('https://www.google.com/maps?q=%F,%F&z=17', $lat, $lng);
+
+            Location::updateOrCreate(
+                ['item_id' => $item->id],
+                [
+                    'latitude' => $lat,
+                    'longitude' => $lng,
+                    'url_map' => $url,
+                ]
+            );
+        }
+
+        return redirect()->route('rooms.items.index', [
+            'room' => $room,
+            'query_key' => $room->password_plan,
+        ]);
+    }
+
     public function deleteItem(Room $room, Item $item): RedirectResponse
     {
         if ((int) $item->room_id !== (int) $room->id) {

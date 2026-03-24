@@ -5,6 +5,33 @@
         <span class="bg-sub-pink text-white px-3 py-1 rounded-full text-sm">
             {{ room.items|length }}件
         </span>
+        <a
+            href="{{
+            route(
+                'rooms.items.index',
+                {
+                    room: room.id,
+                    query_key: room.password_plan
+                }
+            )
+            }}"
+            class="{{
+            cn(
+                'inline-flex items-center justify-center',
+                'px-2.5 py-2.5',
+                'bg-sub-green rounded-lg',
+                'border border-emerald-500/20 shadow-sm',
+                'transition-all duration-200 ease-out',
+                'hover:bg-sub-green-hover hover:-translate-y-0.5 hover:shadow-md',
+                'hover:ring-2 hover:ring-emerald-300/50',
+                'active:translate-y-0 active:scale-95'
+            )
+            }}"
+        >
+            <span class="icon-[fluent-color--clipboard-text-edit-24] w-5 h-5">
+
+            </span>
+        </a>
     </div>
 
     {% if (room.items|length) == 0 %}
@@ -33,7 +60,7 @@
                     class="{{
                     cn(
                         'p-3 md:p-4',
-                        'bg-gradient-to-r from-gray-50 to-sub-pink-50',
+                        'bg-linear-to-r from-gray-50 to-sub-pink-50',
                         'rounded-xl border border-gray-200',
                         'hover:shadow-md transition-shadow'
                     )
@@ -153,70 +180,6 @@
                                     </span>
                                 </div>
                             {% endif %}
-
-                            <form
-                                method="POST"
-                                action="{{
-                                route(
-                                    'rooms.items.delete',
-                                    {
-                                        room: room.id,
-                                        item: item.id
-                                    }
-                                )
-                                }}"
-                                class="group flex items-center"
-                            >
-                                <input
-                                    type="hidden"
-                                    name="_token"
-                                    value="{{ csrf_token() }}"
-                                />
-                                <input
-                                    type="hidden"
-                                    name="_method"
-                                    value="DELETE"
-                                />
-                                <button
-                                    type="submit"
-                                    aria-label="削除を実行"
-                                    class="{{
-                                    cn(
-                                        'h-8 text-xs rounded-lg',
-                                        'text-white bg-rose-400 hover:bg-rose-400',
-                                        'transition-all duration-200',
-                                        'mr-0 max-w-0 px-0 opacity-0 overflow-hidden',
-                                        'group-hover:mr-2 group-hover:max-w-24 group-hover:px-3 group-hover:opacity-100',
-                                        'group-focus-within:mr-2 group-focus-within:max-w-24 group-focus-within:px-3 group-focus-within:opacity-100'
-                                    )
-                                    }}"
-                                >
-                                    実行
-                                </button>
-                                <button
-                                    type="button"
-                                    aria-label="削除ボタン"
-                                    class="{{
-                                    cn(
-                                        'h-8 px-3 text-xs md:text-sm rounded-lg border',
-                                        'border-rose-200 bg-white',
-                                        'hover:bg-rose-50 transition-colors'
-                                    )
-                                    }}"
-                                >
-                                    <span
-                                        class="{{
-                                        cn(
-                                            'icon-[marketeq--delete-alt-2] w-5 h-5 flex items-center justify-center',
-                                            'transition-all duration-200 ',
-                                            'text-black'
-                                        )
-                                        }}"
-                                    >
-
-                                    </span>
-                                </button>
-                            </form>
                         </div>
                     </div>
                 </div>
