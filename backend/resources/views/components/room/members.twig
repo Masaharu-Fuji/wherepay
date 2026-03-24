@@ -53,7 +53,7 @@
                 class="{{
                 cn(
                     'w-full text-sm md:text-lg p-2',
-                    'bg-gradient-to-r from-primary to-sub-pink text-white',
+                    'bg-linear-to-r from-primary to-sub-pink text-white',
                     'rounded-xl',
                     'hover:from-primary-hover hover:to-sub-pink-hover',
                     'shadow-lg transition-all',
@@ -81,20 +81,49 @@
                 >
                     {{ room.members|length }}人
                 </span>
+                <a
+                    href="{{
+                    route(
+                        'rooms.members.index',
+                        {
+                            room: room.id,
+                            query_key: room.password_plan
+                        }
+                    )
+                    }}"
+                    class="{{
+                    cn(
+                        'inline-flex items-center justify-center',
+                        'px-2.5 py-2.5',
+                        'bg-sub-green rounded-lg',
+                        'border border-emerald-500/20 shadow-sm',
+                        'transition-all duration-200 ease-out',
+                        'hover:bg-sub-green-hover hover:-translate-y-0.5 hover:shadow-md',
+                        'hover:ring-2 hover:ring-emerald-300/50',
+                        'active:translate-y-0 active:scale-95'
+                    )
+                    }}"
+                >
+                    <span
+                        class="icon-[fluent-color--clipboard-text-edit-24] w-5 h-5"
+                    >
+
+                    </span>
+                </a>
             </div>
             <div class="flex flex-wrap gap-2">
                 {% for member in room.members %}
-                    <div
+                    <span
                         class="{{
                         cn(
-                            'px-4 py-2',
+                            'px-4 py-2 text-xs md:text-sm',
                             'bg-primary text-white',
                             'rounded-full'
                         )
                         }}"
                     >
                         {{ member.member_name }}
-                    </div>
+                    </span>
                 {% endfor %}
             </div>
         {% else %}

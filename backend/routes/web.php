@@ -13,10 +13,16 @@ Route::prefix('rooms')->name('rooms.')->group(function (): void {
         Route::get('/', [RoomController::class, 'show'])->name('show');
         Route::get('/csv', [RoomController::class, 'exportCsv'])->name('csv');
 
-        Route::post('/members', [RoomController::class, 'addMember'])->name('members.store');
+        Route::prefix('members')->name('members.')->group(function (): void {
+            Route::post('/', [RoomController::class, 'addMember'])->name('store');
+            Route::get('/', [RoomController::class, 'members'])->name('index');
+            Route::patch('/{member}', [RoomController::class, 'updateMember'])->name('update');
+        });
 
-        Route::post('/items', [RoomController::class, 'addItem'])->name('items.store');
-        Route::delete('/items/{item}', [RoomController::class, 'deleteItem'])->name('items.delete');
+        Route::prefix('items')->name('items.')->group(function (): void {
+            Route::post('/', [RoomController::class, 'addItem'])->name('store');
+            Route::delete('/{item}', [RoomController::class, 'deleteItem'])->name('delete');
+        });
 
         Route::prefix('settlement')->name('settlement.')->group(function (): void {
             Route::match(['get', 'post'], '/', [SettlementController::class, 'show'])

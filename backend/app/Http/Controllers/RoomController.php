@@ -110,6 +110,51 @@ class RoomController extends Controller
         ]);
     }
 
+    public function members(Request $request, Room $room): View
+    {
+        $queryKey = $request->query('query_key');
+        if ($queryKey === null || $queryKey !== $room->password_plan) {
+            /** @var view-string $view */
+            $view = 'room.gate';
+
+            return view($view, ['room' => $room]);
+        }
+
+        $room->load(['members']);
+
+        /** @var view-string $view */
+        $view = 'room.members';
+
+        return view($view, [
+            'room' => $room,
+        ]);
+    }
+
+    public function updateMember(Request $request, Room $room, Member $member): RedirectResponse
+    {
+        $queryKey = $request->query('query_key');
+        if ($queryKey === null || $queryKey !== $room->password_plan) {
+            return redirect()->route('rooms.show', ['room' => $room]);
+        }
+
+        if ((int) $member->room_id !== (int) $room->id) {
+            abort(404);
+        }
+
+        $validated = $request->validate([
+            'member_name' => ['required', 'string', 'max:255'],
+        ]);
+
+        $member->update([
+            'member_name' => $validated['member_name'],
+        ]);
+
+        return redirect()->route('rooms.members.index', [
+            'room' => $room,
+            'query_key' => $room->password_plan,
+        ]);
+    }
+
     public function addItem(Request $request, Room $room): RedirectResponse
     {
         $validated = $request->validate([
