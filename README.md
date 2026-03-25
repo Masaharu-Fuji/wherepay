@@ -74,8 +74,9 @@
 - PHP 8.2 以上
 - Composer
 - Node.js / npm
+- （任意）Docker（Laravel Sail で動かす場合）
 
-### 初期構築（推奨）
+### 初期構築（推奨・ローカルで動かす）
 
 リポジトリルートから以下を実行します。
 
@@ -91,6 +92,33 @@ composer run setup
 - アプリケーションキー生成
 - マイグレーション実行
 - フロントエンドビルド
+
+#### DB について（ローカル実行）
+
+このプロジェクトはデフォルトで SQLite を想定しています（`DB_CONNECTION=sqlite`）。
+
+- **SQLite で動かす場合**: `backend/database/database.sqlite` が必要です（存在しない場合は作成してください）。
+
+```bash
+cd backend
+mkdir -p database
+touch database/database.sqlite
+```
+
+- **PostgreSQL 等で動かす場合**: `.env` の `DB_CONNECTION` / `DB_HOST` / `DB_DATABASE` などを合わせてください。
+
+### Docker（Laravel Sail）で動かす（任意）
+
+Docker を使う場合は `backend/compose.yaml`（Sail）を利用できます（PostgreSQL コンテナが起動します）。
+
+```bash
+cd backend
+composer install
+./vendor/bin/sail up -d
+./vendor/bin/sail artisan migrate
+./vendor/bin/sail npm install
+./vendor/bin/sail npm run dev
+```
 
 ---
 
@@ -109,6 +137,11 @@ composer run dev
 - キューリスナー
 - ログ監視
 - Vite 開発サーバー
+
+補足:
+
+- `php artisan serve` の既定ポートは **8000** です（環境により変更される場合があります）。
+- Vite は既定で **5173** を使用します。
 
 ### テスト / 品質チェック
 
@@ -182,6 +215,7 @@ app_portfolio/
 - 位置情報を使う機能では、ブラウザ側で位置情報利用の許可が必要です。
 - ルーム参加には `query_key` が必要です。URL 共有時は取り扱いに注意してください。
 - 現在、支出項目の編集機能はありません（削除して再登録で対応）。
+- 「訪れた場所」の地図リンクは Google Maps（URL）を利用しています。
 
 ---
 
