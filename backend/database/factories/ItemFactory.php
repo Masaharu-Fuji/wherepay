@@ -13,8 +13,26 @@ class ItemFactory extends Factory
 {
     public function definition(): array
     {
+        $itemNames = [
+            'ランチ代',
+            'ディナー代',
+            'カフェ代',
+            '飲み代',
+            'コンビニ',
+            'スーパー',
+            'タクシー代',
+            '電車代',
+            'バス代',
+            'ガソリン代',
+            'ホテル代',
+            '入場料',
+            'お土産代',
+            '日用品',
+            '雑費',
+        ];
+
         return [
-            'item_name' => fake()->words(2, true),
+            'item_name' => fake()->randomElement($itemNames),
             'memo' => fake()->optional()->sentence(),
             'amount' => fake()->numberBetween(100, 10000),
             'paid_at' => fake()->date(),

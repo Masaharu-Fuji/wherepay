@@ -1,0 +1,14 @@
+{
+  "room_name": "ルーム名",
+  "member_name": "メンバー名",
+  "item_name": "品目名",
+  "amount": "金額",
+  "payer_id": "支払者",
+  "participant_ids": "対象者",
+  "latitude": "緯度",
+  "longitude": "経度",
+  "location_address": "住所",
+  "memo": "メモ",
+  "paid_at": "支払日"
+}
+
