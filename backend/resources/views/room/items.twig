@@ -261,41 +261,67 @@
                                 </div>
 
                                 <div data-participant-jump-root>
-                                    <div class="flex items-center gap-2">
+                                    <label
+                                        class="block text-xs md:text-sm mb-1.5 text-gray-700"
+                                    >
+                                        対象者（誰の分の支払いか）
+                                    </label>
+                                    <div
+                                        class="{{
+                                        cn(
+                                            'mb-2 flex gap-2 items-stretch',
+                                            'min-h-11'
+                                        )
+                                        }}"
+                                    >
                                         <label
-                                            class="block text-xs md:text-sm mb-2 text-gray-700"
+                                            class="sr-only"
+                                            for="participant-jump-{{ item.id }}"
                                         >
-                                            対象者（誰の分の支払いか）
+                                            対象者名でジャンプ
                                         </label>
-                                        <div class="mb-2">
-                                            <label
-                                                class="sr-only"
-                                                for="participant-jump-{{
-                                                item.id
-                                                }}"
-                                            >
-                                                対象者名でジャンプ
-                                            </label>
-                                            <input
-                                                id="participant-jump-{{
-                                                item.id
-                                                }}"
-                                                type="search"
-                                                enterkeyhint="search"
-                                                autocomplete="off"
-                                                placeholder="検索"
-                                                data-participant-jump-input
-                                                class="{{
-                                                cn(
-                                                    'w-full text-xs md:text-sm p-2',
-                                                    'border-2 border-gray-200 rounded-xl',
-                                                    'focus:outline-none focus:border-primary',
-                                                    'focus:ring-4 focus:ring-primary-100',
-                                                    'transition-all'
-                                                )
-                                                }}"
-                                            />
-                                        </div>
+                                        <input
+                                            id="participant-jump-{{ item.id }}"
+                                            type="search"
+                                            enterkeyhint="go"
+                                            inputmode="search"
+                                            autocomplete="off"
+                                            autocorrect="off"
+                                            autocapitalize="off"
+                                            spellcheck="false"
+                                            placeholder="名前の一部 →「移動」でジャンプ"
+                                            data-participant-jump-input
+                                            class="{{
+                                            cn(
+                                                'flex-1 min-w-0 px-3 py-2.5',
+                                                'text-base md:text-sm',
+                                                'border-2 border-gray-200 rounded-xl',
+                                                'focus:outline-none focus:border-primary',
+                                                'focus:ring-4 focus:ring-primary-100',
+                                                'transition-all'
+                                            )
+                                            }}"
+                                        />
+                                        <button
+                                            type="button"
+                                            data-participant-jump-go
+                                            aria-label="名前の一致へスクロール"
+                                            class="{{
+                                            cn(
+                                                'shrink-0 px-3 py-2',
+                                                'text-sm font-medium',
+                                                'border-2 border-primary rounded-xl',
+                                                'bg-primary text-white',
+                                                'active:bg-primary-hover',
+                                                'md:hover:bg-primary-hover',
+                                                'focus:outline-none focus:ring-4',
+                                                'focus:ring-primary-100',
+                                                'transition-colors'
+                                            )
+                                            }}"
+                                        >
+                                            移動
+                                        </button>
                                     </div>
                                     <div
                                         data-participant-jump-scroll
@@ -304,7 +330,9 @@
                                             'space-y-2 p-2 md:p-3',
                                             'bg-gray-50 rounded-xl',
                                             'border-2 border-gray-200',
-                                            'max-h-36 overflow-y-auto'
+                                            'max-h-[min(50svh,14rem)] md:max-h-36',
+                                            'overflow-y-auto touch-pan-y overscroll-y-contain',
+                                            '[-webkit-overflow-scrolling:touch]'
                                         )
                                         }}"
                                     >
@@ -316,9 +344,11 @@
                                                 ) }}"
                                                 class="{{
                                                 cn(
-                                                    'flex items-center gap-3 p-2 md:p-3',
+                                                    'flex items-center gap-3',
+                                                    'min-h-12 p-2.5 md:p-3',
                                                     'bg-white rounded-lg cursor-pointer',
-                                                    'hover:bg-primary-50 transition-colors',
+                                                    'active:bg-primary-50 md:hover:bg-primary-50',
+                                                    'transition-colors',
                                                     'border border-gray-200'
                                                 )
                                                 }}"
@@ -335,15 +365,13 @@
                                                     }}
                                                     class="{{
                                                     cn(
-                                                        'w-5 h-5',
+                                                        'w-5 h-5 shrink-0',
                                                         'text-sub-pink rounded',
                                                         'focus:ring-2 focus:ring-sub-pink'
                                                     )
                                                     }}"
                                                 />
-                                                <span
-                                                    class="text-sm md:text-base"
-                                                >
+                                                <span class="text-base">
                                                     {{ member.member_name }}
                                                 </span>
                                             </label>

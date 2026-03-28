@@ -30,9 +30,39 @@ function fuzzyMatchName(name, query) {
     return qi === q.length;
 }
 
+function prefersReducedMotion() {
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+/** 狭い画面・タッチ端末では smooth が不安定なことがある */
+function useSmoothScroll() {
+    if (prefersReducedMotion()) {
+        return false;
+    }
+    if (window.matchMedia("(max-width: 767px)").matches) {
+        return false;
+    }
+    return true;
+}
+
+/**
+ * パネル内スクロールを先に合わせる（iOS 等で scrollIntoView だけだと内側が動かない対策）
+ */
+function alignRowInScrollPanel(scrollEl, row, smooth) {
+    const behavior = smooth ? "smooth" : "auto";
+    const panel = scrollEl.getBoundingClientRect();
+    const r = row.getBoundingClientRect();
+    const delta =
+        r.top - panel.top - (panel.height - r.height) / 2;
+    if (Math.abs(delta) > 1) {
+        scrollEl.scrollBy({ top: delta, behavior });
+    }
+}
+
 function initRoot(root) {
     const input = root.querySelector("[data-participant-jump-input]");
     const scrollEl = root.querySelector("[data-participant-jump-scroll]");
+    const goBtn = root.querySelector("[data-participant-jump-go]");
     if (!input || !scrollEl) {
         return;
     }
@@ -56,10 +86,14 @@ function initRoot(root) {
     }
 
     function scrollRowIntoView(row) {
-        row.scrollIntoView({
-            behavior: "smooth",
-            block: "center",
-            inline: "nearest",
+        const smooth = useSmoothScroll();
+        alignRowInScrollPanel(scrollEl, row, smooth);
+        requestAnimationFrame(() => {
+            row.scrollIntoView({
+                behavior: smooth ? "smooth" : "auto",
+                block: "center",
+                inline: "nearest",
+            });
         });
     }
 
@@ -71,7 +105,6 @@ function initRoot(root) {
         }
         matchOrdinal = (matchOrdinal + 1) % hits.length;
         const { row } = hits[matchOrdinal];
-        scrollRowIntoView(row);
         const cb = row.querySelector('input[type="checkbox"]');
         if (cb) {
             cb.focus({ preventScroll: true });
@@ -89,6 +122,12 @@ function initRoot(root) {
             jumpNext();
         }
     });
+
+    if (goBtn) {
+        goBtn.addEventListener("click", () => {
+            jumpNext();
+        });
+    }
 }
 
 export default function roomItemParticipantJump() {
