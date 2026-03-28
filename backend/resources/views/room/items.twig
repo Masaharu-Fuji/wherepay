@@ -139,7 +139,9 @@
                                     </span>
                                 </div>
 
-                                <div class="hidden md:block">
+                                <div
+                                    class="hidden md:flex md:items-center md:gap-2"
+                                >
                                     <label
                                         class="block text-xs md:text-sm mb-1 text-gray-700"
                                     >
@@ -155,7 +157,7 @@
                                         }}"
                                         class="{{
                                         cn(
-                                            'w-full text-sm md:text-base p-2',
+                                            'w-4/5 text-sm md:text-base p-2',
                                             'border-2 border-gray-200 rounded-xl',
                                             'focus:outline-none focus:border-primary',
                                             'focus:ring-4 focus:ring-primary-100',
@@ -169,11 +171,11 @@
                                 <div
                                     class="hidden md:grid md:grid-cols-2 md:gap-2"
                                 >
-                                    <div>
+                                    <div class="flex gap-1 items-center">
                                         <label
-                                            class="block text-xs md:text-sm mb-1 text-gray-700"
+                                            class="text-nowrap block text-xs md:text-sm mb-1 text-gray-700"
                                         >
-                                            金額（固定）
+                                            金額
                                         </label>
                                         <span
                                             class="p-2 rounded-xl bg-gray-100 border border-gray-200 text-gray-700"
@@ -181,11 +183,11 @@
                                             ¥{{ item.amount|number_format(0, '.', ',') }}
                                         </span>
                                     </div>
-                                    <div>
+                                    <div class="flex gap-1 items-center">
                                         <label
-                                            class="block text-xs md:text-sm mb-1 text-gray-700"
+                                            class="text-nowrap block text-xs md:text-sm mb-1 text-gray-700"
                                         >
-                                            支払者（固定）
+                                            支払者
                                         </label>
                                         <span
                                             class="p-2 rounded-xl bg-gray-100 border border-gray-200 text-gray-700"
@@ -198,9 +200,9 @@
                                 </div>
 
                                 <div class="grid grid-cols-2 gap-2">
-                                    <div>
+                                    <div class="flex gap-1 items-center">
                                         <label
-                                            class="block text-xs md:text-sm mb-1 text-gray-700"
+                                            class="text-nowrap block text-xs md:text-sm mb-1 text-gray-700"
                                         >
                                             緯度
                                         </label>
@@ -227,9 +229,9 @@
                                             }}"
                                         />
                                     </div>
-                                    <div>
+                                    <div class="flex gap-1 items-center">
                                         <label
-                                            class="block text-xs md:text-sm mb-1 text-gray-700"
+                                            class="text-nowrap block text-xs md:text-sm mb-1 text-gray-700"
                                         >
                                             経度
                                         </label>
@@ -258,13 +260,45 @@
                                     </div>
                                 </div>
 
-                                <div>
-                                    <label
-                                        class="block text-xs md:text-sm mb-2 text-gray-700"
-                                    >
-                                        対象者（誰の分の支払いか）
-                                    </label>
+                                <div data-participant-jump-root>
+                                    <div class="flex items-center gap-2">
+                                        <label
+                                            class="block text-xs md:text-sm mb-2 text-gray-700"
+                                        >
+                                            対象者（誰の分の支払いか）
+                                        </label>
+                                        <div class="mb-2">
+                                            <label
+                                                class="sr-only"
+                                                for="participant-jump-{{
+                                                item.id
+                                                }}"
+                                            >
+                                                対象者名でジャンプ
+                                            </label>
+                                            <input
+                                                id="participant-jump-{{
+                                                item.id
+                                                }}"
+                                                type="search"
+                                                enterkeyhint="search"
+                                                autocomplete="off"
+                                                placeholder="検索"
+                                                data-participant-jump-input
+                                                class="{{
+                                                cn(
+                                                    'w-full text-xs md:text-sm p-2',
+                                                    'border-2 border-gray-200 rounded-xl',
+                                                    'focus:outline-none focus:border-primary',
+                                                    'focus:ring-4 focus:ring-primary-100',
+                                                    'transition-all'
+                                                )
+                                                }}"
+                                            />
+                                        </div>
+                                    </div>
                                     <div
+                                        data-participant-jump-scroll
                                         class="{{
                                         cn(
                                             'space-y-2 p-2 md:p-3',
@@ -276,6 +310,10 @@
                                     >
                                         {% for member in room.members %}
                                             <label
+                                                data-participant-jump-row
+                                                data-member-name="{{ member.member_name|e(
+                                                    'html_attr'
+                                                ) }}"
                                                 class="{{
                                                 cn(
                                                     'flex items-center gap-3 p-2 md:p-3',

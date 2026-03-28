@@ -123,11 +123,36 @@
             {% endif %}
         </div>
 
-        <div>
+        <div data-participant-jump-root>
             <label class="block text-xs md:text-sm mb-2 text-gray-700">
                 対象者（誰の分の支払いか）
             </label>
+            {% if (room.members|length) > 0 %}
+                <div class="mb-2">
+                    <label class="sr-only" for="participant-jump-new-item">
+                        対象者名でジャンプ
+                    </label>
+                    <input
+                        id="participant-jump-new-item"
+                        type="search"
+                        enterkeyhint="search"
+                        autocomplete="off"
+                        placeholder="検索"
+                        data-participant-jump-input
+                        class="{{
+                        cn(
+                            'w-full text-xs md:text-sm p-2',
+                            'border-2 border-gray-200 rounded-xl',
+                            'focus:outline-none focus:border-primary',
+                            'focus:ring-4 focus:ring-primary-100',
+                            'transition-all'
+                        )
+                        }}"
+                    />
+                </div>
+            {% endif %}
             <div
+                data-participant-jump-scroll
                 class="{{
                 cn(
                     'space-y-2 p-2 md:p-3',
@@ -144,6 +169,10 @@
                 {% else %}
                     {% for member in room.members %}
                         <label
+                            data-participant-jump-row
+                            data-member-name="{{ member.member_name|e(
+                                'html_attr'
+                            ) }}"
                             class="{{
                             cn(
                                 'flex items-center gap-3 p-2 md:p-3',
