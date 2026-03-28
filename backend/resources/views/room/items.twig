@@ -175,11 +175,11 @@
                                         >
                                             金額（固定）
                                         </label>
-                                        <div
+                                        <span
                                             class="p-2 rounded-xl bg-gray-100 border border-gray-200 text-gray-700"
                                         >
                                             ¥{{ item.amount|number_format(0, '.', ',') }}
-                                        </div>
+                                        </span>
                                     </div>
                                     <div>
                                         <label
@@ -187,13 +187,13 @@
                                         >
                                             支払者（固定）
                                         </label>
-                                        <div
+                                        <span
                                             class="p-2 rounded-xl bg-gray-100 border border-gray-200 text-gray-700"
                                         >
                                             {{ item.payer
                                                 ? item.payer.member_name
                                                 : '不明' }}
-                                        </div>
+                                        </span>
                                     </div>
                                 </div>
 
@@ -353,8 +353,10 @@
                                                 'text-white bg-rose-400 hover:bg-rose-400',
                                                 'transition-all duration-200',
                                                 'mr-0 max-w-0 px-0 opacity-0 overflow-hidden',
-                                                'group-hover:mr-2 group-hover:max-w-24 group-hover:px-3 group-hover:opacity-100',
-                                                'group-focus-within:mr-2 group-focus-within:max-w-24 group-focus-within:px-3 group-focus-within:opacity-100'
+                                                'group-hover:mr-2 group-hover:max-w-24',
+                                                'group-hover:px-3 group-hover:opacity-100',
+                                                'group-focus-within:mr-2 group-focus-within:max-w-24',
+                                                'group-focus-within:px-3 group-focus-within:opacity-100'
                                             )
                                             }}"
                                         >
@@ -374,7 +376,8 @@
                                             <span
                                                 class="{{
                                                 cn(
-                                                    'icon-[marketeq--delete-alt-2] w-5 h-5 flex items-center justify-center',
+                                                    'icon-[marketeq--delete-alt-2] w-5 h-5',
+                                                    'flex items-center justify-center',
                                                     'transition-all duration-200 ',
                                                     'text-black'
                                                 )
