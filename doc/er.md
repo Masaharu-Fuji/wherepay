@@ -6,6 +6,7 @@ erDiagram
   t_rooms ||--o{ t_members : references
   t_members ||--o{ t_item_participants : references
   t_items ||--o{ t_item_participants : references
+  t_rooms ||--o{ t_settlements : references
   t_members ||--o{ t_settlements : payer
   t_members ||--o{ t_settlements : receiver
   m_item_categories ||--o{ t_items : references
@@ -23,6 +24,7 @@ erDiagram
     BIGINT id
     VARCHAR room_name
     VARCHAR password_plan
+    INT settlement_version
     TIMESTAMP created_at
     TIMESTAMP updated_at
   }
@@ -68,10 +70,12 @@ erDiagram
 
   t_settlements {
     BIGINT id
+    BIGINT room_id
     BIGINT payer_id
     BIGINT receiver_id
     INT amount
     BOOLEAN is_paid
+    INT version
     TIMESTAMP created_at
     TIMESTAMP updated_at
   }
