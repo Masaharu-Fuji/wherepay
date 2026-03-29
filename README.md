@@ -13,6 +13,8 @@
 - [開発環境セットアップ](#開発環境セットアップ)
 - [実行方法](#実行方法)
 - [現在の実装機能](#現在の実装機能)
+- [ER 図](#er-図)
+- [スクリーンショット](#スクリーンショット)
 - [ディレクトリ構成](#ディレクトリ構成)
 - [利用上の注意](#利用上の注意)
 - [今後の拡張アイデア](#今後の拡張アイデア)
@@ -192,6 +194,76 @@ composer run lint:lines
 
 ---
 
+## ER 図
+
+主要テーブルとリレーションの概要です。編集可能な Mermaid ソースは [doc/er.md](doc/er.md) にあります。
+
+<img src="doc/image/er.svg" alt="データベース ER 図" width="960">
+
+`doc/image/er.svg` を [Kroki](https://kroki.io) で再生成する例（リポジトリルート・ネットワーク必須）:
+
+~~~bash
+awk '/^```mermaid$/,/^```$/' doc/er.md | sed '1d;$d' | curl -sS -o doc/image/er.svg -X POST https://kroki.io/mermaid/svg -H "Content-Type: text/plain" --data-binary @-
+~~~
+
+各画面の見た目は [スクリーンショット](#スクリーンショット) を参照してください。
+
+---
+
+## スクリーンショット
+
+[アプリの進行（画面遷移）](doc/workflow.md) と同じ流れで、主要画面のキャプチャです。
+
+### トップページ（ルーム作成）
+
+ルーム名を入力してグループ用のルームを新規作成します。
+
+<img src="doc/image/top.png" alt="トップページ：ルーム名入力と作成ボタン" width="800">
+
+### セキュリティページ（アクセスキー入力）
+
+`query_key` が無い／不一致のときに表示され、正しいキーで入室します。
+
+<img src="doc/image/security.png" alt="セキュリティページ：アクセスキー入力フォーム" width="800">
+
+### 登録ページ（ルーム詳細）
+
+メンバー・支出品目の登録、URL 共有、清算への遷移などを行います。
+
+<img src="doc/image/room.png" alt="ルーム詳細：メンバー・品目一覧と操作" width="800">
+
+### メンバー一覧（編集）ページ
+
+登録済みメンバーの一覧と名前の更新ができます。
+
+<img src="doc/image/members.png" alt="メンバー一覧：名前の編集" width="800">
+
+### 品目一覧（編集）ページ
+
+品目名・対象者・位置情報の更新や削除ができます（金額・支払者は変更不可）。
+
+<img src="doc/image/items.png" alt="品目一覧：編集と削除" width="800">
+
+### 清算ページ
+
+合計・負担額・支払い関係のサマリーを表示します。
+
+<img src="doc/image/settlement.png" alt="清算ページ：サマリーと支払い関係" width="800">
+
+### おつり計算
+
+所持金入力と清算完了の判定を行います。
+
+<img src="doc/image/calculator.png" alt="清算ページ：おつり計算と完了状態" width="800">
+
+### 訪れた場所
+
+品目に紐づいた位置の一覧と、Google Maps へのルートリンクがあります。
+
+<img src="doc/image/visited.png" alt="清算ページ：訪れた場所一覧と地図リンク" width="800">
+
+---
+
 ## ディレクトリ構成
 
 ```text
@@ -236,16 +308,14 @@ app_portfolio/
 
 ### 画面別ガイド（workflow）
 
+画面キャプチャは [スクリーンショット](#スクリーンショット) を参照してください。
+
 - [トップページ](doc/workflow.md#トップページ)
-  - 画像: [top](doc/image/top.png)
 - [セキュリティページ](doc/workflow.md#セキュリティページ)
-  - 画像: [security](doc/image/security.png)
 - [登録ページ](doc/workflow.md#登録ページ)
-  - 画像: [room](doc/image/room.png)
+- [メンバー一覧（編集）ページ](doc/workflow.md#メンバー一覧編集ページ)
+- [品目一覧（編集）ページ](doc/workflow.md#品目一覧編集ページ)
 - [清算ページ](doc/workflow.md#清算ページ)
-  - 画像: [settlement](doc/image/settlement.png)
-  - 詳細: [支払い清算](doc/workflow.md#支払い清算)
-  - 詳細: [おつり計算](doc/workflow.md#おつり計算)
-  - 詳細: [訪れた場所](doc/workflow.md#訪れた場所)
-  - 画像: [おつり計算（calculator）](doc/image/calculator.png)
-  - 画像: [訪れた場所（visited）](doc/image/visited.png)
+  - [支払い清算](doc/workflow.md#支払い清算)
+  - [おつり計算](doc/workflow.md#おつり計算)
+  - [訪れた場所](doc/workflow.md#訪れた場所)
