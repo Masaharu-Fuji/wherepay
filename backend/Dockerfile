@@ -57,9 +57,10 @@ COPY . /var/www/html
 WORKDIR /var/www/html
 
 # 4. Setup application dependencies 
+# Build has no .env / DB; default CACHE_STORE=database would require database.sqlite.
 RUN composer install --optimize-autoloader --no-dev \
     && mkdir -p storage/logs \
-    && php artisan optimize:clear \
+    && CACHE_STORE=array php artisan optimize:clear \
     && chown -R www-data:www-data /var/www/html \
     && echo "MAILTO=\"\"\n* * * * * www-data /usr/bin/php /var/www/html/artisan schedule:run" > /etc/cron.d/laravel \
     && if [ -d .fly ]; then cp .fly/entrypoint.sh /entrypoint; chmod +x /entrypoint; fi
