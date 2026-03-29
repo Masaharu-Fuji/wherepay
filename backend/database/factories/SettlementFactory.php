@@ -19,6 +19,7 @@ class SettlementFactory extends Factory
             'receiver_id' => Member::factory(),
             'amount' => fake()->numberBetween(100, 10000),
             'is_paid' => fake()->boolean(30),
+            'version' => 1,
         ];
     }
 }

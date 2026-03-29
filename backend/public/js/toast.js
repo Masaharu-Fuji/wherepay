@@ -4,11 +4,11 @@ export default function toast() {
 
     button.addEventListener("click", function (event) {
         const isFullySettled = button.dataset.isFullySettled === "1";
-        const hasPaidMembers = button.dataset.hasPaidMembers === "1";
 
-        if (isFullySettled || hasPaidMembers) {
+        if (isFullySettled) {
             const form = button.closest("form");
             if (form) {
+                syncCashInputsToConfirmForm(form);
                 form.submit();
             }
             return;
@@ -18,6 +18,23 @@ export default function toast() {
         showToast(
             "まだ全員の清算が完了していません。すべてのメンバーのおつりを確認してください。",
         );
+    });
+}
+
+function syncCashInputsToConfirmForm(confirmForm) {
+    if (!confirmForm) return;
+
+    const oldInputs = confirmForm.querySelectorAll("[data-cash-cloned='1']");
+    oldInputs.forEach((input) => input.remove());
+
+    const cashInputs = document.querySelectorAll("input[name^='cash[']");
+    cashInputs.forEach((input) => {
+        const hidden = document.createElement("input");
+        hidden.type = "hidden";
+        hidden.name = input.name;
+        hidden.value = input.value;
+        hidden.setAttribute("data-cash-cloned", "1");
+        confirmForm.appendChild(hidden);
     });
 }
 

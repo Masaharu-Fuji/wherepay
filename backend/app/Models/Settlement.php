@@ -18,6 +18,7 @@ class Settlement extends Model
         'receiver_id',
         'amount',
         'is_paid',
+        'version',
     ];
 
     public function payer(): BelongsTo

@@ -25,8 +25,11 @@ class SettlementSeeder extends Seeder
                     'room_id' => $room->id,
                     'payer_id' => $payer->id,
                     'receiver_id' => $receiver->id,
+                    'version' => 1,
                 ]);
             }
+
+            $room->update(['settlement_version' => 1]);
         });
     }
 }

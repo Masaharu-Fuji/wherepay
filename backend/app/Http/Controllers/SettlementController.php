@@ -8,6 +8,7 @@ use App\Models\Settlement;
 use App\Services\SettlementCalculator;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -23,19 +24,33 @@ class SettlementController extends Controller
         $result = $calculator->calculate($room);
 
         $cashInputs = $request->input('cash', []);
+        $hasCashInputs = collect($cashInputs)->contains(
+            static fn ($value): bool => $value !== null && $value !== ''
+        );
 
         $changeByMember = $calculator->calculateChange(
             $result['transactions'],
             $cashInputs,
         );
 
-        // おつりが 0 以上なら、その人の「支払うべきお金」は完了とみなして is_paid を更新（payer 側で判定）
-        foreach ($changeByMember as $memberId => $change) {
-            if ($change !== null && $change >= 0) {
-                Settlement::where('room_id', $room->id)
-                    ->where('payer_id', $memberId)
-                    ->update(['is_paid' => true]);
+        // おつり入力があるときのみ、現在 version の is_paid を更新（payer 側で判定）
+        if ($room->settlement_version > 0 && $hasCashInputs) {
+            foreach ($changeByMember as $memberId => $change) {
+                if ($change !== null && $change >= 0) {
+                    Settlement::where('room_id', $room->id)
+                        ->where('version', $room->settlement_version)
+                        ->where('payer_id', $memberId)
+                        ->update(['is_paid' => true]);
+                }
             }
+        }
+
+        $settlementsByPayer = collect();
+        if ($room->settlement_version > 0) {
+            $settlementsByPayer = Settlement::where('room_id', $room->id)
+                ->where('version', $room->settlement_version)
+                ->get()
+                ->groupBy('payer_id');
         }
 
         // 各メンバーが実際に支払うべき総額（transactions ベース）
@@ -65,14 +80,27 @@ class SettlementController extends Controller
                 continue;
             }
 
-            // 支払義務がある人については、おつりが null でなく 0 以上なら完了
-            if (
-                ! array_key_exists($memberId, $changeByMember)
-                || $changeByMember[$memberId] === null
-                || $changeByMember[$memberId] < 0
-            ) {
-                $isFullySettled = false;
+            if ($hasCashInputs) {
+                // おつり入力があるときは、入力値ベースで判定
+                if (
+                    ! array_key_exists($memberId, $changeByMember)
+                    || $changeByMember[$memberId] === null
+                    || $changeByMember[$memberId] < 0
+                ) {
+                    $isFullySettled = false;
 
+                    break;
+                }
+            } elseif ($room->settlement_version > 0) {
+                // 入力がない表示では、保存済み清算の is_paid を参照
+                $payerSettlements = $settlementsByPayer->get($memberId, collect());
+                if ($payerSettlements->isEmpty() || $payerSettlements->contains(fn ($s): bool => ! $s->is_paid)) {
+                    $isFullySettled = false;
+
+                    break;
+                }
+            } else {
+                $isFullySettled = false;
                 break;
             }
         }
@@ -121,21 +149,42 @@ class SettlementController extends Controller
             ]);
         }
 
-        // 画面表示用の「清算完了メンバー」は、おつり計算の結果と揃える
-        $paidMembers = $room->members->filter(function ($member) use ($owedByMember, $changeByMember) {
-            $memberId = $member->id;
-            $owed = $owedByMember[$memberId] ?? 0;
+        // 画面表示用の「清算完了メンバー」
+        $paidMembers = $room->members->filter(
+            function ($member) use (
+                $owedByMember,
+                $changeByMember,
+                $hasCashInputs,
+                $room,
+                $settlementsByPayer
+            ) {
+                $memberId = $member->id;
+                $owed = $owedByMember[$memberId] ?? 0;
 
-            // そもそも支払うべき金額がない人は、最初から完了扱い
-            if ($owed === 0) {
-                return true;
+                // そもそも支払うべき金額がない人は、最初から完了扱い
+                if ($owed === 0) {
+                    return true;
+                }
+
+                if ($hasCashInputs) {
+                    // 支払義務のある人は、おつりが 0 以上になっていれば完了
+                    return array_key_exists($memberId, $changeByMember)
+                        && $changeByMember[$memberId] !== null
+                        && $changeByMember[$memberId] >= 0;
+                }
+
+                if ($room->settlement_version > 0) {
+                    $payerSettlements = $settlementsByPayer->get($memberId, collect());
+
+                    return
+                        $payerSettlements->isNotEmpty()
+                        &&
+                        ! $payerSettlements->contains(fn ($s): bool => ! $s->is_paid);
+                }
+
+                return false;
             }
-
-            // 支払義務のある人は、おつりが 0 以上になっていれば完了
-            return array_key_exists($memberId, $changeByMember)
-                && $changeByMember[$memberId] !== null
-                && $changeByMember[$memberId] >= 0;
-        })->values();
+        )->values();
 
         /** @var view-string $view */
         $view = 'settlement.show';
@@ -159,16 +208,35 @@ class SettlementController extends Controller
     public function confirm(Request $request, Room $room, SettlementCalculator $calculator)
     {
         $result = $calculator->calculate($room);
+        $cashInputs = $request->input('cash', []);
+        $changeByMember = $calculator->calculateChange(
+            $result['transactions'],
+            $cashInputs,
+        );
 
-        foreach ($result['transactions'] as $transaction) {
-            Settlement::create([
-                'room_id' => $room->id,
-                'payer_id' => $transaction['from'],
-                'receiver_id' => $transaction['to'],
-                'amount' => $transaction['amount'],
-                'is_paid' => false,
-            ]);
-        }
+        DB::transaction(function () use ($room, $result, $changeByMember): void {
+            $locked = Room::query()->lockForUpdate()->findOrFail($room->id);
+
+            Settlement::where('room_id', $locked->id)->delete();
+
+            $locked->increment('settlement_version');
+            $locked->refresh();
+
+            $version = $locked->settlement_version;
+
+            foreach ($result['transactions'] as $transaction) {
+                Settlement::create([
+                    'room_id' => $locked->id,
+                    'payer_id' => $transaction['from'],
+                    'receiver_id' => $transaction['to'],
+                    'amount' => $transaction['amount'],
+                    'is_paid' => array_key_exists($transaction['from'], $changeByMember)
+                        && $changeByMember[$transaction['from']] !== null
+                        && $changeByMember[$transaction['from']] >= 0,
+                    'version' => $version,
+                ]);
+            }
+        });
 
         return redirect()
             ->route('rooms.settlement.show', [
@@ -200,10 +268,11 @@ class SettlementController extends Controller
                 return;
             }
             fwrite($handle, "\xEF\xBB\xBF");
-            fputcsv($handle, ['ID', 'お金を返す人', 'お金を受け取る人', '金額', '清算完了済みか']);
+            fputcsv($handle, ['ID', '清算バージョン', 'お金を返す人', 'お金を受け取る人', '金額', '清算完了済みか']);
             foreach ($settlements as $s) {
                 fputcsv($handle, [
                     $s->id,
+                    $s->version,
                     $s->payer->member_name ?? '',
                     $s->receiver->member_name ?? '',
                     $s->amount,

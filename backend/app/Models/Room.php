@@ -20,6 +20,7 @@ class Room extends Model
     protected $fillable = [
         'room_name',
         'password_plan',
+        'settlement_version',
     ];
 
     public function members(): HasMany
