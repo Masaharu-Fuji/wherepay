@@ -14,11 +14,23 @@ console_command = 'php /var/www/html/artisan tinker'
 
 [env]
   APP_ENV = 'production'
+  APP_NAME = 'wherepay'
+  APP_LOCALE = 'ja'
+  APP_FALLBACK_LOCALE = 'ja'
+  APP_FAKER_LOCALE = 'ja_JP'
+  APP_MAINTENANCE_DRIVER = 'file'
   LOG_CHANNEL = 'stderr'
   LOG_LEVEL = 'info'
   LOG_STDERR_FORMATTER = 'Monolog\Formatter\JsonFormatter'
   SESSION_DRIVER = 'cookie'
   SESSION_SECURE_COOKIE = 'true'
+  SESSION_LIFETIME = 120
+  SESSION_ENCRYPT = 'false'
+  SESSION_PATH = '/'
+  SESSION_DOMAIN = 'null'
+  VITE_APP_NAME = "${APP_NAME}"
+  WWWUSER = 1000
+  WWWGROUP = 1000
 
 [http_service]
   internal_port = 8080
