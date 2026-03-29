@@ -21,13 +21,11 @@ export default function roomItemsHeight() {
         // items コンテナの上端位置
         const containerRect = scrollContainer.getBoundingClientRect();
 
-        // コンテナ上端から清算リンクの「下端」までの高さをぴったり合わせる
-        const availableHeight = linkRect.bottom - containerRect.top;
-
-        // 最低 150px は確保
-        if (availableHeight < 150) {
-            availableHeight = 150;
-        }
+        // コンテナ上端から清算リンクの「下端」までの高さをぴったり合わせる（最低 150px）
+        const availableHeight = Math.max(
+            linkRect.bottom - containerRect.top,
+            150
+        );
 
         scrollContainer.style.maxHeight = availableHeight + "px";
     }
