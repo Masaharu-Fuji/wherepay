@@ -1,5 +1,7 @@
 import cn from "./cn.js";
-import location from "./location.js";
+import fetchItemGeoLocation from "./location.js";
+
+window.fetchItemGeoLocation = fetchItemGeoLocation;
 
 document.addEventListener("DOMContentLoaded", async () => {
     const [
@@ -25,4 +27,4 @@ document.addEventListener("DOMContentLoaded", async () => {
     roomItemParticipantJump();
 });
 
-export { cn, location };
+export { cn, fetchItemGeoLocation };

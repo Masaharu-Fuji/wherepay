@@ -1,4 +1,4 @@
-export default function location() {
+export default function fetchItemGeoLocation() {
     if (!navigator.geolocation) {
         alert("このブラウザは位置情報をサポートしていません");
         return;
