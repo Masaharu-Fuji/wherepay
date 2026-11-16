@@ -54,7 +54,7 @@
 ## 技術スタック
 
 - **バックエンド**
-  - Laravel 12 (PHP 8.2+)
+  - Laravel 12 (PHP 8.5)
   - Twig (`rcrowe/twigbridge`)
 - **フロントエンド**
   - Vite
@@ -73,7 +73,7 @@
 
 ### 前提
 
-- PHP 8.2 以上
+- PHP 8.5
 - Composer
 - Node.js / npm
 - （任意）Docker（Laravel Sail で動かす場合）
