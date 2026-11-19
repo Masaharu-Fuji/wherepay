@@ -275,9 +275,10 @@
                                 type="checkbox"
                                 name="participant_ids[]"
                                 value="{{ member.id }}"
-                                {{ (member.id ~ '') in old(
-                                    'participant_ids',
-                                    []
+                                {{ (member.id ~ '') in (
+                                    errors.getBag('default').isNotEmpty()
+                                        ? old('participant_ids', [])
+                                        : []
                                 ) ? 'checked' : '' }}
                                 class="{{
                                 cn(

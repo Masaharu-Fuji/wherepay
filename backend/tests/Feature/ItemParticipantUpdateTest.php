@@ -116,11 +116,109 @@ class ItemParticipantUpdateTest extends TestCase
             'participant_ids' => [$payer->id, $outsider->id],
         ]);
 
-        $response->assertSessionHasErrors('participant_ids.1');
+        $response->assertSessionHasErrors(
+            ['participant_ids.1'],
+            null,
+            'itemParticipants'.$item->id,
+        );
+        $response->assertSessionDoesntHaveErrors(['participant_ids', 'participant_ids.1']);
         $this->assertSame(1, ItemParticipant::query()->where('item_id', $item->id)->count());
         $item->refresh();
         $this->assertSame('タクシー', $item->item_name);
         $this->assertSame(1800, $item->amount);
         $this->assertSame($payer->id, $item->payer_id);
+
+        $page = $this->followRedirects($response);
+        $page->assertSee('選択された対象者は無効です。', false);
+        $html = (string) $page->getContent();
+        $this->assertSame(1, substr_count($html, '選択された対象者は無効です。'));
+
+        $editor = $this->participantEditorHtml($html);
+        $this->assertStringContainsString('open', $editor);
+        $this->assertStringContainsString('value="'.$payer->id.'"', $editor);
+        $this->assertMatchesRegularExpression(
+            '/value="'.$payer->id.'"[^>]*checked/',
+            $editor,
+        );
+        $this->assertDoesNotMatchRegularExpression(
+            '/value="'.$outsider->id.'"/',
+            $editor,
+        );
+
+        $addForm = $this->addItemFormHtml($html);
+        $this->assertStringNotContainsString('選択された対象者は無効です。', $addForm);
+        $this->assertStringNotContainsString('checked', $addForm);
+    }
+
+    public function test_missing_participants_error_stays_on_the_item_being_edited(): void
+    {
+        $room = Room::factory()->create(['password_plan' => 'roomkey3']);
+        $payer = Member::factory()->create([
+            'room_id' => $room->id,
+            'member_name' => '太郎',
+        ]);
+        $item = Item::factory()->create([
+            'room_id' => $room->id,
+            'item_name' => 'ランチ',
+            'amount' => 3000,
+            'payer_id' => $payer->id,
+            'category_id' => null,
+        ]);
+        ItemParticipant::factory()->create([
+            'item_id' => $item->id,
+            'member_id' => $payer->id,
+            'share_amount' => 3000,
+        ]);
+
+        $response = $this->from(route('rooms.show', [
+            'room' => $room,
+            'query_key' => $room->password_plan,
+        ]))->patch(route('rooms.items.participants.update', [
+            'room' => $room,
+            'item' => $item,
+            'query_key' => $room->password_plan,
+        ]), []);
+
+        $response->assertSessionHasErrors(
+            ['participant_ids'],
+            null,
+            'itemParticipants'.$item->id,
+        );
+        $response->assertSessionDoesntHaveErrors(['participant_ids']);
+        $this->assertSame(1, ItemParticipant::query()->where('item_id', $item->id)->count());
+
+        $page = $this->followRedirects($response);
+        $page->assertOk();
+        $html = (string) $page->getContent();
+        $this->assertSame(1, substr_count($html, '対象者は必須です。'));
+
+        $editor = $this->participantEditorHtml($html);
+        $this->assertStringContainsString('対象者は必須です。', $editor);
+        $this->assertStringContainsString('open', $editor);
+        $this->assertStringNotContainsString('checked', $editor);
+
+        $addForm = $this->addItemFormHtml($html);
+        $this->assertStringNotContainsString('対象者は必須です。', $addForm);
+        $this->assertStringNotContainsString('checked', $addForm);
+    }
+
+    private function participantEditorHtml(string $html): string
+    {
+        $start = strpos($html, '<details');
+        $this->assertNotFalse($start);
+        $end = strpos($html, '</details>', $start);
+        $this->assertNotFalse($end);
+
+        return substr($html, $start, $end - $start);
+    }
+
+    private function addItemFormHtml(string $html): string
+    {
+        $start = strpos($html, 'data-item-form');
+        $this->assertNotFalse($start);
+        $end = strpos($html, '</form>', $start);
+        $this->assertNotFalse($end);
+
+        return substr($html, $start, $end - $start);
     }
 }

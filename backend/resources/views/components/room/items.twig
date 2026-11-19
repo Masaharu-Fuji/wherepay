@@ -188,7 +188,18 @@
                             {% endif %}
                         </div>
                     </div>
-                    <details class="mt-3">
+                    {% set participantErrors =
+                        errors.getBag('itemParticipants' ~ item.id)
+                    %}
+                    {% set checkedParticipantIds =
+                        participantErrors.isNotEmpty()
+                            ? old('participant_ids', [])
+                            : selectedParticipantIds
+                    %}
+                    <details
+                        class="mt-3"
+                        {{ participantErrors.isNotEmpty() ? 'open' : '' }}
+                    >
                         <summary
                             class="cursor-pointer text-sm font-medium text-primary"
                         >
@@ -275,7 +286,11 @@
                                             type="checkbox"
                                             name="participant_ids[]"
                                             value="{{ member.id }}"
-                                            {{ member.id in selectedParticipantIds
+                                            {{ (',' ~ member.id ~ ',') in (
+                                                ','
+                                                    ~ checkedParticipantIds|join(',')
+                                                    ~ ','
+                                            )
                                                 ? 'checked'
                                                 : '' }}
                                             class="w-5 h-5 shrink-0"
@@ -286,6 +301,11 @@
                                     </label>
                                 {% endfor %}
                             </div>
+                            {% if participantErrors.isNotEmpty() %}
+                                <p role="alert" class="text-sm text-sub-pink">
+                                    {{ participantErrors.first }}
+                                </p>
+                            {% endif %}
                             <p data-per-person class="text-sm text-gray-700">
                                 対象者を選ぶと、1人あたりの金額が出ます
                             </p>

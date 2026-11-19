@@ -9,7 +9,9 @@ use App\Models\Member;
 use App\Models\Room;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -294,10 +296,18 @@ class RoomController extends Controller
             abort(404);
         }
 
-        $validated = $request->validate([
+        $errorBag = 'itemParticipants'.$item->id;
+        $validator = Validator::make($request->all(), [
             'participant_ids' => ['required', 'array', 'min:1'],
             'participant_ids.*' => $this->memberInRoomRules($room),
         ]);
+
+        if ($validator->fails()) {
+            throw (new ValidationException($validator))->errorBag($errorBag);
+        }
+
+        /** @var array{participant_ids: list<int|string>} $validated */
+        $validated = $validator->validated();
 
         /** @var list<int|string> $participantIds */
         $participantIds = $validated['participant_ids'];
