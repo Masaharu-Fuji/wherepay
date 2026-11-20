@@ -10,8 +10,6 @@ class Map extends Model
 {
     use HasFactory;
 
-    protected $table = 't_maps';
-
     protected $fillable = [
         'url',
         'room_id',

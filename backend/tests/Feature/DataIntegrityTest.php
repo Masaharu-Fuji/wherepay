@@ -20,14 +20,14 @@ class DataIntegrityTest extends TestCase
         $this->seed();
 
         $invalidItems = Item::query()
-            ->join('t_members as payer', 't_items.payer_id', '=', 'payer.id')
-            ->whereColumn('t_items.room_id', '!=', 'payer.room_id')
+            ->join('members as payer', 'items.payer_id', '=', 'payer.id')
+            ->whereColumn('items.room_id', '!=', 'payer.room_id')
             ->count();
 
         $this->assertSame(
             0,
             $invalidItems,
-            't_items の room_id と payer_id の member.room_id が一致しないレコードがあります。'
+            'items の room_id と payer_id の member.room_id が一致しないレコードがあります。'
         );
     }
 
@@ -39,15 +39,15 @@ class DataIntegrityTest extends TestCase
         $this->seed();
 
         $invalidParticipants = ItemParticipant::query()
-            ->join('t_items', 't_item_participants.item_id', '=', 't_items.id')
-            ->join('t_members as participant', 't_item_participants.member_id', '=', 'participant.id')
-            ->whereColumn('t_items.room_id', '!=', 'participant.room_id')
+            ->join('items', 'item_participants.item_id', '=', 'items.id')
+            ->join('members as participant', 'item_participants.member_id', '=', 'participant.id')
+            ->whereColumn('items.room_id', '!=', 'participant.room_id')
             ->count();
 
         $this->assertSame(
             0,
             $invalidParticipants,
-            't_item_participants の member_id が item の属する room と異なるレコードがあります。'
+            'item_participants の member_id が item の属する room と異なるレコードがあります。'
         );
     }
 }

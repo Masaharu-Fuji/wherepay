@@ -61,9 +61,26 @@ composer run twig:fix
 
 ## DB とシーディング
 
-### `t_items.room_id` の追加と関連
+### テーブル名
 
-`t_items` に `room_id`（NOT NULL）を追加し、`t_rooms.id` を参照します。
+ドメインテーブルは Eloquent の既定名です。モデルの `$table` は指定していません。
+
+| モデル | テーブル |
+| --- | --- |
+| `Room` | `rooms` |
+| `Member` | `members` |
+| `Item` | `items` |
+| `ItemParticipant` | `item_participants` |
+| `Location` | `locations` |
+| `Settlement` | `settlements` |
+| `Map` | `maps` |
+| `ItemCategory` | `item_categories` |
+
+作成時の `t_` / `m_` 名は `database/migrations/2026_11_20_000011_rename_domain_tables_to_eloquent_convention.php` で改名します。適用済みの DB は `php artisan migrate` で追従できます。
+
+### `items.room_id` の追加と関連
+
+`items.room_id`（NOT NULL）は `rooms.id` を参照します。追加自体は改名前のマイグレーションです。
 
 - マイグレーション: `database/migrations/2026_03_10_000009_add_room_id_to_t_items_table.php`
 - 目的: **Item が必ず Room に属する** ことを DB で保証する
@@ -78,14 +95,14 @@ composer run twig:fix
 
 - `SQLSTATE[23502]: not null violation ... column "room_id" ...`
   - `ItemSeeder` が `room_id` を指定しているか
-  - `t_members.room_id` が `NULL` になっていないか
+  - `members.room_id` が `NULL` になっていないか
   - 必要に応じて `php artisan migrate:fresh --seed`
 
 ---
 
 ## ルームへのアクセス（query_key）
 
-ルーム詳細（`/rooms/{id}`）および清算ページへは、URL に **query_key**（DB の `t_rooms.password_plan`）が必要です。
+ルーム詳細（`/rooms/{id}`）および清算ページへは、URL に **query_key**（DB の `rooms.password_plan`）が必要です。
 
 - 例: `http://localhost:8000/rooms/1?query_key=abc12def`
 - query_key がない・誤っている場合は「アクセスキー入力」画面が表示されます
@@ -99,8 +116,8 @@ composer run twig:fix
 - **目的**: Seeder / Factory 変更時に、部屋・メンバー・アイテムの紐づきが崩れたら検知する
 - **テストファイル**: `tests/Feature/DataIntegrityTest.php`
 - **検証内容（例）**
-  - `t_items.room_id` と、`payer_id` に紐づく `t_members.room_id` が一致する
-  - `t_item_participants.member_id` が、対応 `item_id` と同一 `room_id` に属する
+  - `items.room_id` と、`payer_id` に紐づく `members.room_id` が一致する
+  - `item_participants.member_id` が、対応 `item_id` と同一 `room_id` に属する
 
 実行例:
 

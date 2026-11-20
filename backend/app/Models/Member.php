@@ -15,8 +15,6 @@ class Member extends Model
 {
     use HasFactory;
 
-    protected $table = 't_members';
-
     protected $fillable = [
         'member_name',
         'room_id',

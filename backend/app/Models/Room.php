@@ -15,8 +15,6 @@ class Room extends Model
 {
     use HasFactory;
 
-    protected $table = 't_rooms';
-
     protected $fillable = [
         'room_name',
         'password_plan',

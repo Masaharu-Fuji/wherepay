@@ -10,8 +10,6 @@ class Location extends Model
 {
     use HasFactory;
 
-    protected $table = 't_locations';
-
     protected $fillable = [
         'latitude',
         'longitude',

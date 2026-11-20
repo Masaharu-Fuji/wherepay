@@ -9,6 +9,7 @@ use App\Models\Member;
 use App\Models\Room;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -160,9 +161,9 @@ class RoomController extends Controller
         $validated = $request->validate([
             'item_name' => ['required', 'string', 'max:255'],
             'amount' => ['required', 'integer', 'min:1'],
-            'payer_id' => ['required', 'integer', 'exists:t_members,id'],
+            'payer_id' => ['required', 'integer', Rule::exists(Member::class, 'id')],
             'participant_ids' => ['required', 'array', 'min:1'],
-            'participant_ids.*' => ['integer', 'exists:t_members,id'],
+            'participant_ids.*' => ['integer', Rule::exists(Member::class, 'id')],
             'memo' => ['nullable', 'string', 'max:1000'],
             'paid_at' => ['nullable', 'date'],
             'latitude' => ['nullable', 'numeric'],
@@ -250,7 +251,7 @@ class RoomController extends Controller
         $validated = $request->validate([
             'item_name' => ['required', 'string', 'max:255'],
             'participant_ids' => ['required', 'array', 'min:1'],
-            'participant_ids.*' => ['integer', 'exists:t_members,id'],
+            'participant_ids.*' => ['integer', Rule::exists(Member::class, 'id')],
             'latitude' => ['nullable', 'numeric', 'required_with:longitude'],
             'longitude' => ['nullable', 'numeric', 'required_with:latitude'],
         ]);

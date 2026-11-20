@@ -2,25 +2,25 @@
 
 ```mermaid
 erDiagram
-  t_items ||--|| t_locations : references
-  t_rooms ||--o{ t_members : references
-  t_members ||--o{ t_item_participants : references
-  t_items ||--o{ t_item_participants : references
-  t_rooms ||--o{ t_settlements : references
-  t_members ||--o{ t_settlements : payer
-  t_members ||--o{ t_settlements : receiver
-  m_item_categories ||--o{ t_items : references
-  t_rooms ||--|| t_maps : references
-  t_items }o--|| t_members : payer
+  items ||--|| locations : references
+  rooms ||--o{ members : references
+  members ||--o{ item_participants : references
+  items ||--o{ item_participants : references
+  rooms ||--o{ settlements : references
+  members ||--o{ settlements : payer
+  members ||--o{ settlements : receiver
+  item_categories ||--o{ items : references
+  rooms ||--|| maps : references
+  items }o--|| members : payer
 
-  m_item_categories {
+  item_categories {
     BIGINT id
     VARCHAR category_name
     TIMESTAMP created_at
     TIMESTAMP updated_at
   }
 
-  t_rooms {
+  rooms {
     BIGINT id
     VARCHAR room_name
     VARCHAR password_plan
@@ -29,7 +29,7 @@ erDiagram
     TIMESTAMP updated_at
   }
 
-  t_items {
+  items {
     BIGINT id
     VARCHAR item_name
     TEXT memo
@@ -41,7 +41,7 @@ erDiagram
     TIMESTAMP updated_at
   }
 
-  t_members {
+  members {
     BIGINT id
     VARCHAR member_name
     BIGINT room_id
@@ -49,7 +49,7 @@ erDiagram
     TIMESTAMP updated_at
   }
 
-  t_locations {
+  locations {
     BIGINT id
     DOUBLE latitude
     DOUBLE longitude
@@ -59,7 +59,7 @@ erDiagram
     TIMESTAMP updated_at
   }
 
-  t_item_participants {
+  item_participants {
     BIGINT id
     INT share_amount
     BIGINT item_id
@@ -68,7 +68,7 @@ erDiagram
     TIMESTAMP updated_at
   }
 
-  t_settlements {
+  settlements {
     BIGINT id
     BIGINT room_id
     BIGINT payer_id
@@ -80,7 +80,7 @@ erDiagram
     TIMESTAMP updated_at
   }
 
-  t_maps {
+  maps {
     BIGINT id
     TEXT url
     BIGINT room_id
