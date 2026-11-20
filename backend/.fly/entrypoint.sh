@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 set -eu
 
-# Render injects PORT (often 10000). Fly and local images keep 8080.
+# Fly listens on 8080. Honor PORT when the host injects one.
 port="${PORT:-8080}"
 case "$port" in
     ''|*[!0-9]*)
@@ -15,7 +15,7 @@ sed -i \
     -e "s/listen \\[::\\]:8080 default_server;/listen [::]:${port} default_server;/" \
     "$nginx_site"
 
-# Render's generateValue is raw base64. Laravel accepts that only with this prefix.
+# Laravel accepts the key only with this prefix.
 if [ -n "${APP_KEY:-}" ]; then
     case "$APP_KEY" in
         base64:*) ;;
@@ -23,12 +23,7 @@ if [ -n "${APP_KEY:-}" ]; then
     esac
 fi
 
-if [ -z "${APP_URL:-}" ] && [ -n "${RENDER_EXTERNAL_URL:-}" ]; then
-    export APP_URL="$RENDER_EXTERNAL_URL"
-fi
-
-# A Postgres URL with no driver still means Postgres. SQLite on the free
-# web service disappears whenever the instance sleeps.
+# A Postgres URL with no driver still means Postgres.
 if [ -z "${DB_CONNECTION:-}" ] && [ -n "${DATABASE_URL:-}" ]; then
     case "$DATABASE_URL" in
         postgres:*|postgresql:*|pgsql:*)
