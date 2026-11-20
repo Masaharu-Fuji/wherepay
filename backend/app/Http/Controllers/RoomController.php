@@ -28,7 +28,7 @@ class RoomController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'room_name' => ['required', 'string', 'max:255'],
+            'room_name' => ['required', 'string', 'max:'.Room::NAME_MAX_LENGTH],
         ]);
 
         $room = Room::create([
