@@ -49,10 +49,9 @@ return [
             // default: cache file storage path
             'cache' => null,
 
-            // When developing with Twig, it's useful to recompile the template
-            // whenever the source code changes. If you don't provide a value
-            // for the auto_reload option, it will be determined automatically based on the debug value.
-            'auto_reload' => true,
+            // Recompile when sources change only while debugging.
+            // Production keeps the compiled templates. Twig optimizations stay enabled below.
+            'auto_reload' => (bool) env('APP_DEBUG', false),
 
             // If set to false, Twig will silently ignore invalid variables
             // (variables and or attributes/methods that do not exist) and

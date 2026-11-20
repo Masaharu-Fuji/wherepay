@@ -10,6 +10,19 @@ export default defineConfig({
         }),
         tailwindcss(),
     ],
+    build: {
+        target: 'es2022',
+        minify: 'esbuild',
+        cssMinify: 'esbuild',
+        sourcemap: false,
+        modulePreload: {
+            polyfill: false,
+        },
+    },
+    esbuild: {
+        legalComments: 'none',
+        charset: 'utf8',
+    },
     server: {
         watch: {
             ignored: ['**/storage/framework/views/**'],
