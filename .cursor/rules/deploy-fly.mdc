@@ -1,16 +1,19 @@
 ---
-description: 本番は Fly.io。SQLite は Volume 上に置き、Render には載せない
+description: 本番は Fly.io。SQLite は Volume 上に置き、月額請求は $5 未満に保つ
 alwaysApply: true
 ---
 
 # デプロイ
 
-本番ホスティングは Fly.io。説明の正本はリポジトリ直下 README の「デプロイ」。
+本番ホスティングは Fly.io。手順の正本はリポジトリ直下 README の「デプロイ」。
 
 - 設定は `backend/fly.toml`、`backend/Dockerfile`、`backend/.fly/` を変更する。別ホスト用の設定ファイルは足さない
 - DB は SQLite。パスは `/data/database.sqlite`（Fly Volume `wherepay_data`）
 - 本番で `/data` がマウントされていないときは起動を失敗させる（`backend/.fly/scripts/migrate.sh`）
-- リージョンは `nrt`。マシンは 1 台。Volume は複数マシンで共有しない
+- リージョンは `nrt`。マシンは 1 台。Volume は複数マシンで共有しない。`fly machine clone` で台数を増やさない
+- 公開と更新は `backend/` で `fly deploy`。`fly launch` は既存の `fly.toml` を上書きするので使わない
+- `APP_KEY` は `fly secrets set` で渡す。`fly.toml` に秘密を書かない
+- `min_machines_running = 0` を維持する。Managed Postgres、専用 IPv4、マシンの追加を入れると月額 $5 未満の免除を超える
 - `render.yaml` など Render 用の設定を追加しない
 - DB を Postgres や他のマネージド DB に切り替えない
 - デプロイ先を変えるのは、利用者から明示されたときだけ

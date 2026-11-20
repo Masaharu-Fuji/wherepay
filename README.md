@@ -12,7 +12,7 @@
 - [技術スタック](#技術スタック)
 - [開発環境セットアップ](#開発環境セットアップ)
 - [実行方法](#実行方法)
-- [無料で公開する](#無料で公開する)
+- [デプロイ](#デプロイ)
 - [現在の実装機能](#現在の実装機能)
 - [ER 図](#er-図)
 - [スクリーンショット](#スクリーンショット)
@@ -65,6 +65,8 @@
   - PHPUnit (テスト)
   - PHPStan / Larastan (静的解析)
   - Twig CS Fixer / Prettier (整形)
+- **ホスティング**
+  - Fly.io（設定の正本は `backend/fly.toml`）。手順は [デプロイ](#デプロイ)
 
 `backend/` 配下に Laravel アプリを配置し、Vite によるアセットビルドを組み合わせる構成です。
 
@@ -158,32 +160,136 @@ composer run lint:lines
 
 ---
 
-## 無料で公開する
+## デプロイ
 
-公開先は [Render](https://render.com) の無料枠です。Web サービスと Postgres がどちらも $0 で、クレジットカードの登録なしで始められます。定義はリポジトリ直下の [`render.yaml`](render.yaml) です。リージョンはシンガポール、Web のメモリは 512MB です。
+本番の公開先は **Fly.io** です。ルーム・メンバー・支出・清算の作成、参照、更新、削除は SQLite に残します。接続先は Fly Volume `wherepay_data` 上の `/data/database.sqlite` です。
 
-環境変数の見本は [`backend/.env.deploy.example`](backend/.env.deploy.example) です。自分で用意するのは次の 2 つです。
+設定の正本は次のファイルです。環境変数の見本は [`backend/.env.deploy.example`](backend/.env.deploy.example) です。
 
-| 変数 | 見本 | 入り方 |
+- `backend/fly.toml` … アプリ名、リージョン、環境変数、HTTP、Volume、マシンサイズ
+- `backend/Dockerfile` … PHP 8.5 と Vite ビルドを含む本番イメージ
+- `backend/.fly/` … nginx / PHP-FPM / 起動時スクリプト
+
+アプリ名は `wherepay-old-shape-6823`、リージョンは東京（`nrt`）、公開 URL は `https://wherepay-old-shape-6823.fly.dev` です。コマンドは、リポジトリの `backend/` で実行します。`fly.toml` がそこにあるためです。
+
+### 公式ドキュメントの見方
+
+Fly.io のドキュメントは英語だけです。Chrome でページを開き、右クリックの「日本語に翻訳」を使います。翻訳は機械翻訳なので、左の目次でページを決め、右側の番号付き手順と灰色のコード枠を追います。黄色や赤の枠は注意です。
+
+このアプリで開くページは次のとおりです。検索欄に英語の見出しを入れても同じページに届きます。
+
+| 目次の英語 | 開くページ | このアプリでの使い方 |
 | --- | --- | --- |
-| `APP_KEY` | `base64:` で始まる 32 バイトの鍵 | Render の generateValue が作ります。手元で作るときは `php artisan key:generate --show` です |
-| `DATABASE_URL` | `postgres://wherepay:password@dpg-example:5432/wherepay` | Blueprint が wherepay-db の接続文字列を入れます。差し替えるときはこの 1 行です |
+| Getting Started | [Launch your app](https://fly.io/docs/getting-started/launch/) | `flyctl` の導入とログインの流れ |
+| Language & Framework Guides | [Laravel on Fly.io](https://fly.io/docs/laravel/) | Laravel を載せるときの全体像。下記のとおり `fly launch` は使わない |
+| Fly Volumes | [Add volume storage](https://fly.io/docs/launch/volume-storage/) | `/data` にディスクを付け、デプロイ後も SQLite を残す |
+| Apps on Fly.io | [Secrets](https://fly.io/docs/apps/secrets/) | `APP_KEY` を暗号化して渡す |
+| About | [Free Waiver](https://fly.io/docs/about/free-waiver/) | 月額請求が $5 未満なら、その月は支払わない |
+| About | [Resource Pricing](https://fly.io/docs/about/pricing/) | マシン、Volume、リージョンごとの料金 |
+| Reference | [Install flyctl](https://fly.io/docs/flyctl/install/) | Windows へのコマンドの入れ方 |
 
-`APP_ENV`、`DB_CONNECTION=pgsql`、`SESSION_DRIVER=cookie`、`CACHE_STORE=file`、`QUEUE_CONNECTION=sync` は見本ファイルと `render.yaml` に同じ値があります。`PORT` と `RENDER_EXTERNAL_URL` は Render が起動時に渡します。
+[Laravel on Fly.io](https://fly.io/docs/laravel/) の最初のコマンドは `fly launch` です。これは空の Laravel を新規に載せる手順で、Dockerfile と `fly.toml` を作り、Postgres や Redis を提案します。このリポジトリには設定がすでにあるので、公開と更新は `fly deploy` を使います。`fly launch` が上書きを聞いてきたときは No を選びます。
 
-ルームは Postgres に保存します。無料の Web はディスクを持たないので、SQLite のファイルはインスタンスが止まるたびに消えます。
+### 費用を $0 に保つ
 
-無料枠の動きは次のとおりです。
+Fly.io に無料枠はありません。公式の [Free Waiver](https://fly.io/docs/about/free-waiver/) では、申し込み時の個人組織（Personal）の月額請求が $5 未満なら全額免除されます。$5 以上の月は、先頭の $5 を引かずに請求額の全額を払います。免除には、その個人組織へクレジットカードを登録します。カードが無い間は、$1・7 日間のトライアルだけです。自分で追加した別の組織には免除がありません。
 
-- 15 分アクセスが無いと Web は止まります。次に開くと、起きるまで約 1 分かかります。止まっているあいだのルームは Postgres に残ります。
-- 無料 Postgres は作ってから 30 日で期限が切れます。切れてから 14 日の猶予のあと、Render がデータベースごと削除します。旅行のあいだ試す用途向けです。
-- 30 日を超えて残すときは、`DATABASE_URL` を Neon などの無料 Postgres に差し替えます。`DB_CONNECTION` は `pgsql` のままです。
+2026 年 11 月の [Resource Pricing](https://fly.io/docs/about/pricing/) では、料金は次のとおりです。東京の計算用の倍率は 1.308 です。
 
-この節の内容が `master` に入ったあと、次のボタンから作成します。確認画面で Web と Postgres のプランがどちらも **free** であることを見てから作成してください。プラン欄を空にすると、Web は月 $7、Postgres は月 $6 のプランが選ばれます。
+- 止まっているマシンは、CPU とメモリを課金しない。コンテナイメージの容量だけ（1GB あたり月 $0.15）
+- Volume はマシンが止まっていても、確保した容量で課金する。1GB で月 $0.15
+- `shared-cpu-1x` / 512MB を東京で 30 日起動し続けると、計算上およそ $4.83。これに Volume の $0.15 が乗る
+- 31 日の月や外向き通信（アジアは 1GB あたり $0.04）が乗ると $5 を超え、その月は全額の請求になる
 
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Masaharu-Fuji/wherepay)
+`fly.toml` の `min_machines_running = 0` を維持し、アクセスが無いときはマシンを止めます。旅行のときだけ開く使い方なら、免除の内側に収まります。専用 IPv4（月 $2）、Managed Postgres（月 $38 から）、マシンの追加は入れません。請求額は [ダッシュボード](https://fly.io/dashboard) の Billing で見ます。組織名が Personal であることを確認します。
 
-作成が終わると `https://wherepay.onrender.com` のような URL が付きます。同じ名前が既にあるときは末尾が変わります。
+### データが残る条件
+
+支出と清算は Volume に残します。アクセスが途切れるとマシンは `stopped` になります。これは障害ではなく、次のアクセスで起動するまでの正常な状態です。Volume の中の SQLite は残るので、起動後に同じルームへ続きから書けます。最初の表示は、マシンが起きるまで待ちます。
+
+起動時の `backend/.fly/scripts/migrate.sh` は、本番で `/data` がマウントされていなければプロセスを終了します。空のコンテナ内 DB に落ちて、記録が消えたように見えるのを防ぐためです。
+
+Volume は 1 台のマシンにしか付きません。公式ページにある `fly machine clone` は、空のディスクがもう 1 台できるだけで、SQLite の中身はコピーしません。マシンは 1 台のままにします。
+
+ディスクが消えるのは、ダッシュボードか `fly volumes destroy`、`fly apps destroy` で Volume やアプリ自体を削除したときです。`fly deploy` では消えません。
+
+### 手順
+
+#### 1. コマンドを入れる
+
+PowerShell で、[Install flyctl](https://fly.io/docs/flyctl/install/) の Windows 用コマンドを実行します。
+
+```powershell
+powershell -Command "iwr https://fly.io/install.ps1 -useb | iex"
+```
+
+終わったら PowerShell を開き直し、`fly version` で版が表示されることを確認します。
+
+#### 2. アカウント
+
+ブラウザが開きます。すでにアカウントがあるときは `fly auth login` です。
+
+```powershell
+fly auth signup
+```
+
+登録後、[ダッシュボード](https://fly.io/dashboard) の個人組織にクレジットカードを登録します。
+
+#### 3. 秘密の鍵を渡す
+
+`APP_KEY` は `fly.toml` に書きません。[Secrets](https://fly.io/docs/apps/secrets/) の手順で渡します。`fly secrets list` は名前だけを表示し、値は見えません。
+
+```powershell
+cd backend
+php artisan key:generate --show
+fly secrets set 'APP_KEY=base64:ここに表示された値'
+```
+
+#### 4. ディスクを作って載せる
+
+[Add volume storage](https://fly.io/docs/launch/volume-storage/) の、既存アプリに Volume を足す手順です。`[mounts]` は `fly.toml` にあります。東京に 1 個だけ作ります。
+
+```powershell
+fly volumes create wherepay_data -r nrt
+fly deploy
+```
+
+`fly status` でアプリが無いと言われたら、`fly.toml` と同じ名前で作ってから、Volume の作成と `fly deploy` をやり直します。
+
+```powershell
+fly apps create wherepay-old-shape-6823
+```
+
+`fly deploy` の途中で Volume を作るか聞かれたら Yes と答えます。Postgres、Redis、Tigris を足すか聞かれたら No と答えます。
+
+#### 5. データが残るか確認する
+
+```powershell
+fly apps open
+```
+
+ブラウザでルームを 1 つ作り、メンバーと支出を登録します。数分放置してからもう一度開きます。同じルームが残っていれば、Volume 上で作成・参照・更新・削除が成り立っています。
+
+```powershell
+fly status
+fly volumes list
+fly logs
+```
+
+`fly volumes list` の `REGION` が `nrt` で、`ATTACHED VM` にマシン ID が入っていれば、ディスクは接続されています。
+
+2 回目以降の更新は、`backend/` で `fly deploy` だけです。
+
+### 画面に出る英語
+
+| 表示 | 意味 |
+| --- | --- |
+| Personal | 月額 $5 未満の免除が付く個人組織 |
+| Do you want to tweak these settings before proceeding? | 提案された設定を変えるか。Postgres などが入っていたら Yes にして外す |
+| Postgres / Redis / Tigris | 追加の有料サービス。このアプリでは追加しない |
+| started | 起動中。この時間だけ CPU とメモリが課金対象 |
+| stopped | 停止中。SQLite は Volume に残る |
+| created | Volume はあるが、まだマシンに付いていない |
 
 ---
 
@@ -333,6 +439,7 @@ app_portfolio/
 ### 概要・機能一覧
 
 - [README（このページ）](README.md)
+- [デプロイ](#デプロイ)
 - [アプリの進行](doc/workflow.md)
 - [ER 図](doc/er.md)
 

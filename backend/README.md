@@ -10,6 +10,7 @@
 ## 目次
 
 - [よく使うコマンド](#よく使うコマンド)
+- [デプロイ（Fly.io）](#デプロイflyio)
 - [DB とシーディング](#db-とシーディング)
 - [ルームへのアクセス（query_key）](#ルームへのアクセスquery_key)
 - [データ整合性チェック用テスト](#データ整合性チェック用テスト)
@@ -56,6 +57,20 @@ Twig の自動整形:
 ```bash
 composer run twig:fix
 ```
+
+---
+
+## デプロイ（Fly.io）
+
+本番は **Fly.io** です。手順、公式ドキュメントの読み方、月額 $5 未満で支払わない条件は、リポジトリ直下の [README「デプロイ」](../README.md#デプロイ) にあります。
+
+- 設定: `fly.toml`、`Dockerfile`、`.fly/`
+- DB: Volume `wherepay_data` の `/data/database.sqlite`
+- リージョン: `nrt`（東京）。マシンは 1 台のままにする
+- 公開と更新: このディレクトリで `fly deploy`
+- 本番で `/data` が無いときは `.fly/scripts/migrate.sh` が起動を止める
+
+`fly launch` は使いません。上書きを聞かれたら No と答えます。`render.yaml` は置かず、SQLite を Postgres などのマネージド DB に移すのも、明示の依頼があるまで行いません。
 
 ---
 
