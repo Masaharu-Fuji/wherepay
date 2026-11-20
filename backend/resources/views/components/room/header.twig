@@ -1,20 +1,30 @@
 <header class="ui-bar">
     <div class="ui-bar-inner">
-        <div class="min-w-0 flex-1 basis-full sm:basis-auto">
-            <h1 class="truncate text-lg font-semibold text-gray-900">
-                {{ room.room_name }}
-            </h1>
-            <p class="text-sm text-gray-500">
-                合計
-                <span class="ui-money">
-                    ¥{{ totalAmount|number_format(0, '.', ',') }}
-                </span>
-            </p>
+        <div class="flex min-w-0 flex-1 basis-full items-center gap-3 sm:basis-auto">
+            <a
+                href="{{ route('rooms.create') }}"
+                class="ui-btn ui-btn-secondary shrink-0 px-2.5"
+                aria-label="ルーム選択に戻る"
+                title="ルーム選択に戻る"
+            >
+                <span
+                    class="icon-[lucide--arrow-left] inline-block h-5 w-5 shrink-0"
+                    aria-hidden="true"
+                ></span>
+            </a>
+            <div class="min-w-0">
+                <h1 class="truncate text-lg font-semibold text-gray-900">
+                    {{ room.room_name }}
+                </h1>
+                <p class="text-sm text-gray-500">
+                    合計
+                    <span class="ui-money">
+                        ¥{{ totalAmount|number_format(0, '.', ',') }}
+                    </span>
+                </p>
+            </div>
         </div>
         <div class="flex flex-wrap items-center gap-2">
-            <a href="{{ route('rooms.create') }}" class="ui-btn ui-btn-secondary">
-                ルーム選択に戻る
-            </a>
             <input
                 id="room-url"
                 type="text"
