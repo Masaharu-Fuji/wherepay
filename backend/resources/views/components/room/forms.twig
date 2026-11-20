@@ -15,6 +15,8 @@
         }}"
         class="space-y-2 md:space-y-4"
         id="item-form"
+        data-item-form
+        data-room-id="{{ room.id }}"
     >
         <input type="hidden" name="_token" value="{{ csrf_token() }}" />
         <input type="hidden" name="latitude" id="latitude" />
@@ -123,10 +125,61 @@
             {% endif %}
         </div>
 
-        <div data-participant-jump-root>
+        <div
+            data-participant-jump-root
+            data-participant-editor
+            data-amount-input="amount"
+            data-payer-select="payer_id"
+        >
             <label class="block text-xs md:text-sm mb-2 text-gray-700">
                 対象者（誰の分の支払いか）
             </label>
+            {% if (room.members|length) > 0 %}
+                <div class="mb-2 flex flex-wrap gap-2">
+                    <button
+                        type="button"
+                        data-participant-all
+                        class="{{
+                        cn(
+                            'px-3 py-2 text-sm font-medium',
+                            'border-2 border-primary rounded-xl',
+                            'bg-primary text-white',
+                            'active:bg-primary-hover'
+                        )
+                        }}"
+                    >
+                        全員
+                    </button>
+                    <button
+                        type="button"
+                        data-participant-except-payer
+                        class="{{
+                        cn(
+                            'px-3 py-2 text-sm font-medium',
+                            'border-2 border-primary rounded-xl',
+                            'bg-white text-primary',
+                            'active:bg-primary-50'
+                        )
+                        }}"
+                    >
+                        支払者以外
+                    </button>
+                    <button
+                        type="button"
+                        data-participant-clear
+                        class="{{
+                        cn(
+                            'px-3 py-2 text-sm font-medium',
+                            'border-2 border-gray-200 rounded-xl',
+                            'bg-white text-gray-700',
+                            'active:bg-gray-50'
+                        )
+                        }}"
+                    >
+                        クリア
+                    </button>
+                </div>
+            {% endif %}
             {% if (room.members|length) > 0 %}
                 <div
                     class="{{
@@ -222,6 +275,11 @@
                                 type="checkbox"
                                 name="participant_ids[]"
                                 value="{{ member.id }}"
+                                {{ (member.id ~ '') in (
+                                    errors.getBag('default').isNotEmpty()
+                                        ? old('participant_ids', [])
+                                        : []
+                                ) ? 'checked' : '' }}
                                 class="{{
                                 cn(
                                     'w-5 h-5 shrink-0',
@@ -242,6 +300,9 @@
                     {{ errors.first('participant_ids') }}
                 </p>
             {% endif %}
+            <p data-per-person class="text-sm text-gray-700">
+                対象者を選ぶと、1人あたりの金額が出ます
+            </p>
         </div>
 
         <div class="flex flex-col gap-3">
@@ -250,12 +311,10 @@
                 onclick="fetchItemGeoLocation()"
                 class="{{
                 cn(
-                    'w-full text-sm md:text-lg p-2',
-                    'rounded-xl shadow-md',
-                    'hover:shadow-lg transition-all',
-                    'transform hover:scale-[1.02]',
-                    'bg-gradient-to-r from-sub-pink to-sub-pink-hover text-white',
-                    'hover:opacity-90',
+                    'w-full text-sm p-2',
+                    'rounded-xl border-2 border-gray-200',
+                    'bg-white text-gray-700',
+                    'hover:bg-gray-50 transition-colors',
                     'flex items-center justify-center gap-1'
                 )
                 }}"
@@ -263,7 +322,7 @@
                 <span class="icon-[fluent-color--location-ripple-24] w-5 h-5">
 
                 </span>
-                <span class="text-sm md:text-xl">位置情報取得</span>
+                <span class="text-sm">位置情報を付ける（任意）</span>
             </button>
             <button
                 type="submit"

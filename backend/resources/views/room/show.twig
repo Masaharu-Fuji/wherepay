@@ -8,6 +8,22 @@
     <div class="min-h-screen pb-32">
         {{ include('components.room.header') }}
 
+        {% if statusMessage %}
+            <div class="max-w-5xl mx-auto px-4 pt-4">
+                <p
+                    role="status"
+                    class="{{
+                    cn(
+                        'rounded-xl border border-primary-200',
+                        'bg-white px-4 py-3 text-sm text-gray-800 shadow-sm'
+                    )
+                    }}"
+                >
+                    {{ statusMessage }}
+                </p>
+            </div>
+        {% endif %}
+
         <div
             class="{{
             cn(
