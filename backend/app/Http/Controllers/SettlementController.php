@@ -66,19 +66,28 @@ class SettlementController extends Controller
             $owedByMember[$fromId] += $transaction['amount'];
         }
 
-        // ルーム全体が完了しているかどうか
-        // 「支払うべき金額が 0 のメンバー」は最初から完了扱いとし、
-        // 実際に支払い義務のあるメンバーのみを判定対象とする
+        $receiveByMember = [];
+
+        foreach ($result['transactions'] as $transaction) {
+            $toId = $transaction['to'];
+            $receiveByMember[$toId] = ($receiveByMember[$toId] ?? 0) + $transaction['amount'];
+        }
+
+        // ルーム全体が完了しているかどうか。
+        // 払う金額がない人は完了にしない。払う人がひとりもいないときも、
+        // まだ清算していないので完了にしない。
         $isFullySettled = true;
+        $hasPaymentObligation = false;
 
         foreach ($room->members as $member) {
             $memberId = $member->id;
             $owed = $owedByMember[$memberId] ?? 0;
 
-            // 支払義務がない人は常に OK
             if ($owed === 0) {
                 continue;
             }
+
+            $hasPaymentObligation = true;
 
             if ($hasCashInputs) {
                 // おつり入力があるときは、入力値ベースで判定
@@ -105,9 +114,14 @@ class SettlementController extends Controller
             }
         }
 
+        if (! $hasPaymentObligation) {
+            $isFullySettled = false;
+        }
+
         $room->loadMissing([
             'members',
             'items.payer',
+            'items.participants.member',
             'items.location',
         ]);
         $membersById = $room->members->keyBy('id');
@@ -161,9 +175,9 @@ class SettlementController extends Controller
                 $memberId = $member->id;
                 $owed = $owedByMember[$memberId] ?? 0;
 
-                // そもそも支払うべき金額がない人は、最初から完了扱い
+                // 払う金額がない人は、清算完了の対象にしない
                 if ($owed === 0) {
-                    return true;
+                    return false;
                 }
 
                 if ($hasCashInputs) {
@@ -194,6 +208,9 @@ class SettlementController extends Controller
             'query_key' => $queryKey,
             'total' => $result['total'],
             'memberDebts' => $result['memberDebts'],
+            'paidByMember' => $result['paidByMember'],
+            'owedByMember' => $owedByMember,
+            'receiveByMember' => $receiveByMember,
             'transactions' => $result['transactions'],
             'cashInputs' => $cashInputs,
             'changeByMember' => $changeByMember,
@@ -202,6 +219,10 @@ class SettlementController extends Controller
             'allLocationsUrl' => $allLocationsUrl,
             'isFullySettled' => $isFullySettled,
             'paidMembers' => $paidMembers,
+            'paidMemberIds' => $paidMembers->pluck('id')->all(),
+            'excludedItemCount' => $room->items
+                ->filter(fn ($item) => $item->participants->isEmpty())
+                ->count(),
         ]);
     }
 

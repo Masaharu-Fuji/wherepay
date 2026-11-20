@@ -5,10 +5,14 @@
     {% endif %}
 >
     {% if (transactions|length) == 0 %}
-        <p class="py-8 text-center text-sm text-gray-500">
-            清算は完了しています
+        <p class="py-8 text-center text-sm leading-relaxed text-gray-500">
+            誰かが誰かに払う金額はありません。
         </p>
     {% else %}
+        <p class="mb-3 text-sm leading-relaxed text-gray-500">
+            払う人から、受け取る人への金額です。
+            所持金が支払額以上になると、支払える状態になります。
+        </p>
         <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <label class="block text-sm text-gray-600">
                 この人の分だけ
@@ -44,12 +48,19 @@
                     class="py-3"
                 >
                     <p class="text-base text-gray-900">
-                        <span class="font-medium">{{ fromName }}</span>さん →
-                        <span class="font-medium">{{ toName }}</span>さんに
+                        <span class="font-medium">{{ fromName }}</span>さんが
+                        <span class="font-medium">{{ toName }}</span>さんへ払う
                         <span class="ui-money">
                             ¥{{ transaction.amount|number_format(0, '.', ',') }}
                         </span>
                     </p>
+                    {% if transaction.from in paidMemberIds %}
+                        <p class="mt-1 text-sm font-medium text-sub-green-ink">
+                            支払える状態です
+                        </p>
+                    {% else %}
+                        <p class="mt-1 text-sm text-gray-500">未払い</p>
+                    {% endif %}
                 </article>
             {% endfor %}
         </div>

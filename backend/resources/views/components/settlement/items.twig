@@ -1,0 +1,58 @@
+<section class="ui-card">
+    <h3 class="ui-section-title">
+        <span class="icon-[lucide--receipt] ui-icon"></span>
+        品目の内訳
+    </h3>
+    <p class="mt-2 text-sm leading-relaxed text-gray-500">
+        品目ごとに、誰が払い、誰の負担になるかを示します。
+    </p>
+
+    {% if (room.items|length) == 0 %}
+        <p class="mt-4 text-sm text-gray-500">
+            品目はまだありません。
+        </p>
+    {% else %}
+        <ul class="mt-4 divide-y divide-gray-100 border-t border-gray-100">
+            {% for item in room.items %}
+                {% set payer = item.payer %}
+                {% set names = [] %}
+                {% for participant in item.participants %}
+                    {% set names =
+                        names|merge(
+                            [
+                                participant.member
+                                    ? participant.member.member_name
+                                    : '不明',
+                            ],
+                        )
+                    %}
+                {% endfor %}
+                <li class="py-3">
+                    <div class="flex items-start justify-between gap-3">
+                        <p class="min-w-0 text-sm font-medium text-gray-900">
+                            {{ item.item_name }}
+                        </p>
+                        <p class="ui-money shrink-0 text-base">
+                            ¥{{ item.amount|number_format(0, '.', ',') }}
+                        </p>
+                    </div>
+                    {% if (item.participants|length) == 0 %}
+                        <p class="mt-1 text-sm text-danger">
+                            対象者がいないので、この品目は上の金額に入っていません。
+                        </p>
+                    {% else %}
+                        {% set perPerson =
+                            (item.amount / (item.participants|length))
+                                |round(0, 'common')
+                                |number_format(0, '.', ',')
+                        %}
+                        <p class="mt-1 text-sm leading-relaxed text-gray-600">
+                            {{ payer ? payer.member_name : '不明' }}が支払い、
+                            {{ names|join('、') }}で負担（1人 ¥{{ perPerson }}）
+                        </p>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</section>

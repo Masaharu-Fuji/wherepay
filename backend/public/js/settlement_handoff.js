@@ -43,7 +43,7 @@ export default function settlementHandoff() {
                 .map((row) => {
                     const amount = Number(row.dataset.amount || 0);
                     const formatted = amount.toLocaleString("ja-JP");
-                    return `${row.dataset.fromName} → ${row.dataset.toName} ¥${formatted}`;
+                    return `${row.dataset.fromName}が${row.dataset.toName}へ払う ¥${formatted}`;
                 });
             const text = [`${root.dataset.roomName}の清算`, ...lines].join("\n");
 

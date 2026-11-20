@@ -11,6 +11,7 @@ class SettlementCalculator
      * @return array{
      *     total:int,
      *     memberDebts: array<int,float>,
+     *     paidByMember: array<int,int>,
      *     balances: array<int,float>,
      *     transactions: array<int,array{from:int,to:int,amount:int}>
      * }
@@ -33,10 +34,12 @@ class SettlementCalculator
 
         $balances = [];
         $memberDebts = [];
+        $paidByMember = [];
 
         foreach ($members as $member) {
             $balances[$member->id] = 0.0;
             $memberDebts[$member->id] = 0;
+            $paidByMember[$member->id] = 0;
         }
 
         foreach ($items as $item) {
@@ -52,14 +55,17 @@ class SettlementCalculator
             if (! array_key_exists($item->payer_id, $balances)) {
                 $balances[$item->payer_id] = 0.0;
                 $memberDebts[$item->payer_id] = 0;
+                $paidByMember[$item->payer_id] = 0;
             }
 
             $balances[$item->payer_id] += $item->amount;
+            $paidByMember[$item->payer_id] += (int) $item->amount;
 
             foreach ($participants as $participant) {
                 if (! array_key_exists($participant->member_id, $balances)) {
                     $balances[$participant->member_id] = 0.0;
                     $memberDebts[$participant->member_id] = 0;
+                    $paidByMember[$participant->member_id] = 0;
                 }
 
                 $balances[$participant->member_id] -= $perPerson;
@@ -75,6 +81,7 @@ class SettlementCalculator
                 static fn (float $value): float => round($value),
                 $memberDebts
             ),
+            'paidByMember' => $paidByMember,
             'balances' => $balances,
             'transactions' => $transactions,
         ];

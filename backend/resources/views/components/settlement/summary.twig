@@ -1,21 +1,68 @@
 <section class="ui-card">
-    <p class="text-sm text-gray-500">合計金額</p>
+    <p class="text-sm text-gray-500">
+        合計金額
+    </p>
     <p class="ui-money mt-1 text-3xl">
         ¥{{ total|number_format(0, '.', ',') }}
     </p>
+    <p class="mt-2 text-sm leading-relaxed text-gray-500">
+        支払ったは立て替えた金額、負担は品目を分けたあとの自分の分です。
+        受け取る・払うは、このあと渡す金額です。
+    </p>
+    {% if excludedItemCount > 0 %}
+        <p class="mt-2 text-sm leading-relaxed text-danger">
+            対象者のいない品目が{{ excludedItemCount }}件あります。
+            その金額はメンバーごとの数字に入っていません。下の内訳で確認できます。
+        </p>
+    {% endif %}
     <ul class="mt-4 divide-y divide-gray-100 border-t border-gray-100">
         {% for member in room.members %}
-            {% set debt = memberDebts[member.id]|default(0)|round(0, 'common') %}
-            <li class="flex items-center justify-between gap-3 py-2.5">
-                <span class="text-sm text-gray-900">
+            {% set paid = paidByMember[member.id]|default(0) %}
+            {% set debt =
+                memberDebts[member.id]|default(0)|round(0, 'common')
+            %}
+            {% set pay = owedByMember[member.id]|default(0) %}
+            {% set receive = receiveByMember[member.id]|default(0) %}
+            <li class="py-3">
+                <p class="text-sm font-medium text-gray-900">
                     {{ member.member_name }}
-                </span>
-                <span class="text-sm text-gray-500">
-                    負担額
-                    <span class="ui-money">
-                        ¥{{ debt|number_format(0, '.', ',') }}
-                    </span>
-                </span>
+                </p>
+                <dl
+                    class="mt-2 grid grid-cols-2 gap-x-3 gap-y-2 text-sm sm:grid-cols-4"
+                >
+                    <div>
+                        <dt class="text-gray-500">
+                            支払った
+                        </dt>
+                        <dd class="ui-money">
+                            ¥{{ paid|number_format(0, '.', ',') }}
+                        </dd>
+                    </div>
+                    <div>
+                        <dt class="text-gray-500">
+                            負担
+                        </dt>
+                        <dd class="ui-money">
+                            ¥{{ debt|number_format(0, '.', ',') }}
+                        </dd>
+                    </div>
+                    <div>
+                        <dt class="text-gray-500">
+                            受け取る
+                        </dt>
+                        <dd class="ui-money">
+                            ¥{{ receive|number_format(0, '.', ',') }}
+                        </dd>
+                    </div>
+                    <div>
+                        <dt class="text-gray-500">
+                            払う
+                        </dt>
+                        <dd class="ui-money">
+                            ¥{{ pay|number_format(0, '.', ',') }}
+                        </dd>
+                    </div>
+                </dl>
             </li>
         {% endfor %}
     </ul>
