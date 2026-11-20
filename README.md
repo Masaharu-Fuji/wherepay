@@ -160,7 +160,23 @@ composer run lint:lines
 
 ## 無料で公開する
 
-公開先は [Render](https://render.com) の無料枠です。Web サービスと Postgres がどちらも $0 で、クレジットカードの登録なしで始められます。定義はリポジトリ直下の [`render.yaml`](render.yaml) です。リージョンはシンガポール、Web のメモリは 512MB です。
+カードを登録せずに無料で扱えるのは、次の 3 つです。金額と期限は 2026年11月の公式料金です。
+
+| 置くもの | 無料の先 | 枠 |
+| --- | --- | --- |
+| アプリ本体 | [Render の Free Web](https://render.com/docs/free) | $0。期限なし。メモリ 512MB。ワークスペースあたり月 750 時間で、このアプリ 1 台なら月を通して足ります。止まっている時間は数えません。15 分アクセスが無いと止まり、次に開くと約 1 分で起きます |
+| ルーム（30 日まで） | 同じ Render の Free Postgres | $0。容量 1GB。ワークスペースに 1 つ。作ってから 30 日で期限が切れ、その後 14 日の猶予のあと、データごと削除されます |
+| ルーム（30 日を超えて残す） | [Neon の Free](https://neon.com/docs/introduction/plans) | $0。期限なし。プロジェクトあたり容量 1GB、計算は月 100 CU 時間。5 分使わないと計算資源は 0 になり、データはそのまま残ります。次の接続で戻ります |
+
+公開手順はリポジトリ直下の [`render.yaml`](render.yaml) です。Web と Postgres はどちらも `plan: free`、リージョンはシンガポールです。ワークスペースは Hobby（月 $0）のままにします。
+
+ルームは Postgres に保存します。無料の Web にディスクは付かないので、SQLite のファイルはインスタンスが止まるたびに消えます。
+
+30 日を超えてルームを残すときは、Render の Web はそのままにして、`DATABASE_URL` だけを Neon の接続文字列に差し替えます。`DB_CONNECTION` は `pgsql` のままです。Neon は Render の外にあるので、通信は公開インターネットを通ります。
+
+Hobby には、外向きの通信が月 5GB、ビルドが月 500 分まで含まれます。カードが無い状態で外向きの通信が 5GB を超えると、その月の残りは無料のサービスが止まります。ビルドが 500 分を超えると、新しいビルドが止まり、動いているサービスはそのまま残ります。
+
+`backend/fly.toml` は Fly.io 向けの別の定義です。Fly.io の新規アカウントがカードなしで使えるのは、$1 の 7 日間トライアルです。トライアル中の Machine は、起動から 5 分で止まります。トライアルのあと、個人組織はクレジットカードを登録し、その月の請求が $5 未満のとき請求が免除されます。
 
 環境変数の見本は [`backend/.env.deploy.example`](backend/.env.deploy.example) です。自分で用意するのは次の 2 つです。
 
@@ -171,15 +187,7 @@ composer run lint:lines
 
 `APP_ENV`、`DB_CONNECTION=pgsql`、`SESSION_DRIVER=cookie`、`CACHE_STORE=file`、`QUEUE_CONNECTION=sync` は見本ファイルと `render.yaml` に同じ値があります。`PORT` と `RENDER_EXTERNAL_URL` は Render が起動時に渡します。
 
-ルームは Postgres に保存します。無料の Web はディスクを持たないので、SQLite のファイルはインスタンスが止まるたびに消えます。
-
-無料枠の動きは次のとおりです。
-
-- 15 分アクセスが無いと Web は止まります。次に開くと、起きるまで約 1 分かかります。止まっているあいだのルームは Postgres に残ります。
-- 無料 Postgres は作ってから 30 日で期限が切れます。切れてから 14 日の猶予のあと、Render がデータベースごと削除します。旅行のあいだ試す用途向けです。
-- 30 日を超えて残すときは、`DATABASE_URL` を Neon などの無料 Postgres に差し替えます。`DB_CONNECTION` は `pgsql` のままです。
-
-この節の内容が `master` に入ったあと、次のボタンから作成します。確認画面で Web と Postgres のプランがどちらも **free** であることを見てから作成してください。プラン欄を空にすると、Web は月 $7、Postgres は月 $6 のプランが選ばれます。
+次のボタンから、上の Free Web と Free Postgres を作成します。確認画面で Web と Postgres のプランがどちらも **free** であることを見てから作成してください。プラン欄を空にすると、Web は月 $7、Postgres は月 $6 のプランが選ばれます。
 
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Masaharu-Fuji/wherepay)
 
