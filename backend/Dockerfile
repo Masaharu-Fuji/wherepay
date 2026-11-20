@@ -60,7 +60,7 @@ WORKDIR /var/www/html
 
 # 4. Setup application dependencies 
 # Build has no .env / DB; default CACHE_STORE=database would require database.sqlite.
-RUN composer install --optimize-autoloader --no-dev \
+RUN composer install --optimize-autoloader --classmap-authoritative --no-dev \
     && mkdir -p storage/logs \
     && CACHE_STORE=array php artisan optimize:clear \
     && chown -R www-data:www-data /var/www/html \
@@ -83,8 +83,10 @@ COPY --from=base /var/www/html/vendor /app/vendor
 # Use yarn or npm depending on what type of
 # lock file we might find. Defaults to
 # NPM if no lock file is found.
-# Note: We run "production" for Mix and "build" for Vite
-RUN if [ -f "vite.config.js" ] || [ -f "vite.config.ts" ]; then \
+# Note: We run "production" for Mix and "build" for Vite.
+# set -e keeps a failed asset build from being hidden by the minify step.
+RUN set -e; \
+    if [ -f "vite.config.js" ] || [ -f "vite.config.ts" ]; then \
     ASSET_CMD="build"; \
     else \
     ASSET_CMD="production"; \
@@ -102,7 +104,8 @@ RUN if [ -f "vite.config.js" ] || [ -f "vite.config.ts" ]; then \
     else \
     npm install; \
     npm run $ASSET_CMD; \
-    fi;
+    fi; \
+    OPTIMIZE_PUBLIC_JS=1 node bin/optimize-public-js.mjs;
 
 # From our base container created above, we
 # create our final image, adding in static

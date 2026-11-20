@@ -39,7 +39,7 @@ function syncCashInputsToConfirmForm(confirmForm) {
 }
 
 export function showToast(message) {
-    const container = document.getElementById("toast-container");
+    let container = document.getElementById("toast-container");
 
     if (!container) {
         container = document.createElement("div");
