@@ -16,8 +16,6 @@ class Item extends Model
 {
     use HasFactory;
 
-    protected $table = 't_items';
-
     protected $fillable = [
         'room_id',
         'item_name',

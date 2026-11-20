@@ -386,7 +386,7 @@ class RoomController extends Controller
     {
         $rules = [
             'integer',
-            Rule::exists('t_members', 'id')->where('room_id', $room->id),
+            Rule::exists(Member::class, 'id')->where('room_id', $room->id),
         ];
 
         if ($required) {

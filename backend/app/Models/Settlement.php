@@ -10,8 +10,6 @@ class Settlement extends Model
 {
     use HasFactory;
 
-    protected $table = 't_settlements';
-
     protected $fillable = [
         'room_id',
         'payer_id',

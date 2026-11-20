@@ -17,8 +17,6 @@ class Room extends Model
 
     public const NAME_MAX_LENGTH = 40;
 
-    protected $table = 't_rooms';
-
     protected $fillable = [
         'room_name',
         'password_plan',

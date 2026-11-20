@@ -10,8 +10,6 @@ class ItemParticipant extends Model
 {
     use HasFactory;
 
-    protected $table = 't_item_participants';
-
     protected $fillable = [
         'share_amount',
         'item_id',
