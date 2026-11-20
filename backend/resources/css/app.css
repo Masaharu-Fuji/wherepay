@@ -3,49 +3,136 @@
 /* Scan Twig templates (not in Vite dependency graph) */
 @source "../views/**/*.twig";
 
-/* Base typography (Google Fonts loaded in base.twig) */
-@layer base {
-    body {
-        font-family:
-            "Roboto", "Noto Sans JP", "BIZ UDPMincho", system-ui, sans-serif;
-    }
-}
-
 @plugin "@iconify/tailwind4";
 
-/* Ensure icon classes used in Twig are generated (Vite may not scan .twig) */
-@source inline("icon-[fluent-color--home-32]");
-
-/**
- * Theme (colorset)
- * @see backend/doc/colorset.txt
+/*
+ * Color roles
+ * primary        the single main action on a screen
+ * sub-pink       money amounts
+ * sub-green-ink  settled, recorded location, change that is covered
+ * danger         validation errors and a shortage of cash
+ * gray           structure, names, and secondary actions
  */
 @theme {
-    /* primary - for backgrounds/buttons only, never for text */
     --color-primary: #1a68b1;
     --color-primary-hover: #155399;
     --color-primary-50: #e8f0fa;
     --color-primary-100: #d1e1f5;
     --color-primary-200: #a3c3eb;
 
-    /* sub-green */
     --color-sub-green: #61b816;
     --color-sub-green-hover: #4f9a12;
+    --color-sub-green-ink: #2f6d0c;
+    --color-sub-green-ink-hover: #24580a;
     --color-sub-green-50: #e8f5e0;
     --color-sub-green-100: #d1ebc1;
     --color-sub-green-200: #a3d783;
 
-    /* sub-pink */
     --color-sub-pink: #bf1e56;
     --color-sub-pink-hover: #9e1946;
     --color-sub-pink-50: #fce8ef;
     --color-sub-pink-100: #f9d1df;
     --color-sub-pink-200: #f3a3bf;
 
-    /* sub-yellow */
     --color-sub-yellow: #f2bc09;
     --color-sub-yellow-hover: #c29607;
     --color-sub-yellow-50: #fdf6e8;
     --color-sub-yellow-100: #fbedd1;
     --color-sub-yellow-200: #f7dba3;
+
+    --color-danger: #b42318;
+    --color-danger-50: #fdecea;
+}
+
+@layer base {
+    body {
+        font-family: "Noto Sans JP", system-ui, sans-serif;
+        @apply bg-gray-50 text-gray-900 antialiased;
+    }
+}
+
+@layer components {
+    .ui-page {
+        @apply mx-auto w-full max-w-5xl px-4 py-6;
+    }
+
+    .ui-card {
+        @apply rounded-xl border border-gray-200 bg-white p-4 shadow-sm md:p-5;
+    }
+
+    .ui-section-title {
+        @apply flex items-center gap-2 text-base font-semibold text-gray-900;
+    }
+
+    .ui-icon {
+        @apply inline-block h-5 w-5 shrink-0 text-gray-500;
+    }
+
+    .ui-label {
+        @apply mb-1.5 block text-sm text-gray-600;
+    }
+
+    .ui-input {
+        @apply w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-base text-gray-900 transition-colors placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary-100;
+    }
+
+    .ui-btn {
+        @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-3.5 py-2.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-200 disabled:cursor-not-allowed disabled:opacity-50;
+    }
+
+    .ui-btn-primary {
+        @apply bg-primary text-white hover:bg-primary-hover;
+    }
+
+    .ui-btn-secondary {
+        @apply border border-gray-300 bg-white text-gray-700 hover:bg-gray-50;
+    }
+
+    .ui-btn-success {
+        @apply bg-sub-green-ink text-white hover:bg-sub-green-ink-hover;
+    }
+
+    .ui-btn-danger {
+        @apply border border-danger/30 bg-white text-danger hover:bg-danger-50;
+    }
+
+    .ui-money {
+        @apply font-semibold tabular-nums text-sub-pink;
+    }
+
+    .ui-chip {
+        @apply inline-flex items-center rounded-full border border-primary-100 bg-primary-50 px-3 py-1 text-sm text-primary;
+    }
+
+    .ui-count {
+        @apply inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600;
+    }
+
+    .ui-choice {
+        @apply flex min-h-12 cursor-pointer items-center gap-3 rounded-lg border border-gray-200 bg-white px-3 py-2.5 transition-colors hover:bg-gray-50;
+    }
+
+    .ui-check {
+        @apply h-5 w-5 shrink-0 accent-primary;
+    }
+
+    .ui-scroll {
+        @apply space-y-2 overflow-y-auto overscroll-y-contain rounded-lg border border-gray-200 bg-gray-50 p-2 touch-pan-y;
+    }
+
+    .ui-bar {
+        @apply sticky top-0 z-10 border-b border-gray-200 bg-white;
+    }
+
+    .ui-bar-inner {
+        @apply mx-auto flex w-full max-w-5xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3;
+    }
+
+    .ui-status {
+        @apply rounded-lg border border-primary-100 bg-white px-4 py-3 text-sm text-gray-800;
+    }
+
+    .ranking-bar.is-collapsed {
+        transform: translateY(calc(100% - 3.5rem));
+    }
 }

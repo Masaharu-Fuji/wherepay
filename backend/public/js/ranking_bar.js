@@ -9,19 +9,13 @@ export default function rankingBar() {
     let isOpen = false;
 
     function updateState() {
-        if (isOpen) {
-            bar.classList.remove("translate-y-[calc(100%-5rem)]");
-            if (textSpan) {
-                textSpan.textContent =
-                    textSpan.getAttribute("data-open-text") || "閉じる";
-            }
-        } else {
-            bar.classList.add("translate-y-[calc(100%-5rem)]");
-            if (textSpan) {
-                textSpan.textContent =
-                    textSpan.getAttribute("data-closed-text") || "開く";
-            }
+        bar.classList.toggle("is-collapsed", !isOpen);
+        if (!textSpan) {
+            return;
         }
+        const openLabel = textSpan.getAttribute("data-open-text") || "閉じる";
+        const closedLabel = textSpan.getAttribute("data-closed-text") || "開く";
+        textSpan.textContent = isOpen ? openLabel : closedLabel;
     }
 
     toggle.addEventListener("click", function () {

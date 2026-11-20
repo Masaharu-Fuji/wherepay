@@ -1,50 +1,22 @@
-<div
-    class="{{
-    cn(
-        'flex flex-col gap-2 md:gap-6 lg:flex-row lg:justify-between',
-        'bg-gradient-to-br from-primary to-sub-pink',
-        'rounded-2xl border border-primary-200',
-        'shadow-xl p-3 md:p-6',
-        'text-white'
-    )
-    }}"
->
-    <div
-        class="{{
-        cn(
-            'flex md:flex-col items-center justify-center',
-            'px-2 py-2 gap-2 md:gap-3',
-            'lg:w-2/5'
-        )
-        }}"
-    >
-        <span class="icon-[fluent-color--premium-24] w-10 h-10"></span>
-        <h3 class="text-base md:text-lg opacity-90">合計金額</h3>
-        <span class="text-2xl md:text-4xl">
-            ¥{{ total|number_format(0, '.', ',') }}
-        </span>
-    </div>
-
-    <div class="flex flex-col gap-1 md:gap-2 lg:w-3/5">
+<section class="ui-card">
+    <p class="text-sm text-gray-500">合計金額</p>
+    <p class="ui-money mt-1 text-3xl">
+        ¥{{ total|number_format(0, '.', ',') }}
+    </p>
+    <ul class="mt-4 divide-y divide-gray-100 border-t border-gray-100">
         {% for member in room.members %}
-            {% set debt =
-                memberDebts[member.id]|default(0)|round(0, 'common')
-            %}
-            <div
-                class="{{
-                cn(
-                    'flex justify-between items-center gap-1 md:gap-2',
-                    'bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2'
-                )
-                }}"
-            >
-                <span class="text-sm md:text-base">
+            {% set debt = memberDebts[member.id]|default(0)|round(0, 'common') %}
+            <li class="flex items-center justify-between gap-3 py-2.5">
+                <span class="text-sm text-gray-900">
                     {{ member.member_name }}
                 </span>
-                <span class="text-sm md:text-base">
-                    負担額 ¥{{ debt|number_format(0, '.', ',') }}
+                <span class="text-sm text-gray-500">
+                    負担額
+                    <span class="ui-money">
+                        ¥{{ debt|number_format(0, '.', ',') }}
+                    </span>
                 </span>
-            </div>
+            </li>
         {% endfor %}
-    </div>
-</div>
+    </ul>
+</section>

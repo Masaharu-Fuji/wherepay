@@ -5,22 +5,21 @@
 {% endblock %}
 
 {% block content %}
-    <div class="min-h-screen flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl border border-gray-200 shadow-xl p-8">
-            <h2 class="text-center mb-6 text-2xl">"Where Pay" is fair play</h2>
+    <div class="flex min-h-screen items-center justify-center p-4">
+        <div class="ui-card w-full max-w-md">
+            <h1 class="text-center text-2xl font-semibold tracking-tight text-gray-900">
+                "Where Pay" is fair play
+            </h1>
 
             <form
                 method="POST"
                 action="{{ route('rooms.store') }}"
-                class="space-y-6"
+                class="mt-6 space-y-4"
             >
                 <input type="hidden" name="_token" value="{{ csrf_token() }}" />
 
-                <div class="flex flex-col gap-1">
-                    <label
-                        for="room_name"
-                        class="block mb-1 text-gray-700 text-xs md:text-sm"
-                    >
+                <div>
+                    <label for="room_name" class="ui-label">
                         グループ名を入力してください
                     </label>
                     <input
@@ -29,89 +28,38 @@
                         type="text"
                         placeholder="例: 飲み会グループ"
                         value="{{ old('room_name') }}"
-                        class="{{
-                        cn(
-                            'w-full text-sm md:text-sm p-2',
-                            'border-2 border-gray-200 rounded-xl',
-                            'focus:outline-none focus:border-primary',
-                            'focus:ring-4 focus:ring-primary-100',
-                            'transition-all'
-                        )
-                        }}"
+                        class="ui-input"
                         autofocus
                         required
                     />
                     {% if errors.has('room_name') %}
-                        <p class="mt-2 text-sm text-sub-pink">
+                        <p class="mt-1.5 text-sm text-danger">
                             {{ errors.first('room_name') }}
                         </p>
                     {% endif %}
                 </div>
 
-                <button
-                    type="submit"
-                    class="{{
-                    cn(
-                        'w-full text-sm md:text-lg p-2',
-                        'bg-gradient-to-r from-primary to-sub-pink text-white',
-                        'rounded-xl',
-                        'hover:from-primary-hover hover:to-sub-pink-hover',
-                        'disabled:opacity-50 disabled:cursor-not-allowed',
-                        'transition-all shadow-lg hover:shadow-xl',
-                        'transform hover:scale-[1.02] active:scale-[0.98]',
-                        'flex items-center justify-center gap-1'
-                    )
-                    }}"
-                >
-                    <span class="icon-[fluent-color--book-open-24] w-10 h-10">
-
-                    </span>
-                    <span class="text-sm md:text-xl">ルームを作成</span>
+                <button type="submit" class="ui-btn ui-btn-primary w-full">
+                    ルームを作成
                 </button>
             </form>
 
-            <div class="mt-2 md:mt-4 pt-2 md:pt-4 border-t border-gray-200">
-                <p class="text-sm font-bold text-gray-600 mb-3 text-center">
-                    主な機能
-                </p>
-                <div class="space-y-2 text-sm text-gray-600">
-                    <div class="flex items-center gap-2">
-                        <span
-                            class="{{
-                            cn(
-                                'icon-[fluent-color--checkbox-24] w-6 h-6'
-                            )
-                            }}"
-                        >
-
-                        </span>
-                        <span>メンバー管理と支払い記録</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span
-                            class="{{
-                            cn(
-                                'icon-[fluent-color--checkbox-24] w-6 h-6'
-                            )
-                            }}"
-                        >
-
-                        </span>
-                        <span>自動清算計算とおつり計算</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span
-                            class="{{
-                            cn(
-                                'icon-[fluent-color--checkbox-24] w-6 h-6'
-                            )
-                            }}"
-                        >
-
-                        </span>
-                        <span>位置情報で思い出を記録</span>
-                    </div>
-                </div>
+            <div class="mt-6 border-t border-gray-200 pt-4">
+                <p class="mb-3 text-sm font-medium text-gray-700">主な機能</p>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li class="flex items-center gap-2">
+                        <span class="icon-[lucide--check] inline-block h-4 w-4 text-sub-green-ink"></span>
+                        メンバー管理と支払い記録
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <span class="icon-[lucide--check] inline-block h-4 w-4 text-sub-green-ink"></span>
+                        自動清算計算とおつり計算
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <span class="icon-[lucide--check] inline-block h-4 w-4 text-sub-green-ink"></span>
+                        位置情報で思い出を記録
+                    </li>
+                </ul>
             </div>
         </div>
     </div>

@@ -12,12 +12,12 @@
                 {
                     room: room,
                     query_key: query_key,
-                    isFullySettled: isFullySettled
-                }
+                    isFullySettled: isFullySettled,
+                },
             )
         }}
 
-        <div class="max-w-4xl mx-auto px-3 md:px-4 py-4 space-y-5 md:space-y-6">
+        <div class="ui-page space-y-4">
             {% if isFullySettled %}
                 {{ include('components.settlement.completed') }}
             {% endif %}
@@ -26,84 +26,81 @@
 
             {{ include('components.settlement.paid_members') }}
 
-            <div class="space-y-2 md:space-y-3" data-accordion>
-                <div
-                    class="bg-white rounded-2xl border border-gray-200 shadow-md"
-                >
+            <div class="space-y-3" data-accordion>
+                <section class="ui-card overflow-hidden p-0">
                     <button
                         type="button"
-                        class="w-full flex items-center justify-between px-3 md:px-4 py-2.5 md:py-3 text-left"
+                        class="flex w-full items-center justify-between gap-3 px-4 py-3 text-left md:px-5"
                         data-accordion-button
                         data-accordion-target="payments"
+                        aria-expanded="true"
                     >
-                        <div class="flex items-center gap-2">
-                            <span
-                                class="icon-[fluent-color--megaphone-loud-24] w-10 h-10"
-                            >
-
-                            </span>
-                            <span class="text-base md:text-lg">支払い計算</span>
-                        </div>
-                        <span class="text-xs md:text-sm text-gray-500">
-                            タップして開閉
+                        <span class="ui-section-title">
+                            <span class="icon-[lucide--arrow-left-right] ui-icon"></span>
+                            支払い計算
                         </span>
+                        <span
+                            class="icon-[lucide--chevron-down] ui-icon rotate-180 transition-transform"
+                            data-accordion-chevron
+                        ></span>
                     </button>
-                </div>
-                <div class="mt-2" data-accordion-panel="payments">
-                    {{ include('components.settlement.transactions') }}
-                </div>
+                    <div
+                        class="border-t border-gray-100 px-4 py-4 md:px-5"
+                        data-accordion-panel="payments"
+                    >
+                        {{ include('components.settlement.transactions') }}
+                    </div>
+                </section>
 
-                <div
-                    class="bg-white rounded-2xl border border-gray-200 shadow-md"
-                >
+                <section class="ui-card overflow-hidden p-0">
                     <button
                         type="button"
-                        class="w-full flex items-center justify-between px-3 md:px-4 py-2.5 md:py-3 text-left"
+                        class="flex w-full items-center justify-between gap-3 px-4 py-3 text-left md:px-5"
                         data-accordion-button
                         data-accordion-target="change"
+                        aria-expanded="false"
                     >
-                        <div class="flex items-center gap-2">
-                            <span
-                                class="icon-[fluent-color--lightbulb-24] w-10 h-10"
-                            >
-
-                            </span>
-                            <span class="text-base md:text-lg">おつり計算</span>
-                        </div>
-                        <span class="text-xs md:text-sm text-gray-500">
-                            タップして開閉
+                        <span class="ui-section-title">
+                            <span class="icon-[lucide--coins] ui-icon"></span>
+                            おつり計算
                         </span>
+                        <span
+                            class="icon-[lucide--chevron-down] ui-icon transition-transform"
+                            data-accordion-chevron
+                        ></span>
                     </button>
-                </div>
-                <div class="mt-2 hidden" data-accordion-panel="change">
-                    {{ include('components.settlement.change_form') }}
-                </div>
+                    <div
+                        class="hidden border-t border-gray-100 px-4 py-4 md:px-5"
+                        data-accordion-panel="change"
+                    >
+                        {{ include('components.settlement.change_form') }}
+                    </div>
+                </section>
 
-                <div
-                    class="bg-white rounded-2xl border border-gray-200 shadow-md"
-                >
+                <section class="ui-card overflow-hidden p-0">
                     <button
                         type="button"
-                        class="w-full flex items-center justify-between px-3 md:px-4 py-2.5 md:py-3 text-left"
+                        class="flex w-full items-center justify-between gap-3 px-4 py-3 text-left md:px-5"
                         data-accordion-button
                         data-accordion-target="locations"
+                        aria-expanded="false"
                     >
-                        <div class="flex items-center gap-2">
-                            <span
-                                class="icon-[fluent-color--location-ripple-24] w-10 h-10"
-                            >
-
-                            </span>
-                            <span class="text-base md:text-lg">訪れた場所</span>
-                        </div>
-                        <span class="text-xs md:text-sm text-gray-500">
-                            タップして開閉
+                        <span class="ui-section-title">
+                            <span class="icon-[lucide--map-pin] ui-icon"></span>
+                            訪れた場所
                         </span>
+                        <span
+                            class="icon-[lucide--chevron-down] ui-icon transition-transform"
+                            data-accordion-chevron
+                        ></span>
                     </button>
-                </div>
-                <div class="mt-2 hidden" data-accordion-panel="locations">
-                    {{ include('components.settlement.locations') }}
-                </div>
+                    <div
+                        class="hidden border-t border-gray-100 px-4 py-4 md:px-5"
+                        data-accordion-panel="locations"
+                    >
+                        {{ include('components.settlement.locations') }}
+                    </div>
+                </section>
             </div>
         </div>
     </div>

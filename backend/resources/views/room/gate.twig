@@ -5,10 +5,12 @@
 {% endblock %}
 
 {% block content %}
-    <div class="min-h-screen flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl border border-gray-200 shadow-xl p-8">
-            <h2 class="text-center mb-2 text-2xl">アクセスキー入力</h2>
-            <p class="text-center text-gray-600 text-sm font-bold mb-3">
+    <div class="flex min-h-screen items-center justify-center p-4">
+        <div class="ui-card w-full max-w-md">
+            <h1 class="text-center text-xl font-semibold text-gray-900">
+                アクセスキー入力
+            </h1>
+            <p class="mt-2 text-center text-sm text-gray-600">
                 ルーム「{{ room.room_name }}」は保護されています。
             </p>
 
@@ -18,54 +20,34 @@
                 route(
                     'rooms.show',
                     {
-                        room: room.id
-                    }
+                        room: room.id,
+                    },
                 )
                 }}"
-                class="space-y-6"
+                class="mt-6 space-y-4"
             >
-                <div class="flex flex-col gap-1">
+                <div>
+                    <label class="sr-only" for="query_key">アクセスキー</label>
                     <input
                         id="query_key"
                         name="query_key"
                         type="text"
                         placeholder="アクセスキーを入力してください"
-                        class="{{
-                        cn(
-                            'w-full text-sm md:text-sm p-2',
-                            'border-2 border-gray-200 rounded-xl',
-                            'focus:outline-none focus:border-primary',
-                            'focus:ring-4 focus:ring-primary-100',
-                            'transition-all'
-                        )
-                        }}"
+                        class="ui-input"
                         autofocus
                         required
                     />
                 </div>
 
-                <button
-                    type="submit"
-                    class="{{
-                    cn(
-                        'w-full text-sm md:text-lg p-2',
-                        'bg-gradient-to-r from-primary to-sub-pink text-white',
-                        'rounded-xl',
-                        'hover:from-primary-hover hover:to-sub-pink-hover',
-                        'disabled:opacity-50 disabled:cursor-not-allowed',
-                        'transition-all shadow-lg hover:shadow-xl',
-                        'transform hover:scale-[1.02] active:scale-[0.98]'
-                    )
-                    }}"
-                >
+                <button type="submit" class="ui-btn ui-btn-primary w-full">
                     ルームに入る
                 </button>
             </form>
 
-            <div class="mt-6 pt-4 border-t border-gray-200">
+            <div class="mt-6 border-t border-gray-200 pt-4">
                 <a
                     href="{{ route('rooms.create') }}"
-                    class="block text-center text-sm text-gray-700 hover:text-gray-900"
+                    class="block text-center text-sm text-gray-600 hover:text-gray-900"
                 >
                     ルーム選択に戻る
                 </a>
