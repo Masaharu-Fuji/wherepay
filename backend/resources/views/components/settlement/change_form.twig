@@ -13,6 +13,17 @@
 >
     <input type="hidden" name="_token" value="{{ csrf_token() }}" />
 
+    {% if (transactions|length) == 0 %}
+        <p class="text-sm leading-relaxed text-gray-500">
+            払う人がいないので、おつり計算はありません。
+        </p>
+    {% else %}
+        <p class="text-sm leading-relaxed text-gray-500">
+            払う人の所持金を入れると、おつりか不足が出ます。
+            所持金が支払額以上の人だけを、支払える人に入れます。
+        </p>
+    {% endif %}
+
     {% for member in room.members %}
         {% set owed = 0 %}
         {% for t in transactions %}
@@ -23,14 +34,21 @@
 
         {% if owed != 0 %}
             {% set change = changeByMember[member.id]|default(null) %}
-            <div class="space-y-3 rounded-lg border border-gray-200 bg-gray-50 p-3 md:p-4">
+            <div
+                class="space-y-3 rounded-lg border border-gray-200 bg-gray-50 p-3 md:p-4"
+            >
                 <div class="flex flex-wrap items-center justify-between gap-2">
-                    <label for="cash-{{ member.id }}" class="text-sm font-medium text-gray-900">
+                    <label
+                        for="cash-{{ member.id }}"
+                        class="text-sm font-medium text-gray-900"
+                    >
                         {{ member.member_name }}
                     </label>
                     <div class="flex flex-wrap items-center gap-3 text-sm">
                         {% if change is not null and change >= 0 %}
-                            <span class="font-medium text-sub-green-ink">清算完了</span>
+                            <span class="font-medium text-sub-green-ink">
+                                支払える
+                            </span>
                         {% endif %}
                         <span class="text-gray-500">
                             支払額
@@ -50,16 +68,24 @@
                 />
                 {% if change is not null %}
                     {% if change >= 0 %}
-                        <p class="rounded-lg bg-sub-green-50 px-3 py-2 text-sm text-gray-800">
+                        <p
+                            class="rounded-lg bg-sub-green-50 px-3 py-2 text-sm text-gray-800"
+                        >
                             おつり
-                            <span class="font-semibold tabular-nums text-sub-green-ink">
+                            <span
+                                class="font-semibold tabular-nums text-sub-green-ink"
+                            >
                                 ¥{{ change|round(0, 'common')|number_format(0, '.', ',') }}
                             </span>
                         </p>
                     {% else %}
-                        <p class="rounded-lg bg-danger-50 px-3 py-2 text-sm text-gray-800">
+                        <p
+                            class="rounded-lg bg-danger-50 px-3 py-2 text-sm text-gray-800"
+                        >
                             不足
-                            <span class="font-semibold tabular-nums text-danger">
+                            <span
+                                class="font-semibold tabular-nums text-danger"
+                            >
                                 ¥{{ (change * -1)|round(0, 'common')|number_format(0, '.', ',') }}
                             </span>
                         </p>

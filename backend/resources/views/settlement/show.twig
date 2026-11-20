@@ -24,6 +24,8 @@
 
             {{ include('components.settlement.summary') }}
 
+            {{ include('components.settlement.items') }}
+
             {{ include('components.settlement.paid_members') }}
 
             <div class="space-y-3" data-accordion>
@@ -36,13 +38,19 @@
                         aria-expanded="true"
                     >
                         <span class="ui-section-title">
-                            <span class="icon-[lucide--arrow-left-right] ui-icon"></span>
+                            <span
+                                class="icon-[lucide--arrow-left-right] ui-icon"
+                            >
+
+                            </span>
                             支払い計算
                         </span>
                         <span
                             class="icon-[lucide--chevron-down] ui-icon rotate-180 transition-transform"
                             data-accordion-chevron
-                        ></span>
+                        >
+
+                        </span>
                     </button>
                     <div
                         class="border-t border-gray-100 px-4 py-4 md:px-5"
@@ -67,7 +75,9 @@
                         <span
                             class="icon-[lucide--chevron-down] ui-icon transition-transform"
                             data-accordion-chevron
-                        ></span>
+                        >
+
+                        </span>
                     </button>
                     <div
                         class="hidden border-t border-gray-100 px-4 py-4 md:px-5"
@@ -92,7 +102,9 @@
                         <span
                             class="icon-[lucide--chevron-down] ui-icon transition-transform"
                             data-accordion-chevron
-                        ></span>
+                        >
+
+                        </span>
                     </button>
                     <div
                         class="hidden border-t border-gray-100 px-4 py-4 md:px-5"

@@ -23,6 +23,7 @@ class SettlementCalculatorTest extends TestCase
 
         $this->assertArrayHasKey('total', $result);
         $this->assertArrayHasKey('memberDebts', $result);
+        $this->assertArrayHasKey('paidByMember', $result);
         $this->assertArrayHasKey('balances', $result);
         $this->assertArrayHasKey('transactions', $result);
 
