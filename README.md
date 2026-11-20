@@ -12,6 +12,7 @@
 - [技術スタック](#技術スタック)
 - [開発環境セットアップ](#開発環境セットアップ)
 - [実行方法](#実行方法)
+- [無料で公開する](#無料で公開する)
 - [現在の実装機能](#現在の実装機能)
 - [ER 図](#er-図)
 - [スクリーンショット](#スクリーンショット)
@@ -154,6 +155,26 @@ composer run phpstan
 composer run twig:lint
 composer run lint:lines
 ```
+
+---
+
+## 無料で公開する
+
+公開先は [Render](https://render.com) の無料枠です。Web サービスと Postgres がどちらも $0 で、クレジットカードの登録なしで始められます。定義はリポジトリ直下の [`render.yaml`](render.yaml) です。リージョンはシンガポール、Web のメモリは 512MB です。
+
+ルームは Postgres に保存します。無料の Web はディスクを持たないので、SQLite のファイルはインスタンスが止まるたびに消えます。
+
+無料枠の動きは次のとおりです。
+
+- 15 分アクセスが無いと Web は止まります。次に開くと、起きるまで約 1 分かかります。止まっているあいだのルームは Postgres に残ります。
+- 無料 Postgres は作ってから 30 日で期限が切れます。切れてから 14 日の猶予のあと、Render がデータベースごと削除します。旅行のあいだ試す用途向けです。
+- 30 日を超えて残すときは、`DATABASE_URL` を Neon などの無料 Postgres に差し替えます。`DB_CONNECTION` は `pgsql` のままです。
+
+この節の内容が `master` に入ったあと、次のボタンから作成します。確認画面で Web と Postgres のプランがどちらも **free** であることを見てから作成してください。プラン欄を空にすると、Web は月 $7、Postgres は月 $6 のプランが選ばれます。
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Masaharu-Fuji/wherepay)
+
+作成が終わると `https://wherepay.onrender.com` のような URL が付きます。同じ名前が既にあるときは末尾が変わります。
 
 ---
 
