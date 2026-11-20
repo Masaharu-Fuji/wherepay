@@ -15,6 +15,7 @@ console_command = 'php /var/www/html/artisan tinker'
 [env]
   APP_ENV = 'production'
   APP_NAME = 'wherepay'
+  APP_URL = 'https://wherepay-old-shape-6823.fly.dev'
   APP_LOCALE = 'ja'
   APP_FALLBACK_LOCALE = 'ja'
   APP_FAKER_LOCALE = 'ja_JP'

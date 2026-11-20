@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Fly keeps SQLite on the /data volume. Render uses Postgres, which can
-# refuse connections for about a minute while the free database wakes up.
+# SQLite lives on the Fly Volume mounted at /data.
+# A Postgres URL can refuse connections while that server wakes up.
 set -euo pipefail
 
 cd "${APP_ROOT:-/var/www/html}"

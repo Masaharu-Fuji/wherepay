@@ -12,7 +12,7 @@
 - [技術スタック](#技術スタック)
 - [開発環境セットアップ](#開発環境セットアップ)
 - [実行方法](#実行方法)
-- [無料で公開する](#無料で公開する)
+- [デプロイ](#デプロイ)
 - [現在の実装機能](#現在の実装機能)
 - [ER 図](#er-図)
 - [スクリーンショット](#スクリーンショット)
@@ -65,6 +65,8 @@
   - PHPUnit (テスト)
   - PHPStan / Larastan (静的解析)
   - Twig CS Fixer / Prettier (整形)
+- **公開先**
+  - Fly.io。設定は `backend/fly.toml`。手順は [デプロイ](#デプロイ)
 
 `backend/` 配下に Laravel アプリを配置し、Vite によるアセットビルドを組み合わせる構成です。
 
@@ -158,40 +160,37 @@ composer run lint:lines
 
 ---
 
-## 無料で公開する
+## デプロイ
 
-カードを登録せずに無料で扱えるのは、次の 3 つです。金額と期限は 2026年11月の公式料金です。
+公開先は **Fly.io**、東京（`nrt`）です。アプリはマシン 1 台、ルームは Volume `wherepay_data` 上の SQLite（`/data/database.sqlite`）に残します。設定の正本は [`backend/fly.toml`](backend/fly.toml) です。公開 URL は `https://wherepay-old-shape-6823.fly.dev` です。
 
-| 置くもの | 無料の先 | 枠 |
-| --- | --- | --- |
-| アプリ本体 | [Render の Free Web](https://render.com/docs/free) | $0。期限なし。メモリ 512MB。ワークスペースあたり月 750 時間で、このアプリ 1 台なら月を通して足ります。止まっている時間は数えません。15 分アクセスが無いと止まり、次に開くと約 1 分で起きます |
-| ルーム（30 日まで） | 同じ Render の Free Postgres | $0。容量 1GB。ワークスペースに 1 つ。作ってから 30 日で期限が切れ、その後 14 日の猶予のあと、データごと削除されます |
-| ルーム（30 日を超えて残す） | [Neon の Free](https://neon.com/docs/introduction/plans) | $0。期限なし。プロジェクトあたり容量 1GB、計算は月 100 CU 時間。5 分使わないと計算資源は 0 になり、データはそのまま残ります。次の接続で戻ります |
+旅行の現場で開き、あとから同じルームを見ます。アクセスが無いとマシンは止まり、次のアクセスで起きます。止まっているあいだも SQLite は Volume に残ります。`fly deploy` でも Volume の中身は消えません。
 
-公開手順はリポジトリ直下の [`render.yaml`](render.yaml) です。Web と Postgres はどちらも `plan: free`、リージョンはシンガポールです。ワークスペースは Hobby（月 $0）のままにします。
+支払いを $0 にする条件は、公式の [Free Waiver](https://fly.io/docs/about/free-waiver/) です。申し込み時の個人組織にクレジットカードを登録し、その月の請求が $5 未満なら、その月は支払いません。$5 以上の月は、請求額の全額を払います。カードが無い間に使えるのは、$1 の 7 日間トライアルだけです。トライアル中のマシンは、起動から 5 分で止まります。
 
-ルームは Postgres に保存します。無料の Web にディスクは付かないので、SQLite のファイルはインスタンスが止まるたびに消えます。
+2026年11月の [Resource Pricing](https://fly.io/docs/about/pricing/) と [リージョン倍率](https://fly.io/pricing) では、東京の倍率は 1.308 です。Volume にこの倍率は掛かりません。
 
-30 日を超えてルームを残すときは、Render の Web はそのままにして、`DATABASE_URL` だけを Neon の接続文字列に差し替えます。`DB_CONNECTION` は `pgsql` のままです。Neon は Render の外にあるので、通信は公開インターネットを通ります。
+- 止まっているマシンの課金は、イメージ容量（1GB あたり月 $0.15）と Volume（1GB で月 $0.15）です。
+- `shared-cpu-1x` / 512MB を東京で 30 日起動し続けると、計算だけで約 $4.83 です。Volume の $0.15 が乗り、$5 の直前になります。31 日の月や、東京からの外向き通信（1GB あたり $0.04）が乗ると $5 を超えます。
+- `min_machines_running = 0` を維持し、旅行のときだけ開きます。専用 IPv4、Managed Postgres、2 台目のマシンは入れません。
 
-Hobby には、外向きの通信が月 5GB、ビルドが月 500 分まで含まれます。カードが無い状態で外向きの通信が 5GB を超えると、その月の残りは無料のサービスが止まります。ビルドが 500 分を超えると、新しいビルドが止まり、動いているサービスはそのまま残ります。
+コマンドは `backend/` で実行します。`fly launch` は `fly.toml` を上書きするので使いません。環境変数の見本は [`backend/.env.deploy.example`](backend/.env.deploy.example) です。`APP_KEY` 以外は `fly.toml` にあります。
 
-`backend/fly.toml` は Fly.io 向けの別の定義です。Fly.io の新規アカウントがカードなしで使えるのは、$1 の 7 日間トライアルです。トライアル中の Machine は、起動から 5 分で止まります。トライアルのあと、個人組織はクレジットカードを登録し、その月の請求が $5 未満のとき請求が免除されます。
+インストールのあと、PowerShell を開き直します。
 
-環境変数の見本は [`backend/.env.deploy.example`](backend/.env.deploy.example) です。自分で用意するのは次の 2 つです。
+```powershell
+powershell -Command "iwr https://fly.io/install.ps1 -useb | iex"
+fly auth signup
+cd backend
+php artisan key:generate --show
+fly secrets set "APP_KEY=base64:ここに表示された値"
+fly volumes create wherepay_data -r nrt
+fly deploy
+```
 
-| 変数 | 見本 | 入り方 |
-| --- | --- | --- |
-| `APP_KEY` | `base64:` で始まる 32 バイトの鍵 | Render の generateValue が作ります。手元で作るときは `php artisan key:generate --show` です |
-| `DATABASE_URL` | `postgres://wherepay:password@dpg-example:5432/wherepay` | Blueprint が wherepay-db の接続文字列を入れます。差し替えるときはこの 1 行です |
+アカウントが既にあるときは `fly auth signup` の代わりに `fly auth login` です。登録後、[ダッシュボード](https://fly.io/dashboard) の個人組織にクレジットカードを登録します。`fly status` でアプリが無いときは、先に `fly apps create wherepay-old-shape-6823` を実行します。Postgres、Redis、Tigris を足すか聞かれたら、追加しません。
 
-`APP_ENV`、`DB_CONNECTION=pgsql`、`SESSION_DRIVER=cookie`、`CACHE_STORE=file`、`QUEUE_CONNECTION=sync` は見本ファイルと `render.yaml` に同じ値があります。`PORT` と `RENDER_EXTERNAL_URL` は Render が起動時に渡します。
-
-次のボタンから、上の Free Web と Free Postgres を作成します。確認画面で Web と Postgres のプランがどちらも **free** であることを見てから作成してください。プラン欄を空にすると、Web は月 $7、Postgres は月 $6 のプランが選ばれます。
-
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Masaharu-Fuji/wherepay)
-
-作成が終わると `https://wherepay.onrender.com` のような URL が付きます。同じ名前が既にあるときは末尾が変わります。
+公開後にルームを 1 つ作り、数分放置してから開き直します。同じルームが残っていれば、Volume に書けています。`fly volumes list` の `REGION` が `nrt` で、`ATTACHED VM` にマシン ID があれば、ディスクは接続されています。2 回目以降の更新は `backend/` で `fly deploy` だけです。
 
 ---
 
@@ -341,6 +340,7 @@ app_portfolio/
 ### 概要・機能一覧
 
 - [README（このページ）](README.md)
+- [デプロイ](#デプロイ)
 - [アプリの進行](doc/workflow.md)
 - [ER 図](doc/er.md)
 

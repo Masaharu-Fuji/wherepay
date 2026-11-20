@@ -1,0 +1,13 @@
+---
+description: 本番の公開先は Fly.io。別ホストの定義を足さない
+alwaysApply: true
+---
+
+# デプロイ
+
+本番の公開先は Fly.io。手順の正本は README の「デプロイ」。
+
+- 設定は `backend/fly.toml`。リージョンは `nrt`。マシンは 1 台。`min_machines_running = 0` を維持する
+- DB は Volume `wherepay_data` の `/data/database.sqlite`
+- `render.yaml` を追加しない。マネージド Postgres に切り替えない
+- 公開先を変えるのは、利用者から明示されたときだけ
