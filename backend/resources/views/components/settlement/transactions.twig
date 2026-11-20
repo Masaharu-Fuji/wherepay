@@ -9,10 +9,13 @@
             清算は完了しています
         </p>
     {% else %}
-        <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-            <label class="block text-sm text-gray-600">
-                この人の分だけ
-                <select data-handoff-person class="ui-input mt-1.5 sm:w-56">
+        <div class="mb-2 flex flex-wrap items-center gap-2">
+            <label class="flex flex-1 items-center gap-2 text-sm text-gray-600 sm:flex-none">
+                <span class="shrink-0">対象者</span>
+                <select
+                    data-handoff-person
+                    class="ui-input w-auto! min-w-32 flex-1 sm:w-48! sm:flex-none"
+                >
                     <option value="">全員</option>
                     {% for member in room.members %}
                         <option value="{{ member.id }}">
@@ -25,8 +28,8 @@
                 清算文をコピー
             </button>
         </div>
-        <p data-handoff-empty class="mb-3 hidden text-sm text-gray-500">
-            この人のやり取りはありません
+        <p data-handoff-empty class="mb-2 hidden text-sm text-gray-500">
+            支払いはありません
         </p>
         <div class="divide-y divide-gray-100">
             {% for transaction in transactions %}
@@ -41,15 +44,16 @@
                     data-amount="{{ transaction.amount }}"
                     data-from-name="{{ fromName|e('html_attr') }}"
                     data-to-name="{{ toName|e('html_attr') }}"
-                    class="py-3"
+                    class="flex items-center justify-between gap-3 py-2"
                 >
-                    <p class="text-base text-gray-900">
-                        <span class="font-medium">{{ fromName }}</span>さん →
-                        <span class="font-medium">{{ toName }}</span>さんに
-                        <span class="ui-money">
-                            ¥{{ transaction.amount|number_format(0, '.', ',') }}
-                        </span>
+                    <p class="min-w-0 text-sm text-gray-900">
+                        <span class="font-medium">{{ fromName }}</span>
+                        →
+                        <span class="font-medium">{{ toName }}</span>
                     </p>
+                    <span class="ui-money shrink-0 text-sm">
+                        ¥{{ transaction.amount|number_format(0, '.', ',') }}
+                    </span>
                 </article>
             {% endfor %}
         </div>
