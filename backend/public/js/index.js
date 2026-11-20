@@ -11,6 +11,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         { default: roomHeader },
         { default: roomItemsHeight },
         { default: roomItemParticipantJump },
+        { default: itemForm },
+        { default: settlementHandoff },
     ] = await Promise.all([
         import("./ranking_bar.js"),
         import("./settlement_accordion.js"),
@@ -18,6 +20,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         import("./room_header.js"),
         import("./room_items_height.js"),
         import("./room_item_participant_jump.js"),
+        import("./item_form.js"),
+        import("./settlement_handoff.js"),
     ]);
     rankingBar();
     settlementAccordion();
@@ -25,6 +29,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     roomHeader();
     roomItemsHeight();
     roomItemParticipantJump();
+    itemForm();
+    settlementHandoff();
 });
 
 export { cn, fetchItemGeoLocation };

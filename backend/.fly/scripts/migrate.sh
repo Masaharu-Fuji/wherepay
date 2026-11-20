@@ -1,20 +1,34 @@
 #!/usr/bin/env bash
-# Apply migrations before nginx listens. Free Render Postgres can take a
-# minute to accept connections on a cold start, so connection failures retry.
-# A schema error stops immediately.
-set -eu
+# Fly keeps SQLite on the /data volume. Render uses Postgres, which can
+# refuse connections for about a minute while the free database wakes up.
+set -euo pipefail
 
 cd "${APP_ROOT:-/var/www/html}"
 
 connection="${DB_CONNECTION:-sqlite}"
 
 if [ "$connection" = "sqlite" ]; then
-    mkdir -p database
-    if [ ! -f database/database.sqlite ]; then
-        touch database/database.sqlite
+    db="${DB_DATABASE:-/data/database.sqlite}"
+    case "$db" in
+        /data|/data/*)
+            if ! grep -q ' /data ' /proc/mounts; then
+                if [ "${APP_ENV:-}" = "production" ]; then
+                    echo "SQLite volume is not mounted at /data" >&2
+                    exit 1
+                fi
+                exit 0
+            fi
+            ;;
+    esac
+    dir="$(dirname "$db")"
+    mkdir -p "$dir"
+    if [ ! -f "$db" ]; then
+        touch "$db"
     fi
     if [ "$(id -u)" -eq 0 ]; then
-        chown www-data:www-data database database/database.sqlite
+        chown -R www-data:www-data "$dir"
+        chmod 775 "$dir"
+        chmod 664 "$db"
     fi
 fi
 
@@ -27,8 +41,14 @@ while true; do
     set -e
     printf '%s\n' "$output"
     if [ "$status" -eq 0 ]; then
-        exit 0
+        break
     fi
+    case "$connection" in
+        pgsql|postgres|postgresql) ;;
+        *)
+            exit "$status"
+            ;;
+    esac
     if ! printf '%s\n' "$output" | grep -Eq 'SQLSTATE\[08006\]|SQLSTATE\[08001\]|SQLSTATE\[HY000\].*[Cc]onnection refused|could not connect|Connection refused|Connection timed out|server closed the connection|temporary failure|Name or service not known|could not translate host name|getaddrinfo'; then
         exit "$status"
     fi
@@ -40,3 +60,14 @@ while true; do
     attempt=$((attempt + 1))
     sleep 3
 done
+
+if [ "$connection" = "sqlite" ]; then
+    case "$db" in
+        /data|/data/*)
+            if [ "$(id -u)" -eq 0 ]; then
+                chown -R www-data:www-data "$dir"
+                chmod 664 "$db"
+            fi
+            ;;
+    esac
+fi

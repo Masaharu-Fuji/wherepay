@@ -15,6 +15,8 @@ class Room extends Model
 {
     use HasFactory;
 
+    public const NAME_MAX_LENGTH = 40;
+
     protected $table = 't_rooms';
 
     protected $fillable = [

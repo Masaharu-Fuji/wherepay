@@ -39,10 +39,10 @@
                 }}"
             >
                 <span class="text-sm md:text-base">
-                    {{ member.id }} {{ member.member_name }}
+                    {{ member.member_name }}
                 </span>
                 <span class="text-sm md:text-base">
-                    ¥{{ debt|number_format(0, '.', ',') }}
+                    負担額 ¥{{ debt|number_format(0, '.', ',') }}
                 </span>
             </div>
         {% endfor %}

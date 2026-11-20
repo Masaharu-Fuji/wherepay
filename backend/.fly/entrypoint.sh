@@ -41,7 +41,7 @@ fi
 scripts_dir="${FLY_SCRIPTS:-/var/www/html/.fly/scripts}"
 for f in "$scripts_dir"/*.sh; do
     # Bail out this loop if any script exits with non-zero status code
-    bash "$f"
+    bash -e "$f" || exit 1
 done
 
 if [ "$#" -gt 0 ]; then
