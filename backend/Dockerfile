@@ -21,8 +21,8 @@ ENV DEBIAN_FRONTEND=noninteractive \
     PHP_ERROR_REPORTING=22527 \
     PHP_MEMORY_LIMIT=128M \
     PHP_MAX_EXECUTION_TIME=90 \
-    PHP_POST_MAX_SIZE=100M \
-    PHP_UPLOAD_MAX_FILE_SIZE=100M \
+    PHP_POST_MAX_SIZE=8M \
+    PHP_UPLOAD_MAX_FILE_SIZE=8M \
     PHP_ALLOW_URL_FOPEN=Off
 
 # Prepare base container: 
@@ -50,7 +50,8 @@ COPY .fly/fpm/ /etc/php/${PHP_VERSION}/fpm/
 COPY .fly/supervisor/ /etc/supervisor/
 COPY .fly/entrypoint.sh /entrypoint
 COPY .fly/start-nginx.sh /usr/local/bin/start-nginx
-RUN chmod 754 /usr/local/bin/start-nginx
+RUN ln -sfn /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default \
+    && chmod 754 /usr/local/bin/start-nginx
 
 # 3. Copy application code, skipping files based on .dockerignore
 COPY . /var/www/html

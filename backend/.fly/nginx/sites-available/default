@@ -10,7 +10,7 @@ server {
 
     charset utf-8;
 
-    client_max_body_size 2048M;
+    client_max_body_size 8m;
 
     access_log /dev/stdout fly;
 

@@ -1,0 +1,66 @@
+# Render の無料枠。Web も Postgres も plan: free のままにする。
+# 環境変数の見本: backend/.env.deploy.example
+# 省略すると有料プラン（Web は月 $7、Postgres は月 $6）になる。
+# 無料 Postgres は作成から 30 日で期限が切れる。
+services:
+  - type: web
+    name: wherepay
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    healthCheckPath: /up
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_NAME
+        value: wherepay
+      - key: APP_KEY
+        generateValue: true
+      - key: APP_LOCALE
+        value: ja
+      - key: APP_FALLBACK_LOCALE
+        value: ja
+      - key: APP_FAKER_LOCALE
+        value: ja_JP
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: LOG_LEVEL
+        value: info
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DATABASE_URL
+        fromDatabase:
+          name: wherepay-db
+          property: connectionString
+      - key: DB_SSLMODE
+        value: prefer
+      - key: SESSION_DRIVER
+        value: cookie
+      - key: SESSION_SECURE_COOKIE
+        value: "true"
+      - key: CACHE_STORE
+        value: file
+      - key: QUEUE_CONNECTION
+        value: sync
+      - key: PHP_PM_MAX_CHILDREN
+        value: "2"
+      - key: PHP_PM_START_SERVERS
+        value: "1"
+      - key: PHP_MIN_SPARE_SERVERS
+        value: "1"
+      - key: PHP_MAX_SPARE_SERVERS
+        value: "1"
+      - key: PHP_MEMORY_LIMIT
+        value: 128M
+
+databases:
+  - name: wherepay-db
+    plan: free
+    region: singapore
+    postgresMajorVersion: "16"
+    databaseName: wherepay
+    ipAllowList: []
