@@ -1,19 +1,19 @@
-<div class="bg-white rounded-2xl border border-gray-200 shadow-lg p-2 md:p-6">
-    <div class="flex items-center gap-2 mb-4">
-        <span class="icon-[fluent-color--drafts-20] w-10 h-10"></span>
-        <h3 class="font-semibold text-xs md:text-sm">品目追加</h3>
-    </div>
+<div class="ui-card">
+    <h3 class="ui-section-title mb-4">
+        <span class="icon-[lucide--plus] ui-icon"></span>
+        品目追加
+    </h3>
     <form
         method="POST"
         action="{{
         route(
             'rooms.items.store',
             {
-                room: room.id
-            }
+                room: room.id,
+            },
         )
         }}"
-        class="space-y-2 md:space-y-4"
+        class="space-y-4"
         id="item-form"
         data-item-form
         data-room-id="{{ room.id }}"
@@ -24,91 +24,44 @@
         <input type="hidden" name="location_address" id="location_address" />
 
         <div>
-            <label
-                for="item_name"
-                class="block text-xs md:text-sm mb-2 text-gray-700"
-            >
-                品目名
-            </label>
+            <label for="item_name" class="ui-label">品目名</label>
             <input
                 id="item_name"
                 name="item_name"
                 placeholder="例: ランチ代、タクシー代"
                 value="{{ old('item_name') }}"
-                class="{{
-                cn(
-                    'w-full text-sm md:text-lg p-2',
-                    'border-2 border-gray-200 rounded-xl',
-                    'focus:outline-none focus:border-sub-pink',
-                    'focus:ring-4 focus:ring-sub-pink-100',
-                    'transition-all'
-                )
-                }}"
+                class="ui-input"
                 required
             />
             {% if errors.has('item_name') %}
-                <p class="mt-2 text-sm text-sub-pink">
+                <p class="mt-1.5 text-sm text-danger">
                     {{ errors.first('item_name') }}
                 </p>
             {% endif %}
         </div>
 
         <div>
-            <label
-                for="amount"
-                class="block text-xs md:text-sm mb-2 text-gray-700"
-            >
-                金額（円）
-            </label>
+            <label for="amount" class="ui-label">金額（円）</label>
             <input
                 id="amount"
                 name="amount"
                 type="number"
                 min="1"
                 value="{{ old('amount') }}"
-                class="{{
-                cn(
-                    'w-full text-sm md:text-lg p-2',
-                    'border-2 border-gray-200 rounded-xl',
-                    'focus:outline-none focus:border-sub-pink',
-                    'focus:ring-4 focus:ring-sub-pink-100',
-                    'transition-all'
-                )
-                }}"
+                class="ui-input"
                 required
             />
             {% if errors.has('amount') %}
-                <p class="mt-2 text-sm text-sub-pink">
+                <p class="mt-1.5 text-sm text-danger">
                     {{ errors.first('amount') }}
                 </p>
             {% endif %}
         </div>
 
         <div>
-            <label
-                for="payer_id"
-                class="block text-xs md:text-sm mb-2 text-gray-700"
-            >
-                支払者（誰が支払ったか）
-            </label>
-            <select
-                id="payer_id"
-                name="payer_id"
-                class="{{
-                cn(
-                    'w-full text-sm md:text-lg p-2',
-                    'border-2 border-gray-200 rounded-xl',
-                    'focus:outline-none focus:border-sub-pink',
-                    'focus:ring-4 focus:ring-sub-pink-100',
-                    'transition-all',
-                    'bg-white'
-                )
-                }}"
-                required
-            >
-                <option value="">
-                    選択してください
-                </option>
+            <label for="payer_id" class="ui-label">支払者（誰が支払ったか）</label>
+            <select id="payer_id" name="payer_id" class="ui-input" required>
+                <option value="">選択してください</option>
                 {% for member in room.members %}
                     <option
                         value="{{ member.id }}"
@@ -119,7 +72,7 @@
                 {% endfor %}
             </select>
             {% if errors.has('payer_id') %}
-                <p class="mt-2 text-sm text-sub-pink">
+                <p class="mt-1.5 text-sm text-danger">
                     {{ errors.first('payer_id') }}
                 </p>
             {% endif %}
@@ -131,64 +84,24 @@
             data-amount-input="amount"
             data-payer-select="payer_id"
         >
-            <label class="block text-xs md:text-sm mb-2 text-gray-700">
-                対象者（誰の分の支払いか）
-            </label>
+            <p class="ui-label">対象者（誰の分の支払いか）</p>
             {% if (room.members|length) > 0 %}
                 <div class="mb-2 flex flex-wrap gap-2">
-                    <button
-                        type="button"
-                        data-participant-all
-                        class="{{
-                        cn(
-                            'px-3 py-2 text-sm font-medium',
-                            'border-2 border-primary rounded-xl',
-                            'bg-primary text-white',
-                            'active:bg-primary-hover'
-                        )
-                        }}"
-                    >
+                    <button type="button" data-participant-all class="ui-btn ui-btn-secondary">
                         全員
                     </button>
                     <button
                         type="button"
                         data-participant-except-payer
-                        class="{{
-                        cn(
-                            'px-3 py-2 text-sm font-medium',
-                            'border-2 border-primary rounded-xl',
-                            'bg-white text-primary',
-                            'active:bg-primary-50'
-                        )
-                        }}"
+                        class="ui-btn ui-btn-secondary"
                     >
                         支払者以外
                     </button>
-                    <button
-                        type="button"
-                        data-participant-clear
-                        class="{{
-                        cn(
-                            'px-3 py-2 text-sm font-medium',
-                            'border-2 border-gray-200 rounded-xl',
-                            'bg-white text-gray-700',
-                            'active:bg-gray-50'
-                        )
-                        }}"
-                    >
+                    <button type="button" data-participant-clear class="ui-btn ui-btn-secondary">
                         クリア
                     </button>
                 </div>
-            {% endif %}
-            {% if (room.members|length) > 0 %}
-                <div
-                    class="{{
-                    cn(
-                        'mb-2 flex gap-2 items-stretch',
-                        'min-h-11'
-                    )
-                    }}"
-                >
+                <div class="mb-2 flex items-stretch gap-2">
                     <label class="sr-only" for="participant-jump-new-item">
                         対象者名でジャンプ
                     </label>
@@ -201,36 +114,15 @@
                         autocorrect="off"
                         autocapitalize="off"
                         spellcheck="false"
-                        placeholder="名前の一部 →「移動」でジャンプ"
+                        placeholder="名前の一部で移動"
                         data-participant-jump-input
-                        class="{{
-                        cn(
-                            'flex-1 min-w-0 px-3 py-2.5',
-                            'text-base md:text-sm',
-                            'border-2 border-gray-200 rounded-xl',
-                            'focus:outline-none focus:border-primary',
-                            'focus:ring-4 focus:ring-primary-100',
-                            'transition-all'
-                        )
-                        }}"
+                        class="ui-input"
                     />
                     <button
                         type="button"
                         data-participant-jump-go
                         aria-label="名前の一致へスクロール"
-                        class="{{
-                        cn(
-                            'shrink-0 px-3 py-2',
-                            'text-sm font-medium',
-                            'border-2 border-primary rounded-xl',
-                            'bg-primary text-white',
-                            'active:bg-primary-hover',
-                            'md:hover:bg-primary-hover',
-                            'focus:outline-none focus:ring-4',
-                            'focus:ring-primary-100',
-                            'transition-colors'
-                        )
-                        }}"
+                        class="ui-btn ui-btn-secondary shrink-0"
                     >
                         移動
                     </button>
@@ -238,38 +130,18 @@
             {% endif %}
             <div
                 data-participant-jump-scroll
-                class="{{
-                cn(
-                    'space-y-2 p-2 md:p-3',
-                    'bg-gray-50 rounded-xl',
-                    'border-2 border-gray-200',
-                    'max-h-[min(55svh,18rem)] md:max-h-48',
-                    'overflow-y-auto touch-pan-y overscroll-y-contain',
-                    '[-webkit-overflow-scrolling:touch]'
-                )
-                }}"
+                class="ui-scroll max-h-[min(55svh,18rem)] md:max-h-48"
             >
                 {% if (room.members|length) == 0 %}
-                    <p class="text-gray-500 text-sm">
+                    <p class="px-1 py-2 text-sm text-gray-500">
                         先にメンバーを追加してください
                     </p>
                 {% else %}
                     {% for member in room.members %}
                         <label
                             data-participant-jump-row
-                            data-member-name="{{ member.member_name|e(
-                                'html_attr'
-                            ) }}"
-                            class="{{
-                            cn(
-                                'flex items-center gap-3',
-                                'min-h-12 p-2.5 md:p-3',
-                                'bg-white rounded-lg cursor-pointer',
-                                'active:bg-primary-50 md:hover:bg-primary-50',
-                                'transition-colors',
-                                'border border-gray-200'
-                            )
-                            }}"
+                            data-member-name="{{ member.member_name|e('html_attr') }}"
+                            class="ui-choice"
                         >
                             <input
                                 type="checkbox"
@@ -280,15 +152,9 @@
                                         ? old('participant_ids', [])
                                         : []
                                 ) ? 'checked' : '' }}
-                                class="{{
-                                cn(
-                                    'w-5 h-5 shrink-0',
-                                    'text-sub-pink rounded',
-                                    'focus:ring-2 focus:ring-sub-pink'
-                                )
-                                }}"
+                                class="ui-check"
                             />
-                            <span class="text-base md:text-lg">
+                            <span class="text-sm text-gray-900">
                                 {{ member.member_name }}
                             </span>
                         </label>
@@ -296,49 +162,26 @@
                 {% endif %}
             </div>
             {% if errors.has('participant_ids') %}
-                <p class="mt-2 text-sm text-sub-pink">
+                <p class="mt-1.5 text-sm text-danger">
                     {{ errors.first('participant_ids') }}
                 </p>
             {% endif %}
-            <p data-per-person class="text-sm text-gray-700">
+            <p data-per-person class="mt-2 text-sm text-gray-500">
                 対象者を選ぶと、1人あたりの金額が出ます
             </p>
         </div>
 
-        <div class="flex flex-col gap-3">
+        <div class="flex flex-col gap-2">
             <button
                 type="button"
                 onclick="fetchItemGeoLocation()"
-                class="{{
-                cn(
-                    'w-full text-sm p-2',
-                    'rounded-xl border-2 border-gray-200',
-                    'bg-white text-gray-700',
-                    'hover:bg-gray-50 transition-colors',
-                    'flex items-center justify-center gap-1'
-                )
-                }}"
+                class="ui-btn ui-btn-secondary w-full"
             >
-                <span class="icon-[fluent-color--location-ripple-24] w-5 h-5">
-
-                </span>
-                <span class="text-sm">位置情報を付ける（任意）</span>
+                <span class="icon-[lucide--map-pin] h-4 w-4"></span>
+                位置情報を付ける（任意）
             </button>
-            <button
-                type="submit"
-                class="{{
-                cn(
-                    'w-full text-sm md:text-lg p-2',
-                    'bg-gradient-to-r from-primary to-sub-pink text-white',
-                    'rounded-xl',
-                    'hover:from-primary-hover hover:to-sub-pink-hover',
-                    'shadow-lg transition-all',
-                    'flex items-center justify-center gap-1'
-                )
-                }}"
-            >
-                <span class="icon-[fluent-color--gift-24] w-5 h-5"></span>
-                <span class="text-sm md:text-xl">追加</span>
+            <button type="submit" class="ui-btn ui-btn-primary w-full">
+                追加
             </button>
         </div>
     </form>

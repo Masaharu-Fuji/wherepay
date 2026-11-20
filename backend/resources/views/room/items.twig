@@ -5,460 +5,259 @@
 {% endblock %}
 
 {% block content %}
-    <div class="min-h-screen pb-16 flex justify-center items-center">
-        <div
-            class="{{
-            cn(
-                'max-w-4xl px-4 py-4 md:py-6',
-                'flex flex-col gap-3 md:gap-4'
-            )
-            }}"
-        >
-            <div class="flex items-center justify-between gap-3">
-                <div>
-                    <h1 class="text-xl md:text-2xl font-semibold">品目編集</h1>
-                    <p class="text-sm text-gray-600">
-                        {{ room.room_name }}（{{ room.items|length }}件）
-                    </p>
-                </div>
-                <a
-                    href="{{
-                    route(
-                        'rooms.show',
-                        {
-                            room: room.id,
-                            query_key: room.password_plan
-                        }
-                    )
-                    }}"
-                    class="{{
-                    cn(
-                        'px-3 py-2 text-xs md:text-sm',
-                        'bg-gray-100 hover:bg-gray-200 rounded-md transition-colors'
-                    )
-                    }}"
-                >
-                    ルーム詳細へ戻る
-                </a>
+    <div class="ui-page space-y-4 pb-16">
+        <div class="flex items-center justify-between gap-3">
+            <div>
+                <h1 class="text-xl font-semibold text-gray-900">品目編集</h1>
+                <p class="text-sm text-gray-500">
+                    {{ room.room_name }}（{{ room.items|length }}件）
+                </p>
             </div>
-
-            {% if errors.has('item_name') %}
-                <p class="text-sm text-sub-pink">
-                    {{ errors.first('item_name') }}
-                </p>
-            {% endif %}
-            {% if errors.has('participant_ids') %}
-                <p class="text-sm text-sub-pink">
-                    {{ errors.first('participant_ids') }}
-                </p>
-            {% endif %}
-            {% if errors.has('latitude') %}
-                <p class="text-sm text-sub-pink">
-                    {{ errors.first('latitude') }}
-                </p>
-            {% endif %}
-            {% if errors.has('longitude') %}
-                <p class="text-sm text-sub-pink">
-                    {{ errors.first('longitude') }}
-                </p>
-            {% endif %}
-
-            <div
-                class="bg-white rounded-2xl border border-gray-200 shadow-lg p-3 md:p-6"
+            <a
+                href="{{
+                route(
+                    'rooms.show',
+                    {
+                        room: room.id,
+                        query_key: room.password_plan,
+                    },
+                )
+                }}"
+                class="ui-btn ui-btn-secondary"
             >
-                {% if (room.items|length) == 0 %}
-                    <p class="text-gray-500 text-sm">
-                        品目が登録されていません。
-                    </p>
-                {% else %}
-                    <div
-                        class="{{
-                        cn(
-                            'space-y-3',
-                            'md:space-y-0 md:grid md:grid-cols-2 md:gap-4'
-                        )
-                        }}"
-                    >
-                        {% for item in room.items %}
-                            {% set selectedParticipantIds = [] %}
-                            {% for participant in item.participants %}
-                                {% set selectedParticipantIds =
-                                    selectedParticipantIds|merge(
-                                        [participant.member_id]
-                                    )
-                                %}
-                            {% endfor %}
-                            <form
-                                method="POST"
-                                action="{{
-                                route(
-                                    'rooms.items.update',
-                                    {
-                                        room: room.id,
-                                        item: item.id,
-                                        query_key: room.password_plan
-                                    }
+                ルーム詳細へ戻る
+            </a>
+        </div>
+
+        {% if errors.has('item_name') %}
+            <p class="text-sm text-danger">{{ errors.first('item_name') }}</p>
+        {% endif %}
+        {% if errors.has('participant_ids') %}
+            <p class="text-sm text-danger">
+                {{ errors.first('participant_ids') }}
+            </p>
+        {% endif %}
+        {% if errors.has('latitude') %}
+            <p class="text-sm text-danger">{{ errors.first('latitude') }}</p>
+        {% endif %}
+        {% if errors.has('longitude') %}
+            <p class="text-sm text-danger">{{ errors.first('longitude') }}</p>
+        {% endif %}
+
+        <div class="ui-card">
+            {% if (room.items|length) == 0 %}
+                <p class="text-sm text-gray-500">品目が登録されていません。</p>
+            {% else %}
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    {% for item in room.items %}
+                        {% set selectedParticipantIds = [] %}
+                        {% for participant in item.participants %}
+                            {% set selectedParticipantIds =
+                                selectedParticipantIds|merge(
+                                    [participant.member_id],
                                 )
-                                }}"
+                            %}
+                        {% endfor %}
+                        <form
+                            method="POST"
+                            action="{{
+                            route(
+                                'rooms.items.update',
+                                {
+                                    room: room.id,
+                                    item: item.id,
+                                    query_key: room.password_plan,
+                                },
+                            )
+                            }}"
+                            class="h-full space-y-3 rounded-lg border border-gray-200 bg-gray-50 p-3 md:p-4"
+                        >
+                            <input
+                                type="hidden"
+                                name="_token"
+                                value="{{ csrf_token() }}"
+                            />
+
+                            <div
                                 class="{{
                                 cn(
-                                    'p-3 md:p-4 rounded-xl border border-gray-200',
-                                    'bg-linear-to-r from-gray-50 to-sub-pink-50',
-                                    'space-y-3 h-full'
+                                    'flex items-center gap-2 overflow-x-auto whitespace-nowrap',
+                                    'rounded-lg border border-gray-200 bg-white',
+                                    'px-2 py-1.5 text-xs md:hidden',
                                 )
                                 }}"
                             >
-                                <input
-                                    type="hidden"
-                                    name="_token"
-                                    value="{{ csrf_token() }}"
-                                />
+                                <span class="font-medium text-gray-900">
+                                    {{ item.item_name }}
+                                </span>
+                                <span class="text-gray-300">/</span>
+                                <span class="ui-money">
+                                    ¥{{ item.amount|number_format(0, '.', ',') }}
+                                </span>
+                                <span class="text-gray-300">/</span>
+                                <span class="text-gray-600">
+                                    {{ item.payer
+                                        ? item.payer.member_name
+                                        : '不明' }}
+                                </span>
+                            </div>
 
-                                <div
-                                    class="{{
-                                    cn(
-                                        'flex items-center gap-2 text-xs',
-                                        'overflow-x-auto whitespace-nowrap',
-                                        'rounded-lg border border-gray-200 bg-white px-2 py-1.5',
-                                        'md:text-sm md:hidden'
-                                    )
-                                    }}"
-                                >
-                                    <span class="font-semibold text-gray-800">
-                                        {{ item.item_name }}
-                                    </span>
-                                    <span class="text-gray-400">|</span>
-                                    <span class="text-sub-pink font-semibold">
+                            <div class="hidden items-center gap-2 md:flex">
+                                <label class="ui-label mb-0 shrink-0">品目</label>
+                                <input
+                                    name="item_name"
+                                    value="{{ old('item_name', item.item_name) }}"
+                                    class="ui-input"
+                                    required
+                                />
+                            </div>
+
+                            <div class="hidden gap-3 md:grid md:grid-cols-2">
+                                <p class="text-sm text-gray-600">
+                                    金額
+                                    <span class="ui-money">
                                         ¥{{ item.amount|number_format(0, '.', ',') }}
                                     </span>
-                                    <span class="text-gray-400">|</span>
-                                    <span class="text-gray-600">
+                                </p>
+                                <p class="text-sm text-gray-600">
+                                    支払者
+                                    <span class="font-medium text-gray-900">
                                         {{ item.payer
                                             ? item.payer.member_name
                                             : '不明' }}
                                     </span>
-                                </div>
+                                </p>
+                            </div>
 
-                                <div
-                                    class="hidden md:flex md:items-center md:gap-2"
-                                >
-                                    <label
-                                        class="block text-xs md:text-sm mb-1 text-gray-700"
-                                    >
-                                        品目
-                                    </label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="ui-label">緯度</label>
                                     <input
-                                        name="item_name"
+                                        name="latitude"
+                                        type="number"
+                                        step="any"
                                         value="{{
                                         old(
-                                            'item_name',
-                                            item.item_name
+                                            'latitude',
+                                            item.location
+                                                ? item.location.latitude
+                                                : '',
                                         )
                                         }}"
-                                        class="{{
-                                        cn(
-                                            'w-4/5 text-sm md:text-base p-2',
-                                            'border-2 border-gray-200 rounded-xl',
-                                            'focus:outline-none focus:border-primary',
-                                            'focus:ring-4 focus:ring-primary-100',
-                                            'transition-all'
-                                        )
-                                        }}"
-                                        required
+                                        class="ui-input"
                                     />
                                 </div>
-
-                                <div
-                                    class="hidden md:grid md:grid-cols-2 md:gap-2"
-                                >
-                                    <div class="flex gap-1 items-center">
-                                        <label
-                                            class="text-nowrap block text-xs md:text-sm mb-1 text-gray-700"
-                                        >
-                                            金額
-                                        </label>
-                                        <span
-                                            class="p-2 rounded-xl bg-gray-100 border border-gray-200 text-gray-700"
-                                        >
-                                            ¥{{ item.amount|number_format(0, '.', ',') }}
-                                        </span>
-                                    </div>
-                                    <div class="flex gap-1 items-center">
-                                        <label
-                                            class="text-nowrap block text-xs md:text-sm mb-1 text-gray-700"
-                                        >
-                                            支払者
-                                        </label>
-                                        <span
-                                            class="p-2 rounded-xl bg-gray-100 border border-gray-200 text-gray-700"
-                                        >
-                                            {{ item.payer
-                                                ? item.payer.member_name
-                                                : '不明' }}
-                                        </span>
-                                    </div>
+                                <div>
+                                    <label class="ui-label">経度</label>
+                                    <input
+                                        name="longitude"
+                                        type="number"
+                                        step="any"
+                                        value="{{
+                                        old(
+                                            'longitude',
+                                            item.location
+                                                ? item.location.longitude
+                                                : '',
+                                        )
+                                        }}"
+                                        class="ui-input"
+                                    />
                                 </div>
+                            </div>
 
-                                <div class="grid grid-cols-2 gap-2">
-                                    <div class="flex gap-1 items-center">
-                                        <label
-                                            class="text-nowrap block text-xs md:text-sm mb-1 text-gray-700"
-                                        >
-                                            緯度
-                                        </label>
-                                        <input
-                                            name="latitude"
-                                            type="number"
-                                            step="any"
-                                            value="{{
-                                            old(
-                                                'latitude',
-                                                item.location
-                                                    ? item.location.latitude
-                                                    : ''
-                                            )
-                                            }}"
-                                            class="{{
-                                            cn(
-                                                'w-full text-sm md:text-base p-2',
-                                                'border-2 border-gray-200 rounded-xl',
-                                                'focus:outline-none focus:border-primary',
-                                                'focus:ring-4 focus:ring-primary-100',
-                                                'transition-all'
-                                            )
-                                            }}"
-                                        />
-                                    </div>
-                                    <div class="flex gap-1 items-center">
-                                        <label
-                                            class="text-nowrap block text-xs md:text-sm mb-1 text-gray-700"
-                                        >
-                                            経度
-                                        </label>
-                                        <input
-                                            name="longitude"
-                                            type="number"
-                                            step="any"
-                                            value="{{
-                                            old(
-                                                'longitude',
-                                                item.location
-                                                    ? item.location.longitude
-                                                    : ''
-                                            )
-                                            }}"
-                                            class="{{
-                                            cn(
-                                                'w-full text-sm md:text-base p-2',
-                                                'border-2 border-gray-200 rounded-xl',
-                                                'focus:outline-none focus:border-primary',
-                                                'focus:ring-4 focus:ring-primary-100',
-                                                'transition-all'
-                                            )
-                                            }}"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div data-participant-jump-root>
+                            <div data-participant-jump-root>
+                                <p class="ui-label">対象者（誰の分の支払いか）</p>
+                                <div class="mb-2 flex items-stretch gap-2">
                                     <label
-                                        class="block text-xs md:text-sm mb-1.5 text-gray-700"
+                                        class="sr-only"
+                                        for="participant-jump-{{ item.id }}"
                                     >
-                                        対象者（誰の分の支払いか）
+                                        対象者名でジャンプ
                                     </label>
-                                    <div
-                                        class="{{
-                                        cn(
-                                            'mb-2 flex gap-2 items-stretch',
-                                            'min-h-11'
-                                        )
-                                        }}"
-                                    >
-                                        <label
-                                            class="sr-only"
-                                            for="participant-jump-{{ item.id }}"
-                                        >
-                                            対象者名でジャンプ
-                                        </label>
-                                        <input
-                                            id="participant-jump-{{ item.id }}"
-                                            type="search"
-                                            enterkeyhint="go"
-                                            inputmode="search"
-                                            autocomplete="off"
-                                            autocorrect="off"
-                                            autocapitalize="off"
-                                            spellcheck="false"
-                                            placeholder="名前の一部 →「移動」でジャンプ"
-                                            data-participant-jump-input
-                                            class="{{
-                                            cn(
-                                                'flex-1 min-w-0 px-3 py-2.5',
-                                                'text-base md:text-sm',
-                                                'border-2 border-gray-200 rounded-xl',
-                                                'focus:outline-none focus:border-primary',
-                                                'focus:ring-4 focus:ring-primary-100',
-                                                'transition-all'
-                                            )
-                                            }}"
-                                        />
-                                        <button
-                                            type="button"
-                                            data-participant-jump-go
-                                            aria-label="名前の一致へスクロール"
-                                            class="{{
-                                            cn(
-                                                'shrink-0 px-3 py-2',
-                                                'text-sm font-medium',
-                                                'border-2 border-primary rounded-xl',
-                                                'bg-primary text-white',
-                                                'active:bg-primary-hover',
-                                                'md:hover:bg-primary-hover',
-                                                'focus:outline-none focus:ring-4',
-                                                'focus:ring-primary-100',
-                                                'transition-colors'
-                                            )
-                                            }}"
-                                        >
-                                            移動
-                                        </button>
-                                    </div>
-                                    <div
-                                        data-participant-jump-scroll
-                                        class="{{
-                                        cn(
-                                            'space-y-2 p-2 md:p-3',
-                                            'bg-gray-50 rounded-xl',
-                                            'border-2 border-gray-200',
-                                            'max-h-[min(50svh,14rem)] md:max-h-36',
-                                            'overflow-y-auto touch-pan-y overscroll-y-contain',
-                                            '[-webkit-overflow-scrolling:touch]'
-                                        )
-                                        }}"
-                                    >
-                                        {% for member in room.members %}
-                                            <label
-                                                data-participant-jump-row
-                                                data-member-name="{{ member.member_name|e(
-                                                    'html_attr'
-                                                ) }}"
-                                                class="{{
-                                                cn(
-                                                    'flex items-center gap-3',
-                                                    'min-h-12 p-2.5 md:p-3',
-                                                    'bg-white rounded-lg cursor-pointer',
-                                                    'active:bg-primary-50 md:hover:bg-primary-50',
-                                                    'transition-colors',
-                                                    'border border-gray-200'
-                                                )
-                                                }}"
-                                            >
-                                                <input
-                                                    type="checkbox"
-                                                    name="participant_ids[]"
-                                                    value="{{ member.id }}"
-                                                    {{
-                                                    member.id
-                                                        in selectedParticipantIds
-                                                        ? 'checked'
-                                                        : ''
-                                                    }}
-                                                    class="{{
-                                                    cn(
-                                                        'w-5 h-5 shrink-0',
-                                                        'text-sub-pink rounded',
-                                                        'focus:ring-2 focus:ring-sub-pink'
-                                                    )
-                                                    }}"
-                                                />
-                                                <span class="text-base">
-                                                    {{ member.member_name }}
-                                                </span>
-                                            </label>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-
-                                <div
-                                    class="flex justify-between items-center gap-2"
-                                >
+                                    <input
+                                        id="participant-jump-{{ item.id }}"
+                                        type="search"
+                                        enterkeyhint="go"
+                                        inputmode="search"
+                                        autocomplete="off"
+                                        autocorrect="off"
+                                        autocapitalize="off"
+                                        spellcheck="false"
+                                        placeholder="名前の一部で移動"
+                                        data-participant-jump-input
+                                        class="ui-input"
+                                    />
                                     <button
-                                        type="submit"
-                                        name="_method"
-                                        value="PATCH"
-                                        class="{{
-                                        cn(
-                                            'px-4 py-2 text-sm md:text-base',
-                                            'bg-linear-to-r from-primary to-sub-pink text-white',
-                                            'rounded-xl hover:from-primary-hover hover:to-sub-pink-hover',
-                                            'shadow-md transition-all'
-                                        )
-                                        }}"
+                                        type="button"
+                                        data-participant-jump-go
+                                        aria-label="名前の一致へスクロール"
+                                        class="ui-btn ui-btn-secondary shrink-0"
                                     >
-                                        更新
+                                        移動
                                     </button>
-                                    <div class="group flex items-center">
-                                        <button
-                                            type="submit"
-                                            name="_method"
-                                            value="DELETE"
-                                            formaction="{{
-                                            route(
-                                                'rooms.items.delete',
-                                                {
-                                                    room: room.id,
-                                                    item: item.id,
-                                                    query_key: room.password_plan
-                                                }
-                                            )
-                                            }}"
-                                            aria-label="削除を実行"
-                                            class="{{
-                                            cn(
-                                                'h-8 text-xs rounded-lg',
-                                                'text-white bg-rose-400 hover:bg-rose-400',
-                                                'transition-all duration-200',
-                                                'mr-0 max-w-0 px-0 opacity-0 overflow-hidden',
-                                                'group-hover:mr-2 group-hover:max-w-24',
-                                                'group-hover:px-3 group-hover:opacity-100',
-                                                'group-focus-within:mr-2 group-focus-within:max-w-24',
-                                                'group-focus-within:px-3 group-focus-within:opacity-100'
-                                            )
-                                            }}"
-                                        >
-                                            実行
-                                        </button>
-                                        <button
-                                            type="button"
-                                            aria-label="削除ボタン"
-                                            class="{{
-                                            cn(
-                                                'h-8 px-3 text-xs md:text-sm rounded-lg border',
-                                                'border-rose-200 bg-white',
-                                                'hover:bg-rose-50 transition-colors'
-                                            )
-                                            }}"
-                                        >
-                                            <span
-                                                class="{{
-                                                cn(
-                                                    'icon-[marketeq--delete-alt-2] w-5 h-5',
-                                                    'flex items-center justify-center',
-                                                    'transition-all duration-200 ',
-                                                    'text-black'
-                                                )
-                                                }}"
-                                            >
-
-                                            </span>
-                                        </button>
-                                    </div>
                                 </div>
-                            </form>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
+                                <div
+                                    data-participant-jump-scroll
+                                    class="ui-scroll max-h-[min(50svh,14rem)] bg-white md:max-h-36"
+                                >
+                                    {% for member in room.members %}
+                                        <label
+                                            data-participant-jump-row
+                                            data-member-name="{{ member.member_name|e(
+                                                'html_attr',
+                                            ) }}"
+                                            class="ui-choice"
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                name="participant_ids[]"
+                                                value="{{ member.id }}"
+                                                {{ member.id in selectedParticipantIds
+                                                    ? 'checked'
+                                                    : '' }}
+                                                class="ui-check"
+                                            />
+                                            <span class="text-sm text-gray-900">
+                                                {{ member.member_name }}
+                                            </span>
+                                        </label>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between gap-2">
+                                <button
+                                    type="submit"
+                                    name="_method"
+                                    value="PATCH"
+                                    class="ui-btn ui-btn-primary"
+                                >
+                                    更新
+                                </button>
+                                <button
+                                    type="submit"
+                                    name="_method"
+                                    value="DELETE"
+                                    formaction="{{
+                                    route(
+                                        'rooms.items.delete',
+                                        {
+                                            room: room.id,
+                                            item: item.id,
+                                            query_key: room.password_plan,
+                                        },
+                                    )
+                                    }}"
+                                    class="ui-btn ui-btn-danger"
+                                >
+                                    削除
+                                </button>
+                            </div>
+                        </form>
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

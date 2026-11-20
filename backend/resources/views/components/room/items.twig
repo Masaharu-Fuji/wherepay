@@ -1,51 +1,32 @@
-<div class="bg-white rounded-2xl border border-gray-200 shadow-lg p-2 md:p-6">
-    <div class="flex justify-start items-center gap-2 mb-4">
-        <span class="icon-[fluent-color--gift-24] w-10 h-10"></span>
-        <h3 class="text-xs md:text-sm font-bold">品目一覧</h3>
-        <span class="bg-sub-pink text-white px-3 py-1 rounded-full text-sm">
-            {{ room.items|length }}件
-        </span>
+<div class="ui-card">
+    <div class="mb-4 flex items-center gap-2">
+        <h3 class="ui-section-title">
+            <span class="icon-[lucide--receipt] ui-icon"></span>
+            品目一覧
+        </h3>
+        <span class="ui-count">{{ room.items|length }}件</span>
         <a
             href="{{
             route(
                 'rooms.items.index',
                 {
                     room: room.id,
-                    query_key: room.password_plan
-                }
+                    query_key: room.password_plan,
+                },
             )
             }}"
-            class="{{
-            cn(
-                'inline-flex items-center justify-center',
-                'px-2.5 py-2.5',
-                'bg-sub-green rounded-lg',
-                'border border-emerald-500/20 shadow-sm',
-                'transition-all duration-200 ease-out',
-                'hover:bg-sub-green-hover hover:-translate-y-0.5 hover:shadow-md',
-                'hover:ring-2 hover:ring-emerald-300/50',
-                'active:translate-y-0 active:scale-95'
-            )
-            }}"
+            class="ui-btn ui-btn-secondary ml-auto"
         >
-            <span class="icon-[fluent-color--clipboard-text-edit-24] w-5 h-5">
-
-            </span>
+            編集
         </a>
     </div>
 
     {% if (room.items|length) == 0 %}
-        <div class="text-center py-12">
-            <span class="icon-[fluent-color--drafts-24] w-10 h-10"></span>
-            <p class="text-gray-500 text-sm font-bold">
-                品目を追加してください
-            </p>
-        </div>
+        <p class="py-10 text-center text-sm text-gray-500">
+            品目を追加してください
+        </p>
     {% else %}
-        <div
-            id="room-items-scroll"
-            class="space-y-2 md:space-y-3 md:overflow-y-auto"
-        >
+        <div id="room-items-scroll" class="space-y-3 md:overflow-y-auto">
             {% for item in room.items %}
                 {% set payer = item.payer %}
                 {% set recipients = [] %}
@@ -60,131 +41,53 @@
                         selectedParticipantIds|merge([participant.member_id])
                     %}
                 {% endfor %}
-                <div
-                    class="{{
-                    cn(
-                        'p-3 md:p-4',
-                        'bg-linear-to-r from-gray-50 to-sub-pink-50',
-                        'rounded-xl border border-gray-200',
-                        'hover:shadow-md transition-shadow'
-                    )
-                    }}"
-                >
-                    <div
-                        class="flex flex-col gap-1 md:flex-row md:justify-between md:items-center mb-2"
-                    >
-                        <div class="flex-1">
-                            <div class="flex items-center gap-2 mb-1">
-                                <span class="text-sm md:text-lg font-medium">
-                                    {{ item.item_name }}
-                                </span>
-                                {% if item.location %}
-                                    <div
-                                        class="{{
-                                        cn(
-                                            'bg-sub-green text-white rounded-full px-2 py-0.5',
-                                            'flex items-center gap-0.5'
-                                        )
-                                        }}"
-                                    >
-                                        <span
-                                            class="icon-[fluent-color--location-ripple-24]"
-                                        >
-
-                                        </span>
-                                        <span
-                                            class="hidden sm:block text-[10px] md:text-xs"
-                                        >
-                                            位置情報あり
-                                        </span>
-                                    </div>
-                                {% endif %}
-                            </div>
-                            <div
-                                class="text-xs md:text-sm text-gray-600 flex flex-wrap items-center gap-1"
-                            >
-                                <span
-                                    class="text-sub-pink font-bold md:text-lg"
-                                >
+                <article class="rounded-lg border border-gray-200 bg-gray-50 p-3 md:p-4">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <h4 class="font-medium text-gray-900">
+                                {{ item.item_name }}
+                            </h4>
+                            <p class="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-sm text-gray-600">
+                                <span class="font-medium text-gray-900">
                                     {{ payer ? payer.member_name : '不明' }}
                                 </span>
-                                <span class="rotate-90 md:rotate-0">
-                                    <img
-                                        src="{{ asset('svg/arrow.svg') }}"
-                                        width="10"
-                                        height="10"
-                                        alt="arrow"
-                                        class="inline-block w-2 h-2 md:w-3 md:h-3"
-                                    />
-                                </span>
-                                <span class="text-base text-gray-700">
-                                    <div
-                                        class="flex flex-wrap items-center gap-1"
-                                    >
-                                        {% for recipient in recipients %}
-                                            <span
-                                                class="text-sm font-bold md:text-lg text-blue-500"
-                                            >
-                                                {{ recipient }}
-                                            </span>
-                                            {% if not loop.last %}
-                                                <span
-                                                    class="text-sm md:text-lg"
-                                                >
-                                                    ,
-                                                </span>
-                                            {% endif %}
-                                        {% endfor %}
-                                    </div>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <div
-                            class="text-base md:text-2xl text-right md:text-right mt-1 md:mt-0 text-sub-pink"
-                        >
-                            <div class="flex items-center gap-1">
-                                <span
-                                    class="icon-[fluent-color--people-24] h-5 w-5 md:h-7 md:w-7"
-                                >
-
-                                </span>
-                                ¥{{ item.amount|number_format(0, '.', ',') }}
-                            </div>
-                            {% if item.created_at %}
-                                <div
-                                    class="text-[10px] md:text-xs text-gray-500 mt-1"
-                                >
-                                    作成:
-                                    {{
-                                        item.created_at|date(
-                                            'Y/m/d H:i',
-                                            'Asia/Tokyo'
-                                        )
-                                    }}
-                                </div>
+                                {% if (recipients|length) > 0 %}
+                                    <span
+                                        class="icon-[lucide--arrow-right] inline-block h-3.5 w-3.5 text-gray-400"
+                                    ></span>
+                                    <span>{{ recipients|join('、') }}</span>
+                                {% endif %}
+                            </p>
+                            {% if item.location %}
+                                <p class="mt-1 inline-flex items-center gap-1 text-xs font-medium text-sub-green-ink">
+                                    <span class="icon-[lucide--map-pin] inline-block h-3.5 w-3.5"></span>
+                                    位置情報あり
+                                </p>
                             {% endif %}
                         </div>
-                        <div class="flex items-center gap-2">
+                        <div class="shrink-0 text-right">
+                            <p class="ui-money text-lg">
+                                ¥{{ item.amount|number_format(0, '.', ',') }}
+                            </p>
                             {% if (item.participants|length) > 0 %}
                                 {% set per_person =
                                     (item.amount / (item.participants|length))
                                         |round(0, 'common')
                                         |number_format(0, '.', ',')
                                 %}
-                                <div
-                                    class="flex items-center gap-1 text-gray-500 mt-2"
-                                >
-                                    <span
-                                        class="icon-[fluent-color--person-24] h-5 w-5"
-                                    >
-
-                                    </span>
-                                    <span class="text-gray-500 text-sm">
-                                        ¥{{ per_person }}
-                                    </span>
-                                </div>
+                                <p class="text-xs text-gray-500">
+                                    1人 ¥{{ per_person }}
+                                </p>
+                            {% endif %}
+                            {% if item.created_at %}
+                                <p class="mt-1 text-xs text-gray-400">
+                                    {{
+                                        item.created_at|date(
+                                            'Y/m/d H:i',
+                                            'Asia/Tokyo',
+                                        )
+                                    }}
+                                </p>
                             {% endif %}
                         </div>
                     </div>
@@ -197,12 +100,10 @@
                             : selectedParticipantIds
                     %}
                     <details
-                        class="mt-3"
+                        class="mt-3 border-t border-gray-200 pt-3"
                         {{ participantErrors.isNotEmpty() ? 'open' : '' }}
                     >
-                        <summary
-                            class="cursor-pointer text-sm font-medium text-primary"
-                        >
+                        <summary class="cursor-pointer text-sm font-medium text-gray-700">
                             対象者を直す
                         </summary>
                         <form
@@ -213,11 +114,11 @@
                                 {
                                     room: room.id,
                                     item: item.id,
-                                    query_key: room.password_plan
-                                }
+                                    query_key: room.password_plan,
+                                },
                             )
                             }}"
-                            class="mt-2 space-y-2"
+                            class="mt-3 space-y-3"
                             data-participant-editor
                             data-amount="{{ item.amount }}"
                             data-payer-id="{{ item.payer_id }}"
@@ -232,56 +133,28 @@
                                 <button
                                     type="button"
                                     data-participant-all
-                                    class="{{
-                                    cn(
-                                        'px-3 py-2 text-sm font-medium',
-                                        'border-2 border-primary rounded-xl',
-                                        'bg-primary text-white'
-                                    )
-                                    }}"
+                                    class="ui-btn ui-btn-secondary"
                                 >
                                     全員
                                 </button>
                                 <button
                                     type="button"
                                     data-participant-except-payer
-                                    class="{{
-                                    cn(
-                                        'px-3 py-2 text-sm font-medium',
-                                        'border-2 border-primary rounded-xl',
-                                        'bg-white text-primary'
-                                    )
-                                    }}"
+                                    class="ui-btn ui-btn-secondary"
                                 >
                                     支払者以外
                                 </button>
                                 <button
                                     type="button"
                                     data-participant-clear
-                                    class="{{
-                                    cn(
-                                        'px-3 py-2 text-sm font-medium',
-                                        'border-2 border-gray-200 rounded-xl',
-                                        'bg-white text-gray-700'
-                                    )
-                                    }}"
+                                    class="ui-btn ui-btn-secondary"
                                 >
                                     クリア
                                 </button>
                             </div>
-                            <div
-                                class="{{
-                                cn(
-                                    'space-y-2 p-2 bg-white rounded-xl',
-                                    'border border-gray-200',
-                                    'max-h-48 overflow-y-auto'
-                                )
-                                }}"
-                            >
+                            <div class="ui-scroll max-h-48 bg-white">
                                 {% for member in room.members %}
-                                    <label
-                                        class="flex items-center gap-3 min-h-11"
-                                    >
+                                    <label class="ui-choice">
                                         <input
                                             type="checkbox"
                                             name="participant_ids[]"
@@ -293,36 +166,28 @@
                                             )
                                                 ? 'checked'
                                                 : '' }}
-                                            class="w-5 h-5 shrink-0"
+                                            class="ui-check"
                                         />
-                                        <span class="text-sm">
+                                        <span class="text-sm text-gray-900">
                                             {{ member.member_name }}
                                         </span>
                                     </label>
                                 {% endfor %}
                             </div>
                             {% if participantErrors.isNotEmpty() %}
-                                <p role="alert" class="text-sm text-sub-pink">
+                                <p role="alert" class="text-sm text-danger">
                                     {{ participantErrors.first }}
                                 </p>
                             {% endif %}
-                            <p data-per-person class="text-sm text-gray-700">
+                            <p data-per-person class="text-sm text-gray-500">
                                 対象者を選ぶと、1人あたりの金額が出ます
                             </p>
-                            <button
-                                type="submit"
-                                class="{{
-                                cn(
-                                    'px-4 py-2 text-sm text-white rounded-xl',
-                                    'bg-gradient-to-r from-primary to-sub-pink'
-                                )
-                                }}"
-                            >
+                            <button type="submit" class="ui-btn ui-btn-primary">
                                 この内容で直す
                             </button>
                         </form>
                     </details>
-                </div>
+                </article>
             {% endfor %}
         </div>
     {% endif %}
