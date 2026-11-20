@@ -15,6 +15,8 @@ class Room extends Model
 {
     use HasFactory;
 
+    public const NAME_MAX_LENGTH = 40;
+
     protected $fillable = [
         'room_name',
         'password_plan',

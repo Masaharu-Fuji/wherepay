@@ -9,7 +9,9 @@ use App\Models\Member;
 use App\Models\Room;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -26,7 +28,7 @@ class RoomController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'room_name' => ['required', 'string', 'max:255'],
+            'room_name' => ['required', 'string', 'max:'.Room::NAME_MAX_LENGTH],
         ]);
 
         $room = Room::create([
@@ -87,10 +89,13 @@ class RoomController extends Controller
         /** @var view-string $view */
         $view = 'room.show';
 
+        $status = $request->session()->get('status');
+
         return view($view, [
             'room' => $room,
             'totalAmount' => $totalAmount,
             'ranking' => $ranking,
+            'statusMessage' => is_string($status) ? $status : null,
         ]);
     }
 
@@ -161,10 +166,10 @@ class RoomController extends Controller
         $validated = $request->validate([
             'item_name' => ['required', 'string', 'max:255'],
             'amount' => ['required', 'integer', 'min:1'],
-            'payer_id' => ['required', 'integer', Rule::exists(Member::class, 'id')],
+            'payer_id' => $this->memberInRoomRules($room, true),
             'participant_ids' => ['required', 'array', 'min:1'],
-            'participant_ids.*' => ['integer', Rule::exists(Member::class, 'id')],
-            'memo' => ['nullable', 'string', 'max:1000'],
+            'participant_ids.*' => $this->memberInRoomRules($room),
+            'memo' => ['nullable', 'string', 'max:255'],
             'paid_at' => ['nullable', 'date'],
             'latitude' => ['nullable', 'numeric'],
             'longitude' => ['nullable', 'numeric'],
@@ -181,16 +186,9 @@ class RoomController extends Controller
             'payer_id' => $validated['payer_id'],
         ]);
 
-        $participants = $validated['participant_ids'];
-        $perPerson = (int) round($validated['amount'] / max(1, count($participants)));
-
-        foreach ($participants as $memberId) {
-            ItemParticipant::create([
-                'share_amount' => $perPerson,
-                'item_id' => $item->id,
-                'member_id' => $memberId,
-            ]);
-        }
+        /** @var list<int|string> $participantIds */
+        $participantIds = $validated['participant_ids'];
+        $this->replaceParticipants($item, $this->normalizeMemberIds($participantIds));
 
         if (! empty($validated['latitude']) && ! empty($validated['longitude'])) {
             $lat = (float) $validated['latitude'];
@@ -251,7 +249,7 @@ class RoomController extends Controller
         $validated = $request->validate([
             'item_name' => ['required', 'string', 'max:255'],
             'participant_ids' => ['required', 'array', 'min:1'],
-            'participant_ids.*' => ['integer', Rule::exists(Member::class, 'id')],
+            'participant_ids.*' => $this->memberInRoomRules($room),
             'latitude' => ['nullable', 'numeric', 'required_with:longitude'],
             'longitude' => ['nullable', 'numeric', 'required_with:latitude'],
         ]);
@@ -260,17 +258,9 @@ class RoomController extends Controller
             'item_name' => $validated['item_name'],
         ]);
 
-        $participants = $validated['participant_ids'];
-        $perPerson = (int) round($item->amount / max(1, count($participants)));
-
-        $item->participants()->delete();
-        foreach ($participants as $memberId) {
-            ItemParticipant::create([
-                'share_amount' => $perPerson,
-                'item_id' => $item->id,
-                'member_id' => $memberId,
-            ]);
-        }
+        /** @var list<int|string> $participantIds */
+        $participantIds = $validated['participant_ids'];
+        $this->replaceParticipants($item, $this->normalizeMemberIds($participantIds));
 
         $latitude = $validated['latitude'] ?? null;
         $longitude = $validated['longitude'] ?? null;
@@ -293,6 +283,43 @@ class RoomController extends Controller
             'room' => $room,
             'query_key' => $room->password_plan,
         ]);
+    }
+
+    public function updateItemParticipants(Request $request, Room $room, Item $item): RedirectResponse
+    {
+        $queryKey = $request->query('query_key');
+        if ($queryKey === null || $queryKey !== $room->password_plan) {
+            return redirect()->route('rooms.show', ['room' => $room]);
+        }
+
+        if ((int) $item->room_id !== (int) $room->id) {
+            abort(404);
+        }
+
+        $errorBag = 'itemParticipants'.$item->id;
+        $validator = Validator::make($request->all(), [
+            'participant_ids' => ['required', 'array', 'min:1'],
+            'participant_ids.*' => $this->memberInRoomRules($room),
+        ]);
+
+        if ($validator->fails()) {
+            throw (new ValidationException($validator))->errorBag($errorBag);
+        }
+
+        /** @var array{participant_ids: list<int|string>} $validated */
+        $validated = $validator->validated();
+
+        /** @var list<int|string> $participantIds */
+        $participantIds = $validated['participant_ids'];
+        $memberIds = $this->normalizeMemberIds($participantIds);
+        $perPerson = $this->replaceParticipants($item, $memberIds);
+
+        return redirect()
+            ->route('rooms.show', [
+                'room' => $room,
+                'query_key' => $room->password_plan,
+            ])
+            ->with('status', $this->participantStatusMessage($item, $memberIds, $perPerson));
     }
 
     public function deleteItem(Room $room, Item $item): RedirectResponse
@@ -350,5 +377,83 @@ class RoomController extends Controller
             'Content-Type' => 'text/csv; charset=UTF-8',
             'Content-Disposition' => 'attachment; filename="'.$filename.'"',
         ]);
+    }
+
+    /**
+     * @return list<string|\Illuminate\Validation\Rules\Exists>
+     */
+    private function memberInRoomRules(Room $room, bool $required = false): array
+    {
+        $rules = [
+            'integer',
+            Rule::exists(Member::class, 'id')->where('room_id', $room->id),
+        ];
+
+        if ($required) {
+            array_unshift($rules, 'required');
+        }
+
+        return $rules;
+    }
+
+    /**
+     * @param  list<int|string>  $memberIds
+     * @return list<int>
+     */
+    private function normalizeMemberIds(array $memberIds): array
+    {
+        $ids = [];
+        foreach ($memberIds as $memberId) {
+            $id = (int) $memberId;
+            if (! in_array($id, $ids, true)) {
+                $ids[] = $id;
+            }
+        }
+
+        return $ids;
+    }
+
+    /**
+     * @param  list<int>  $memberIds
+     */
+    private function replaceParticipants(Item $item, array $memberIds): int
+    {
+        $perPerson = (int) round($item->amount / max(1, count($memberIds)));
+        $item->participants()->delete();
+
+        foreach ($memberIds as $memberId) {
+            ItemParticipant::create([
+                'share_amount' => $perPerson,
+                'item_id' => $item->id,
+                'member_id' => $memberId,
+            ]);
+        }
+
+        return $perPerson;
+    }
+
+    /**
+     * @param  list<int>  $memberIds
+     */
+    private function participantStatusMessage(Item $item, array $memberIds, int $perPerson): string
+    {
+        $namesById = Member::query()
+            ->whereIn('id', $memberIds)
+            ->pluck('member_name', 'id');
+
+        $names = [];
+        foreach ($memberIds as $memberId) {
+            $name = $namesById->get($memberId);
+            if (is_string($name)) {
+                $names[] = $name;
+            }
+        }
+
+        return sprintf(
+            '%sの対象者を %s に直しました（1人 ¥%s）',
+            $item->item_name,
+            implode('・', $names),
+            number_format($perPerson)
+        );
     }
 }

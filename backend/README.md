@@ -76,7 +76,7 @@ composer run twig:fix
 | `Map` | `maps` |
 | `ItemCategory` | `item_categories` |
 
-作成時の `t_` / `m_` 名は `database/migrations/2026_11_20_000011_rename_domain_tables_to_eloquent_convention.php` で改名します。適用済みの DB は `php artisan migrate` で追従できます。
+作成時の `t_` / `m_` 名は `database/migrations/2026_11_20_000012_rename_domain_tables_to_eloquent_convention.php` で改名します。ルーム名と品目メモの桁変更のあとに実行します。適用済みの DB は `php artisan migrate` で追従できます。
 
 ### `items.room_id` の追加と関連
 

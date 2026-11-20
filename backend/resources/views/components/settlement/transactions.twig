@@ -1,4 +1,10 @@
-<div class="bg-white rounded-2xl border border-gray-200 shadow-lg p-4 md:p-6">
+<div
+    class="bg-white rounded-2xl border border-gray-200 shadow-lg p-4 md:p-6"
+    {% if (transactions|length) > 0 %}
+        data-settlement-handoff
+        data-room-name="{{ room.room_name|e('html_attr') }}"
+    {% endif %}
+>
     <div class="flex items-center gap-2 mb-4 md:mb-6">
         <span class="icon-[fluent-color--megaphone-loud-24] w-10 h-10"></span>
         <h3 class="text-xl">支払い清算</h3>
@@ -13,77 +19,77 @@
             </p>
         </div>
     {% else %}
+        <div
+            class="{{
+            cn(
+                'mb-4 flex flex-col gap-3',
+                'md:flex-row md:items-end md:justify-between'
+            )
+            }}"
+        >
+            <label class="block text-sm text-gray-700">
+                この人の分だけ
+                <select
+                    data-handoff-person
+                    class="{{
+                    cn(
+                        'mt-1 block w-full md:w-56',
+                        'text-base p-2 bg-white',
+                        'border-2 border-gray-200 rounded-xl'
+                    )
+                    }}"
+                >
+                    <option value="">
+                        全員
+                    </option>
+                    {% for member in room.members %}
+                        <option value="{{ member.id }}">
+                            {{ member.member_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </label>
+            <button
+                type="button"
+                data-handoff-copy
+                class="{{
+                cn(
+                    'px-4 py-2 text-sm font-medium text-white',
+                    'bg-primary rounded-xl active:bg-primary-hover'
+                )
+                }}"
+            >
+                清算文をコピー
+            </button>
+        </div>
+        <p data-handoff-empty class="hidden mb-3 text-sm text-gray-500">
+            この人のやり取りはありません
+        </p>
         <div class="space-y-3 md:space-y-4">
             {% for transaction in transactions %}
                 {% set fromMember = membersById[transaction.from] ?? null %}
                 {% set toMember = membersById[transaction.to] ?? null %}
-                <div
+                {% set fromName = fromMember ? fromMember.member_name : '不明' %}
+                {% set toName = toMember ? toMember.member_name : '不明' %}
+                <article
+                    data-handoff-row
+                    data-from="{{ transaction.from }}"
+                    data-to="{{ transaction.to }}"
+                    data-amount="{{ transaction.amount }}"
+                    data-from-name="{{ fromName|e('html_attr') }}"
+                    data-to-name="{{ toName|e('html_attr') }}"
                     class="{{
                     cn(
-                        'p-3 md:p-5',
-                        'bg-white rounded-xl border border-gray-200',
-                        'shadow-sm'
+                        'p-4 bg-white rounded-xl',
+                        'border border-gray-200 shadow-sm'
                     )
                     }}"
                 >
-                    <div
-                        class="flex flex-col gap-0.5 md:gap-3 md:flex-row md:items-center md:gap-4"
-                    >
-                        <div
-                            class="{{
-                            cn(
-                                'flex-1 text-center px-4 py-2 md:py-3',
-                                'text-sm md:text-base font-medium',
-                                'bg-primary text-white rounded-xl',
-                                'shadow-sm'
-                            )
-                            }}"
-                        >
-                            {{ fromMember
-                                ? fromMember.id ~ ' ' ~ fromMember.member_name
-                                : '不明' }}
-                        </div>
-                        <div
-                            class="{{
-                            cn(
-                                'text-lg md:text-2xl text-gray-500 flex-shrink-0 text-center',
-                                'rotate-90 md:rotate-0'
-                            )
-                            }}"
-                        >
-                            <img
-                                src="{{ asset('svg/arrow.svg') }}"
-                                width="10"
-                                height="10"
-                                alt="arrow"
-                                class="inline-block w-2 h-2 md:w-3 md:h-3"
-                            />
-                        </div>
-                        <div
-                            class="{{
-                            cn(
-                                'flex-1 text-center px-4 py-2 md:py-3 text-sm md:text-base font-medium',
-                                'bg-gray-700 text-white rounded-xl',
-                                'shadow-sm'
-                            )
-                            }}"
-                        >
-                            {{ toMember
-                                ? toMember.id ~ ' ' ~ toMember.member_name
-                                : '不明' }}
-                        </div>
-                        <div
-                            class="{{
-                            cn(
-                                'text-base md:text-2xl font-semibold flex-shrink-0',
-                                'md:min-w-[140px] text-right text-gray-900 mt-1 md:mt-0'
-                            )
-                            }}"
-                        >
-                            ¥{{ transaction.amount|number_format(0, '.', ',') }}
-                        </div>
-                    </div>
-                </div>
+                    <p class="text-lg md:text-2xl font-semibold text-gray-900">
+                        {{ fromName }}さん → {{ toName }}さんに
+                        ¥{{ transaction.amount|number_format(0, '.', ',') }}
+                    </p>
+                </article>
             {% endfor %}
         </div>
     {% endif %}
