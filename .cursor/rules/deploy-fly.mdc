@@ -1,0 +1,16 @@
+---
+description: 本番は Fly.io。SQLite は Volume 上に置き、Render には載せない
+alwaysApply: true
+---
+
+# デプロイ
+
+本番ホスティングは Fly.io。説明の正本はリポジトリ直下 README の「デプロイ」。
+
+- 設定は `backend/fly.toml`、`backend/Dockerfile`、`backend/.fly/` を変更する。別ホスト用の設定ファイルは足さない
+- DB は SQLite。パスは `/data/database.sqlite`（Fly Volume `wherepay_data`）
+- 本番で `/data` がマウントされていないときは起動を失敗させる（`backend/.fly/scripts/migrate.sh`）
+- リージョンは `nrt`。マシンは 1 台。Volume は複数マシンで共有しない
+- `render.yaml` など Render 用の設定を追加しない
+- DB を Postgres や他のマネージド DB に切り替えない
+- デプロイ先を変えるのは、利用者から明示されたときだけ
