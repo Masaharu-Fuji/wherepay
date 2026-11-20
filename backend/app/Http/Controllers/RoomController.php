@@ -169,7 +169,7 @@ class RoomController extends Controller
             'payer_id' => $this->memberInRoomRules($room, true),
             'participant_ids' => ['required', 'array', 'min:1'],
             'participant_ids.*' => $this->memberInRoomRules($room),
-            'memo' => ['nullable', 'string', 'max:1000'],
+            'memo' => ['nullable', 'string', 'max:255'],
             'paid_at' => ['nullable', 'date'],
             'latitude' => ['nullable', 'numeric'],
             'longitude' => ['nullable', 'numeric'],
