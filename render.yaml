@@ -1,4 +1,5 @@
 # Render の無料枠。Web も Postgres も plan: free のままにする。
+# 環境変数の見本: backend/.env.deploy.example
 # 省略すると有料プラン（Web は月 $7、Postgres は月 $6）になる。
 # 無料 Postgres は作成から 30 日で期限が切れる。
 services:

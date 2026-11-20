@@ -162,6 +162,15 @@ composer run lint:lines
 
 公開先は [Render](https://render.com) の無料枠です。Web サービスと Postgres がどちらも $0 で、クレジットカードの登録なしで始められます。定義はリポジトリ直下の [`render.yaml`](render.yaml) です。リージョンはシンガポール、Web のメモリは 512MB です。
 
+環境変数の見本は [`backend/.env.deploy.example`](backend/.env.deploy.example) です。自分で用意するのは次の 2 つです。
+
+| 変数 | 見本 | 入り方 |
+| --- | --- | --- |
+| `APP_KEY` | `base64:` で始まる 32 バイトの鍵 | Render の generateValue が作ります。手元で作るときは `php artisan key:generate --show` です |
+| `DATABASE_URL` | `postgres://wherepay:password@dpg-example:5432/wherepay` | Blueprint が wherepay-db の接続文字列を入れます。差し替えるときはこの 1 行です |
+
+`APP_ENV`、`DB_CONNECTION=pgsql`、`SESSION_DRIVER=cookie`、`CACHE_STORE=file`、`QUEUE_CONNECTION=sync` は見本ファイルと `render.yaml` に同じ値があります。`PORT` と `RENDER_EXTERNAL_URL` は Render が起動時に渡します。
+
 ルームは Postgres に保存します。無料の Web はディスクを持たないので、SQLite のファイルはインスタンスが止まるたびに消えます。
 
 無料枠の動きは次のとおりです。
