@@ -1,76 +1,78 @@
-<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-    <div class="ui-card">
-        <h3 class="ui-section-title mb-4">
-            <span class="icon-[lucide--user-plus] ui-icon"></span>
-            メンバー追加
-        </h3>
-        <form
-            method="POST"
-            action="{{
-            route(
-                'rooms.members.store',
-                {
-                    room: room.id,
-                },
-            )
-            }}"
-            class="space-y-4"
-        >
-            <input type="hidden" name="_token" value="{{ csrf_token() }}" />
-            <div>
-                <label for="member_name" class="ui-label">メンバー名</label>
-                <input
-                    id="member_name"
-                    name="member_name"
-                    placeholder="名前を入力"
-                    value="{{ old('member_name') }}"
-                    class="ui-input"
-                    required
-                />
-                {% if errors.has('member_name') %}
-                    <p class="mt-1.5 text-sm text-danger">
-                        {{ errors.first('member_name') }}
-                    </p>
-                {% endif %}
-            </div>
-            <button type="submit" class="ui-btn ui-btn-primary w-full">
-                追加
-            </button>
-        </form>
-    </div>
+<div class="@container">
+    <div class="grid grid-cols-1 gap-4 @min-[40rem]:grid-cols-2">
+        <div class="ui-card">
+            <h3 class="ui-section-title mb-4">
+                <span class="icon-[lucide--user-plus] ui-icon"></span>
+                メンバー追加
+            </h3>
+            <form
+                method="POST"
+                action="{{
+                route(
+                    'rooms.members.store',
+                    {
+                        room: room.id,
+                    },
+                )
+                }}"
+                class="space-y-4"
+            >
+                <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+                <div>
+                    <label for="member_name" class="ui-label">メンバー名</label>
+                    <input
+                        id="member_name"
+                        name="member_name"
+                        placeholder="名前を入力"
+                        value="{{ old('member_name') }}"
+                        class="ui-input"
+                        required
+                    />
+                    {% if errors.has('member_name') %}
+                        <p class="mt-1.5 text-sm text-danger">
+                            {{ errors.first('member_name') }}
+                        </p>
+                    {% endif %}
+                </div>
+                <button type="submit" class="ui-btn ui-btn-primary w-full">
+                    追加
+                </button>
+            </form>
+        </div>
 
-    <div class="ui-card">
-        {% if (room.members|length) > 0 %}
-            <div class="mb-4 flex items-center gap-2">
-                <h3 class="ui-section-title">
-                    <span class="icon-[lucide--users] ui-icon"></span>
-                    メンバー
-                </h3>
-                <span class="ui-count">{{ room.members|length }}人</span>
-                <a
-                    href="{{
-                    route(
-                        'rooms.members.index',
-                        {
-                            room: room.id,
-                            query_key: room.password_plan,
-                        },
-                    )
-                    }}"
-                    class="ui-btn ui-btn-secondary ml-auto"
-                >
-                    編集
-                </a>
-            </div>
-            <div class="flex flex-wrap gap-2">
-                {% for member in room.members %}
-                    <span class="ui-chip">{{ member.member_name }}</span>
-                {% endfor %}
-            </div>
-        {% else %}
-            <p class="text-sm text-gray-500">
-                まだメンバーがいません。左のフォームから追加してください。
-            </p>
-        {% endif %}
+        <div class="ui-card">
+            {% if (room.members|length) > 0 %}
+                <div class="mb-4 flex items-center gap-2">
+                    <h3 class="ui-section-title">
+                        <span class="icon-[lucide--users] ui-icon"></span>
+                        メンバー
+                    </h3>
+                    <span class="ui-count">{{ room.members|length }}人</span>
+                    <a
+                        href="{{
+                        route(
+                            'rooms.members.index',
+                            {
+                                room: room.id,
+                                query_key: room.password_plan,
+                            },
+                        )
+                        }}"
+                        class="ui-btn ui-btn-secondary ml-auto"
+                    >
+                        編集
+                    </a>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    {% for member in room.members %}
+                        <span class="ui-chip">{{ member.member_name }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-sm text-gray-500">
+                    まだメンバーがいません。フォームから追加してください。
+                </p>
+            {% endif %}
+        </div>
     </div>
 </div>

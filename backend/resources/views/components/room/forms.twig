@@ -13,7 +13,7 @@
             },
         )
         }}"
-        class="space-y-4"
+        class="@container space-y-4"
         id="item-form"
         data-item-form
         data-room-id="{{ room.id }}"
@@ -40,42 +40,44 @@
             {% endif %}
         </div>
 
-        <div>
-            <label for="amount" class="ui-label">金額（円）</label>
-            <input
-                id="amount"
-                name="amount"
-                type="number"
-                min="1"
-                value="{{ old('amount') }}"
-                class="ui-input"
-                required
-            />
-            {% if errors.has('amount') %}
-                <p class="mt-1.5 text-sm text-danger">
-                    {{ errors.first('amount') }}
-                </p>
-            {% endif %}
-        </div>
+        <div class="grid grid-cols-1 gap-4 @min-[32rem]:grid-cols-2">
+            <div>
+                <label for="amount" class="ui-label">金額（円）</label>
+                <input
+                    id="amount"
+                    name="amount"
+                    type="number"
+                    min="1"
+                    value="{{ old('amount') }}"
+                    class="ui-input"
+                    required
+                />
+                {% if errors.has('amount') %}
+                    <p class="mt-1.5 text-sm text-danger">
+                        {{ errors.first('amount') }}
+                    </p>
+                {% endif %}
+            </div>
 
-        <div>
-            <label for="payer_id" class="ui-label">支払者（誰が支払ったか）</label>
-            <select id="payer_id" name="payer_id" class="ui-input" required>
-                <option value="">選択してください</option>
-                {% for member in room.members %}
-                    <option
-                        value="{{ member.id }}"
-                        {{ old('payer_id') == member.id ? 'selected' : '' }}
-                    >
-                        {{ member.member_name }}
-                    </option>
-                {% endfor %}
-            </select>
-            {% if errors.has('payer_id') %}
-                <p class="mt-1.5 text-sm text-danger">
-                    {{ errors.first('payer_id') }}
-                </p>
-            {% endif %}
+            <div>
+                <label for="payer_id" class="ui-label">支払者（誰が支払ったか）</label>
+                <select id="payer_id" name="payer_id" class="ui-input" required>
+                    <option value="">選択してください</option>
+                    {% for member in room.members %}
+                        <option
+                            value="{{ member.id }}"
+                            {{ old('payer_id') == member.id ? 'selected' : '' }}
+                        >
+                            {{ member.member_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+                {% if errors.has('payer_id') %}
+                    <p class="mt-1.5 text-sm text-danger">
+                        {{ errors.first('payer_id') }}
+                    </p>
+                {% endif %}
+            </div>
         </div>
 
         <div
@@ -130,36 +132,38 @@
             {% endif %}
             <div
                 data-participant-jump-scroll
-                class="ui-scroll max-h-[min(55svh,18rem)] md:max-h-48"
+                class="ui-scroll @container max-h-[min(55svh,18rem)] md:max-h-48"
             >
-                {% if (room.members|length) == 0 %}
-                    <p class="px-1 py-2 text-sm text-gray-500">
-                        先にメンバーを追加してください
-                    </p>
-                {% else %}
-                    {% for member in room.members %}
-                        <label
-                            data-participant-jump-row
-                            data-member-name="{{ member.member_name|e('html_attr') }}"
-                            class="ui-choice"
-                        >
-                            <input
-                                type="checkbox"
-                                name="participant_ids[]"
-                                value="{{ member.id }}"
-                                {{ (member.id ~ '') in (
-                                    errors.getBag('default').isNotEmpty()
-                                        ? old('participant_ids', [])
-                                        : []
-                                ) ? 'checked' : '' }}
-                                class="ui-check"
-                            />
-                            <span class="text-sm text-gray-900">
-                                {{ member.member_name }}
-                            </span>
-                        </label>
-                    {% endfor %}
-                {% endif %}
+                <div class="grid grid-cols-1 gap-2 @min-[22rem]:grid-cols-2 @min-[40rem]:grid-cols-3">
+                    {% if (room.members|length) == 0 %}
+                        <p class="px-1 py-2 text-sm text-gray-500">
+                            先にメンバーを追加してください
+                        </p>
+                    {% else %}
+                        {% for member in room.members %}
+                            <label
+                                data-participant-jump-row
+                                data-member-name="{{ member.member_name|e('html_attr') }}"
+                                class="ui-choice"
+                            >
+                                <input
+                                    type="checkbox"
+                                    name="participant_ids[]"
+                                    value="{{ member.id }}"
+                                    {{ (member.id ~ '') in (
+                                        errors.getBag('default').isNotEmpty()
+                                            ? old('participant_ids', [])
+                                            : []
+                                    ) ? 'checked' : '' }}
+                                    class="ui-check"
+                                />
+                                <span class="text-sm text-gray-900">
+                                    {{ member.member_name }}
+                                </span>
+                            </label>
+                        {% endfor %}
+                    {% endif %}
+                </div>
             </div>
             {% if errors.has('participant_ids') %}
                 <p class="mt-1.5 text-sm text-danger">
@@ -171,7 +175,7 @@
             </p>
         </div>
 
-        <div class="flex flex-col gap-2">
+        <div class="grid grid-cols-1 gap-2 @min-[32rem]:grid-cols-2">
             <button
                 type="button"
                 onclick="fetchItemGeoLocation()"

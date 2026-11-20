@@ -199,8 +199,17 @@
                                 </div>
                                 <div
                                     data-participant-jump-scroll
-                                    class="ui-scroll max-h-[min(50svh,14rem)] bg-white md:max-h-36"
+                                    class="ui-scroll @container max-h-[min(50svh,14rem)] bg-white md:max-h-36"
                                 >
+                                    <div
+                                        class="{{
+                                        cn(
+                                            'grid grid-cols-1 gap-2',
+                                            '@min-[22rem]:grid-cols-2',
+                                            '@min-[40rem]:grid-cols-3',
+                                        )
+                                        }}"
+                                    >
                                     {% for member in room.members %}
                                         <label
                                             data-participant-jump-row
@@ -223,6 +232,7 @@
                                             </span>
                                         </label>
                                     {% endfor %}
+                                    </div>
                                 </div>
                             </div>
 

@@ -9,65 +9,69 @@
         },
     )
     }}"
-    class="space-y-4"
+    class="@container space-y-4"
 >
     <input type="hidden" name="_token" value="{{ csrf_token() }}" />
 
-    {% for member in room.members %}
-        {% set owed = 0 %}
-        {% for t in transactions %}
-            {% if t.from == member.id %}
-                {% set owed = owed + t.amount %}
-            {% endif %}
-        {% endfor %}
+    <div class="grid grid-cols-1 gap-3 @min-[40rem]:grid-cols-2">
+        {% for member in room.members %}
+            {% set owed = 0 %}
+            {% for t in transactions %}
+                {% if t.from == member.id %}
+                    {% set owed = owed + t.amount %}
+                {% endif %}
+            {% endfor %}
 
-        {% if owed != 0 %}
-            {% set change = changeByMember[member.id]|default(null) %}
-            <div class="space-y-3 rounded-lg border border-gray-200 bg-gray-50 p-3 md:p-4">
-                <div class="flex flex-wrap items-center justify-between gap-2">
-                    <label for="cash-{{ member.id }}" class="text-sm font-medium text-gray-900">
-                        {{ member.member_name }}
-                    </label>
-                    <div class="flex flex-wrap items-center gap-3 text-sm">
-                        {% if change is not null and change >= 0 %}
-                            <span class="font-medium text-sub-green-ink">清算完了</span>
-                        {% endif %}
-                        <span class="text-gray-500">
-                            支払額
-                            <span class="ui-money">
-                                ¥{{ owed|number_format(0, '.', ',') }}
+            {% if owed != 0 %}
+                {% set change = changeByMember[member.id]|default(null) %}
+                <div class="space-y-3 rounded-lg border border-gray-200 bg-gray-50 p-3 md:p-4">
+                    <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+                        <label for="cash-{{ member.id }}" class="text-sm font-medium text-gray-900">
+                            {{ member.member_name }}
+                        </label>
+                        <div class="flex flex-wrap items-center gap-3 text-sm">
+                            {% if change is not null and change >= 0 %}
+                                <span class="font-medium text-sub-green-ink">清算完了</span>
+                            {% endif %}
+                            <span class="text-gray-500">
+                                支払額
+                                <span class="ui-money">
+                                    ¥{{ owed|number_format(0, '.', ',') }}
+                                </span>
                             </span>
-                        </span>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <input
+                            id="cash-{{ member.id }}"
+                            type="number"
+                            name="cash[{{ member.id }}]"
+                            placeholder="所持金を入力"
+                            value="{{ cashInputs[member.id]|default('') }}"
+                            class="ui-input w-full max-w-40"
+                        />
+                        {% if change is not null %}
+                            {% if change >= 0 %}
+                                <p class="rounded-lg bg-sub-green-50 px-3 py-2 text-sm text-gray-800">
+                                    おつり
+                                    <span class="font-semibold tabular-nums text-sub-green-ink">
+                                        ¥{{ change|round(0, 'common')|number_format(0, '.', ',') }}
+                                    </span>
+                                </p>
+                            {% else %}
+                                <p class="rounded-lg bg-danger-50 px-3 py-2 text-sm text-gray-800">
+                                    不足
+                                    <span class="font-semibold tabular-nums text-danger">
+                                        ¥{{ (change * -1)|round(0, 'common')|number_format(0, '.', ',') }}
+                                    </span>
+                                </p>
+                            {% endif %}
+                        {% endif %}
                     </div>
                 </div>
-                <input
-                    id="cash-{{ member.id }}"
-                    type="number"
-                    name="cash[{{ member.id }}]"
-                    placeholder="所持金を入力"
-                    value="{{ cashInputs[member.id]|default('') }}"
-                    class="ui-input"
-                />
-                {% if change is not null %}
-                    {% if change >= 0 %}
-                        <p class="rounded-lg bg-sub-green-50 px-3 py-2 text-sm text-gray-800">
-                            おつり
-                            <span class="font-semibold tabular-nums text-sub-green-ink">
-                                ¥{{ change|round(0, 'common')|number_format(0, '.', ',') }}
-                            </span>
-                        </p>
-                    {% else %}
-                        <p class="rounded-lg bg-danger-50 px-3 py-2 text-sm text-gray-800">
-                            不足
-                            <span class="font-semibold tabular-nums text-danger">
-                                ¥{{ (change * -1)|round(0, 'common')|number_format(0, '.', ',') }}
-                            </span>
-                        </p>
-                    {% endif %}
-                {% endif %}
-            </div>
-        {% endif %}
-    {% endfor %}
+            {% endif %}
+        {% endfor %}
+    </div>
 
     {% if (transactions|length) > 0 %}
         <button type="submit" class="ui-btn ui-btn-primary w-full">
