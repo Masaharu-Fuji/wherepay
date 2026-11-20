@@ -3,7 +3,7 @@
 # Run user scripts, if they exist
 for f in /var/www/html/.fly/scripts/*.sh; do
     # Bail out this loop if any script exits with non-zero status code
-    bash "$f" -e
+    bash -e "$f" || exit 1
 done
 
 if [ $# -gt 0 ]; then

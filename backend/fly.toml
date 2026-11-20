@@ -28,6 +28,13 @@ console_command = 'php /var/www/html/artisan tinker'
   SESSION_ENCRYPT = 'false'
   SESSION_PATH = '/'
   SESSION_DOMAIN = 'null'
+  DB_CONNECTION = 'sqlite'
+  DB_DATABASE = '/data/database.sqlite'
+  DB_BUSY_TIMEOUT = '5000'
+  DB_JOURNAL_MODE = 'WAL'
+  DB_SYNCHRONOUS = 'NORMAL'
+  CACHE_STORE = 'file'
+  QUEUE_CONNECTION = 'sync'
   VITE_APP_NAME = "${APP_NAME}"
   WWWUSER = 1000
   WWWGROUP = 1000
@@ -40,7 +47,18 @@ console_command = 'php /var/www/html/artisan tinker'
   min_machines_running = 0
   processes = ['app']
 
+  [http_service.concurrency]
+    type = 'requests'
+    soft_limit = 100
+    hard_limit = 120
+
+[mounts]
+  source = 'wherepay_data'
+  destination = '/data'
+  initial_size = '1gb'
+
 [[vm]]
-  memory = '1gb'
+  size = 'shared-cpu-1x'
+  memory = '512mb'
   cpus = 1
-  memory_mb = 1024
+  memory_mb = 512
