@@ -40,6 +40,7 @@ RUN apt-get update \
     && apt-get update \
     && apt-get -y --no-install-recommends install $(cat /tmp/php-packages.txt) \
     && ln -sf /usr/sbin/php-fpm${PHP_VERSION} /usr/sbin/php-fpm \
+    && php -r 'if (version_compare(PHP_VERSION, "8.5.13", "<")) { fwrite(STDERR, "PHP ".PHP_VERSION." is older than the 2026-11-19 security release 8.5.13\n"); exit(1); }' \
     && mkdir -p /var/www/html/public && echo "index" > /var/www/html/public/index.php \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
