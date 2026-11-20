@@ -152,7 +152,8 @@
                                     クリア
                                 </button>
                             </div>
-                            <div class="ui-scroll max-h-48 bg-white">
+                            <div class="ui-scroll @container max-h-48 bg-white">
+                                <div class="grid grid-cols-1 gap-2 @min-[22rem]:grid-cols-2 @min-[40rem]:grid-cols-3">
                                 {% for member in room.members %}
                                     <label class="ui-choice">
                                         <input
@@ -173,6 +174,7 @@
                                         </span>
                                     </label>
                                 {% endfor %}
+                                </div>
                             </div>
                             {% if participantErrors.isNotEmpty() %}
                                 <p role="alert" class="text-sm text-danger">

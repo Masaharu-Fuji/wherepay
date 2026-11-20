@@ -33,11 +33,11 @@
             <p class="text-sm text-danger">{{ errors.first('member_name') }}</p>
         {% endif %}
 
-        <div class="ui-card">
+        <div class="ui-card @container">
             {% if (room.members|length) == 0 %}
                 <p class="text-sm text-gray-500">ユーザが登録されていません。</p>
             {% else %}
-                <div class="space-y-3">
+                <div class="grid grid-cols-1 gap-3 @min-[32rem]:grid-cols-2 @min-[52rem]:grid-cols-3">
                     {% for member in room.members %}
                         <form
                             method="POST"
@@ -51,7 +51,7 @@
                                 },
                             )
                             }}"
-                            class="grid grid-cols-1 items-center gap-2 md:grid-cols-[1fr_auto]"
+                            class="flex items-center gap-2"
                         >
                             <input
                                 type="hidden"
@@ -62,10 +62,10 @@
                             <input
                                 name="member_name"
                                 value="{{ old('member_name', member.member_name) }}"
-                                class="ui-input"
+                                class="ui-input min-w-0 flex-1"
                                 required
                             />
-                            <button type="submit" class="ui-btn ui-btn-primary">
+                            <button type="submit" class="ui-btn ui-btn-primary shrink-0">
                                 更新
                             </button>
                         </form>
