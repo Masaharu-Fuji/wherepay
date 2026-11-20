@@ -76,7 +76,11 @@ composer run twig:fix
 | `Map` | `maps` |
 | `ItemCategory` | `item_categories` |
 
-作成時の `t_` / `m_` 名は `database/migrations/2026_11_20_000012_rename_domain_tables_to_eloquent_convention.php` で改名します。ルーム名と品目メモの桁変更のあとに実行します。適用済みの DB は `php artisan migrate` で追従できます。
+作成時の `t_` / `m_` 名は、旧テーブル名のまま次の順で桁を変えてから改名します。適用済みの DB は `php artisan migrate` で追従できます。
+
+1. `database/migrations/2026_11_20_000011_limit_item_memo_length.php`（`t_items.memo` を 255 文字）
+2. `database/migrations/2026_11_20_000012_shorten_room_name_on_t_rooms_table.php`（`t_rooms.room_name` を 40 文字）
+3. `database/migrations/2026_11_20_000013_rename_domain_tables_to_eloquent_convention.php`（Eloquent の既定名へ改名）
 
 ### `items.room_id` の追加と関連
 
