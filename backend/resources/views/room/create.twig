@@ -28,6 +28,7 @@
                         type="text"
                         placeholder="例: 飲み会グループ"
                         value="{{ old('room_name') }}"
+                        maxlength="{{ constant('App\\Models\\Room::NAME_MAX_LENGTH') }}"
                         class="ui-input"
                         autofocus
                         required

@@ -28,7 +28,7 @@ class RoomController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'room_name' => ['required', 'string', 'max:255'],
+            'room_name' => ['required', 'string', 'max:'.Room::NAME_MAX_LENGTH],
         ]);
 
         $room = Room::create([
@@ -169,7 +169,7 @@ class RoomController extends Controller
             'payer_id' => $this->memberInRoomRules($room, true),
             'participant_ids' => ['required', 'array', 'min:1'],
             'participant_ids.*' => $this->memberInRoomRules($room),
-            'memo' => ['nullable', 'string', 'max:1000'],
+            'memo' => ['nullable', 'string', 'max:255'],
             'paid_at' => ['nullable', 'date'],
             'latitude' => ['nullable', 'numeric'],
             'longitude' => ['nullable', 'numeric'],
