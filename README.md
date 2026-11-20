@@ -171,26 +171,59 @@ composer run lint:lines
 2026年11月の [Resource Pricing](https://fly.io/docs/about/pricing/) と [リージョン倍率](https://fly.io/pricing) では、東京の倍率は 1.308 です。Volume にこの倍率は掛かりません。
 
 - 止まっているマシンの課金は、イメージ容量（1GB あたり月 $0.15）と Volume（1GB で月 $0.15）です。
-- `shared-cpu-1x` / 512MB を東京で 30 日起動し続けると、計算だけで約 $4.83 です。Volume の $0.15 が乗り、$5 の直前になります。31 日の月や、東京からの外向き通信（1GB あたり $0.04）が乗ると $5 を超えます。
+- `shared-cpu-1x` / 512MB を東京で 30 日起動し続けると、計算だけで約 $4.83 です。Volume 1GB の $0.15 を足すと約 $4.98 で、$5 まで約 $0.02 です。外向き通信は 1GB あたり $0.04 なので、約 600MB で $5 を超えます。31 日の月は、通信が無くても約 $5.14 です。
 - `min_machines_running = 0` を維持し、旅行のときだけ開きます。専用 IPv4、Managed Postgres、2 台目のマシンは入れません。
 
 コマンドは `backend/` で実行します。`fly launch` は `fly.toml` を上書きするので使いません。環境変数の見本は [`backend/.env.deploy.example`](backend/.env.deploy.example) です。`APP_KEY` 以外は `fly.toml` にあります。
 
-インストールのあと、PowerShell を開き直します。
+PowerShell で flyctl を入れ、終わったら PowerShell を開き直します。
 
 ```powershell
 powershell -Command "iwr https://fly.io/install.ps1 -useb | iex"
-fly auth signup
-cd backend
-php artisan key:generate --show
-fly secrets set "APP_KEY=base64:ここに表示された値"
-fly volumes create wherepay_data -r nrt
-fly deploy
 ```
 
-アカウントが既にあるときは `fly auth signup` の代わりに `fly auth login` です。登録後、[ダッシュボード](https://fly.io/dashboard) の個人組織にクレジットカードを登録します。`fly status` でアプリが無いときは、先に `fly apps create wherepay-old-shape-6823` を実行します。Postgres、Redis、Tigris を足すか聞かれたら、追加しません。
+開き直したあと、アカウントを作ります。既にあるときは `fly auth login` です。
 
-公開後にルームを 1 つ作り、数分放置してから開き直します。同じルームが残っていれば、Volume に書けています。`fly volumes list` の `REGION` が `nrt` で、`ATTACHED VM` にマシン ID があれば、ディスクは接続されています。2 回目以降の更新は `backend/` で `fly deploy` だけです。
+```powershell
+fly auth signup
+```
+
+次に [ダッシュボード](https://fly.io/dashboard) の個人組織へクレジットカードを登録します。カードが無いトライアルのまま進めると、マシンは 5 分で止まり、クレジットが切れたあとにカードが無いと Volume ごと削除されることがあります。
+
+`backend/` へ移り、アプリが無いときだけアプリを作ります。`fly status` にアプリが出ているときは、この作成は飛ばします。Postgres、Redis、Tigris を足すか聞かれたら、追加しません。
+
+```powershell
+cd backend
+fly apps create wherepay-old-shape-6823
+```
+
+`APP_KEY` には、`php artisan key:generate --show` の出力全体を渡します。出力はすでに `base64:` で始まります。
+
+```powershell
+fly secrets set "APP_KEY=$(php artisan key:generate --show)"
+```
+
+Volume は東京に 1GB を 1 個だけ作ります。同名の Volume があるときは、この作成は飛ばします。作ったあとの一覧で、`SIZE` が `1GB`、`REGION` が `nrt` であることを確認します。
+
+```powershell
+fly volumes create wherepay_data -r nrt --size 1
+fly volumes list
+```
+
+公開は 1 台です。`--ha=false` を付けます。付けない `fly deploy` はマシンを 2 台作り、Volume が付かない方は起動に失敗した時間も課金されます。2 台が動き続けると、計算だけで約 $9.66 になり、その月は全額の請求です。
+
+```powershell
+fly deploy --ha=false
+fly machine list
+```
+
+`fly machine list` が 2 台以上のときは、1 台に戻します。
+
+```powershell
+fly scale count 1
+```
+
+ルームを 1 つ作り、`fly status` が `stopped` になってから開き直します。同じルームが残っていれば、止まったあとも Volume に書けています。`fly volumes list` の `ATTACHED VM` にマシン ID があれば、ディスクは接続されています。一覧が 2 行のときは、空の Volume にも 1GB あたり月 $0.15 が乗ります。2 回目以降の更新は、`backend/` で `fly deploy --ha=false` だけです。
 
 ---
 

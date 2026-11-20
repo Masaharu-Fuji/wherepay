@@ -67,7 +67,7 @@ composer run twig:fix
 - 設定: `fly.toml`、`Dockerfile`、`.fly/`
 - DB: Volume `wherepay_data` の `/data/database.sqlite`
 - リージョン: `nrt`。マシンは 1 台
-- 公開と更新: このディレクトリで `fly deploy`
+- 公開と更新: このディレクトリで `fly deploy --ha=false`
 
 ---
 
